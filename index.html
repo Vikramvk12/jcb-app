@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JCB Cloud Fleet ERP</title>
+  
+  <!-- Google Firebase Realtime Cloud SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; border-radius: 0px !important; }
+    body { background-color: #090d16; padding: 12px; color: #f8fafc; min-height: 100vh; }
+    
+    .top-bar { background: #0f172a; border-bottom: 3px solid #f59e0b; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .brand-title { font-size: 17px; font-weight: 900; color: #f59e0b; }
+    .brand-sub { font-size: 11px; color: #94a3b8; }
+    .badge-live { background: #22c55e; color: #000; font-size: 10px; font-weight: 800; padding: 3px 6px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Client Suspended Overlay */
+    #lockOverlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #090d16; z-index: 999999; padding: 24px; text-align: center;
+      flex-direction: column; justify-content: center; align-items: center;
+    }
+    .lock-icon { font-size: 54px; margin-bottom: 12px; color: #ef4444; }
+    .lock-title { font-size: 20px; font-weight: 900; color: #f8fafc; }
+    .lock-desc { font-size: 13px; color: #94a3b8; margin-top: 10px; line-height: 1.6; max-width: 320px; }
+    .btn-pay-now { background: #f59e0b; color: #000; padding: 14px 20px; font-weight: 900; border: none; margin-top: 24px; text-decoration: none; display: inline-block; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+    .card-panel { background: #111a2e; border: 2px solid #1e293b; padding: 14px; margin-bottom: 14px; }
+    .card-header { font-size: 15px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; border-bottom: 1px solid #1e293b; padding-bottom: 6px; }
+    
+    label { display: block; font-size: 11px; font-weight: bold; color: #94a3b8; margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; }
+    input, select { width: 100%; padding: 12px; background: #090d16; border: 1px solid #334155; color: #fff; font-size: 14px; }
+
+    /* Password Input Wrapper with Eye Toggle */
+    .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+    .password-wrapper input { padding-right: 46px; }
+    .toggle-eye-btn {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; font-size: 18px; cursor: pointer;
+      color: #94a3b8; padding: 6px; user-select: none;
+    }
+    
+    .btn-submit { width: 100%; padding: 14px; border: none; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 12px; text-transform: uppercase; }
+    .btn-green { background: #22c55e; color: #000; }
+    .btn-blue { background: #2563eb; color: #fff; }
+    .btn-amber { background: #f59e0b; color: #000; }
+    .btn-red { background: #dc2626; color: #fff; }
+    .btn-nav { background: #1e293b; color: #f1f5f9; border: 1px solid #334155; padding: 10px; width: 100%; text-align: left; font-weight: bold; margin-bottom: 12px; cursor: pointer; }
+
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .action-tile { background: #111a2e; border: 2px solid #334155; padding: 16px 8px; text-align: center; cursor: pointer; min-height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .action-tile:active { background: #1e293b; }
+    .tile-shift { border-color: #22c55e; color: #22c55e; }
+    .tile-fuel { border-color: #3b82f6; color: #38bdf8; }
+    .tile-close { border-color: #f97316; color: #fb923c; }
+    .tile-rent { border-color: #eab308; color: #facc15; grid-column: span 2; }
+    .tile-alert { border-color: #ef4444; color: #f87171; grid-column: span 2; }
+
+    .client-card { background: #0c1527; border: 1px solid #1e293b; padding: 12px; margin-bottom: 10px; }
+    .client-card.active-border { border-left: 4px solid #22c55e; }
+    .client-card.locked-border { border-left: 4px solid #ef4444; opacity: 0.85; }
+
+    .log-item { background: #071022; border-left: 3px solid #f59e0b; padding: 10px; margin-bottom: 8px; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- क्लायंटचे पेमेंट थकले तर दिसणारा लॉक पडदा -->
+  <div id="lockOverlay">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">सेवा तात्पुरती खंडित (ACCOUNT SUSPENDED)</div>
+    <div class="lock-desc">
+      या खात्याचे मासिक सबस्क्रिप्शन संपलेले आहे.<br>
+      सॉफ्टवेअर सुरू करण्यासाठी कृपया मुख्य ॲडमिनशी संपर्क साधा.
+    </div>
+    <a href="https://wa.me/919545628713?text=Namaskar,%20mala%20JCB%20app%20cha%20subscription%20renew%20karayche%20ahe." class="btn-pay-now">
+      💳 सबस्क्रिप्शन रिन्यू करा (WhatsApp)
+    </a>
+  </div>
+
+  <!-- टॉप हेडर -->
+  <div class="top-bar">
+    <div>
+      <div class="brand-title" id="topHeaderTitle">🚜 JCB FLEET PRO</div>
+      <div class="brand-sub" id="topHeaderSub">Enterprise Heavy Machinery System</div>
+    </div>
+    <div class="badge-live" id="systemStateBadge">CLOUD ACTIVE</div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 0: UNIVERSAL LOGIN SCREEN (१००% सुरक्षित लॉगिन)
+       ======================================================== -->
+  <div id="screenUniversalLogin" class="screen active">
+    <div class="card-panel" style="max-width: 420px; margin: 40px auto; border-color: #f59e0b;">
+      <div style="font-size: 36px; text-align: center; margin-bottom: 8px;">🔐</div>
+      <div class="card-header" style="text-align: center; border: none; font-size: 18px; color: #f59e0b;">
+        अधिकृत लॉगिन (SECURE LOGIN)
+      </div>
+      <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 16px;">
+        कृपया तुमचा अधिकृत User ID आणि Password प्रविष्ट करा:
+      </p>
+
+      <form onsubmit="event.preventDefault(); handleUniversalLogin();" autocomplete="on">
+        <label for="loginUserId">User ID (वापरकर्ता आयडी):</label>
+        <input type="text" id="loginUserId" name="username" autocomplete="username" placeholder="उदा. patil किंवा तुमचा आयडी" required>
+
+        <label for="loginPassword">पासवर्ड (Password):</label>
+        <div class="password-wrapper">
+          <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
+          <button type="button" class="toggle-eye-btn" onclick="togglePasswordVisibility('loginPassword', 'eyeIconLogin')" id="eyeIconLogin" title="पासवर्ड पाहा / लपवा">👁️</button>
+        </div>
+
+        <button type="submit" class="btn-submit btn-amber">लॉगिन करा (Sign In)</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 1: SUPER ADMIN MASTER DASHBOARD (विक्रम सर)
+       ======================================================== -->
+  <div id="screenSuperAdmin" class="screen">
+    <button class="btn-nav" onclick="logoutSession()">🔒 सुपर ॲडमिन लॉगआऊट (Logout)</button>
+    
+    <div class="card-panel" style="border: 2px solid #f59e0b; background: #0c1527;">
+      <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">सर्वोच्च नियंत्रक (Master Controller):</div>
+      <div style="font-size: 20px; font-weight: 900; color: #f59e0b; margin-top: 2px;">
+        👑 विक्रम सर (मुख्य सिस्टीम मालक)
+      </div>
+      <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">
+        Google Cloud Realtime Sync • सर्व ग्राहकांचे थेट नियंत्रण, चालू पासवर्ड व खाती Active/Lock
+      </div>
+    </div>
+
+    <!-- Counters -->
+    <div class="grid-4">
+      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
+        <div style="font-size: 18px; font-weight: 900; color: #f8fafc;" id="statTotalClients">0</div>
+        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">एकूण ग्राहक</div>
+      </div>
+      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
+        <div style="font-size: 18px; font-weight: 900; color: #22c55e;" id="statActiveClients">0</div>
+        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">सुरू खाती</div>
+      </div>
+      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
+        <div style="font-size: 18px; font-weight: 900; color: #ef4444;" id="statLockedClients">0</div>
+        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">बंद खाती (Locked)</div>
+      </div>
+      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
+        <div style="font-size: 18px; font-weight: 900; color: #eab308;" id="statTotalFleet">0</div>
+        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">एकूण मशिन्स</div>
+      </div>
+    </div>
+
+    <!-- नवीन ग्राहक जोडण्याचा फॉर्म -->
+    <div class="card-panel">
+      <div class="card-header">➕ नवीन ग्राहक (JCB मालक) जोडा</div>
+      <div class="grid-2">
+        <input type="text" id="newClientBusiness" placeholder="व्यवसायाचे नाव (उदा. पवार अर्थमूव्हर्स)">
+        <input type="text" id="newClientUser" placeholder="लॉगिन User ID (उदा. pawar)">
+      </div>
+      <div class="grid-2" style="margin-top: 8px;">
+        <input type="password" id="newClientPass" placeholder="पासवर्ड (उदा. pawar123)">
+        <input type="tel" id="newClientPhone" placeholder="मोबाईल नंबर">
+      </div>
+      <div style="margin-top: 8px;">
+        <input type="number" id="newClientMachinesCount" placeholder="मशिन्सची संख्या (उदा. 2)">
+      </div>
+      <button class="btn-submit btn-amber" onclick="createNewClientAccount()">💾 नवीन ग्राहक खाते क्लाऊडवर सेव्ह करा</button>
+    </div>
+
+    <!-- सर्व ग्राहकांची यादी (लाईव्ह पासवर्डसह) -->
+    <div class="card-panel">
+      <div class="card-header">📋 सर्व ग्राहकांची यादी (चालू पासवर्डसह) व ॲक्टिव्ह/लॉक नियंत्रण</div>
+      <div id="superAdminClientsList"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 2: CLIENT OWNER DASHBOARD (मालक डॅशबोर्ड)
+       ======================================================== -->
+  <div id="screenClientOwner" class="screen">
+    <button class="btn-nav" onclick="logoutSession()">🔒 लॉगआऊट (Logout)</button>
+    
+    <div class="card-panel" style="border: 2px solid #f59e0b; background: #0c1527;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 18px; font-weight: 900; color: #f59e0b;" id="ownerClientTitle">पाटील अर्थमूव्हर्स</div>
+          <div style="font-size: 12px; color: #cbd5e1;">मालक डॅशबोर्ड • ऑपरेटर कामाची नोंद व नफा-तोटा</div>
+        </div>
+        <button onclick="navigate('screenClientMachines')" style="background:#2563eb; color:#fff; border:none; padding:8px 12px; font-weight:bold; cursor:pointer;">
+          🚜 ऑपरेटर कन्सोल उघडा
+        </button>
+      </div>
+    </div>
+
+    <!-- पासवर्ड बदलण्याचा फॉर्म -->
+    <div class="card-panel" style="border-color: #3b82f6;">
+      <div class="card-header" style="color: #38bdf8;">🔑 पासवर्ड बदला (Change Password)</div>
+      <div class="grid-2">
+        <div class="password-wrapper">
+          <input type="password" id="clientChangeNewPass" placeholder="नवीन पासवर्ड टाका">
+          <button type="button" class="toggle-eye-btn" onclick="togglePasswordVisibility('clientChangeNewPass', 'eyeIconChange')" id="eyeIconChange">👁️</button>
+        </div>
+        <button class="btn-submit btn-blue" style="margin-top:0;" onclick="handleClientChangePassword()">पासवर्ड अपडेट करा</button>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="card-header">🚜 सर्व मशिन्सची स्थिती</div>
+      <div id="clientOwnerMachinesList"></div>
+    </div>
+
+    <div class="card-panel" style="border-color: #22c55e;">
+      <div class="card-header" style="color: #22c55e;">📋 ऑपरेटरने केलेल्या कामाची नोंद (Operator Work Log)</div>
+      <div id="operatorWorkHistoryList"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 3: CLIENT MACHINES LIST (ऑपरेटर मशिन्स निवड)
+       ======================================================== -->
+  <div id="screenClientMachines" class="screen">
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+      <button class="btn-nav" style="width:auto; margin:0;" onclick="navigate('screenClientOwner')">⬅ मालक डॅशबोर्ड</button>
+      <button class="btn-nav" style="width:auto; margin:0; background:#dc2626;" onclick="logoutSession()">लॉगआऊट</button>
+    </div>
+    
+    <div style="font-size: 12px; color: #94a3b8; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">
+      काम सुरू करण्यासाठी मशीन निवडा:
+    </div>
+    <div id="clientFleetContainer" class="grid-2"></div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 4: OPERATOR ACTIONS CONSOLE
+       ======================================================== -->
+  <div id="screenOpMenu" class="screen">
+    <button class="btn-nav" onclick="navigate('screenClientMachines')">⬅ मशिन्स निवडीवर जा</button>
+    <div class="card-panel" style="border-left: 4px solid #22c55e;">
+      <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">चालू सत्र:</div>
+      <div id="opMachineName" style="font-size: 17px; font-weight: 900; color: #f59e0b; margin-top: 2px;">MACHINE 1</div>
+      <div id="opDriverTitle" style="font-size: 12px; color: #cbd5e1;">चालक: ऑपरेटर</div>
+      <div id="opActiveCustomer" style="font-size: 12px; color: #22c55e; margin-top: 4px; font-weight: bold;">सध्याची पार्टी: नोंद नाही</div>
+    </div>
+
+    <div class="action-grid">
+      <div class="action-tile tile-shift" onclick="navigate('screenMorning')">
+        <div style="font-size: 26px;">📸</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">१. सकाळ रीडिंग</div>
+        <div style="font-size: 10px; color: #94a3b8;">पार्टी नाव + कामाचे स्वरूप</div>
+      </div>
+      <div class="action-tile tile-fuel" onclick="navigate('screenDiesel')">
+        <div style="font-size: 26px;">⛽</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">२. डिझेल नोंद</div>
+        <div style="font-size: 10px; color: #94a3b8;">Fuel Cost + Receipt</div>
+      </div>
+      <div class="action-tile tile-close" onclick="navigate('screenEvening')">
+        <div style="font-size: 26px;">🛑</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">३. काम संपले (शिफ्ट)</div>
+        <div style="font-size: 10px; color: #94a3b8;">संध्याकाळ रीडिंग + डंपर फेऱ्या</div>
+      </div>
+      <div class="action-tile tile-rent" onclick="openCustomerJobScreen()">
+        <div style="font-size: 26px;">📝</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">४. पार्टी भाडे व सलग हिशोब (१५-२० दिवस)</div>
+        <div style="font-size: 10px; color: #94a3b8;">रोजचे तास भरा व पार्टीला WhatsApp बिल पाठवा</div>
+      </div>
+      <div class="action-tile tile-alert" onclick="navigate('screenBreakdown')">
+        <div style="font-size: 26px;">⚠️</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">५. ब्रेकडाऊन नोंद</div>
+        <div style="font-size: 10px; color: #94a3b8;">काम बंद / तांत्रिक बिघाड</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: MORNING READING -->
+  <div id="screenMorning" class="screen">
+    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel">
+      <div class="card-header">१. सकाळचे रीडिंग व पार्टी निवड (SHIFT START)</div>
+      <label>पार्टी / ग्राहकाचे नाव:</label>
+      <input type="text" id="morningCustNameInput" placeholder="उदा. अमोल पाटील">
+      <label>पार्टीचा WhatsApp नंबर:</label>
+      <input type="tel" id="morningCustPhoneInput" placeholder="उदा. 98XXXXXXXX">
+      <label>कामाचे ठिकाण व स्वरूप (Work Details):</label>
+      <input type="text" id="morningWorkTypeInput" placeholder="उदा. शेततळे खोदणे / विहीर / माती काम">
+      <label>सकाळचे Hour Meter Reading:</label>
+      <input type="number" step="0.1" id="startReadingInput" placeholder="उदा. 4520.0">
+      <label>मीटरचा थेट फोटो:</label>
+      <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
+      <button class="btn-submit btn-green" onclick="saveMorningShift()">नोंद सेव्ह करा</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: DIESEL ENTRY -->
+  <div id="screenDiesel" class="screen">
+    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel">
+      <div class="card-header">२. डिझेल नोंद (DIESEL ENTRY)</div>
+      <label>भरलेले डिझेल (Liters):</label>
+      <input type="number" id="dieselLitersInput" placeholder="उदा. 50">
+      <label>एकूण रक्कम (₹ Amount):</label>
+      <input type="number" id="dieselCostInput" placeholder="उदा. 4600">
+      <label>पावतीचा फोटो:</label>
+      <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
+      <button class="btn-submit btn-blue" onclick="submitDieselWhatsApp()">⛽ WhatsApp वर डिझेल नोंद पाठवा</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: EVENING CLOSING -->
+  <div id="screenEvening" class="screen">
+    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel">
+      <div class="card-header" style="color: #f97316;">३. काम संपले - दैनंदिन शिफ्ट क्लोज</div>
+      <label>सकाळचे रीडिंग:</label>
+      <input type="number" step="0.1" id="shiftStartReading" placeholder="0.0">
+      <label>संध्याकाळचे Hour Meter Reading:</label>
+      <input type="number" step="0.1" id="shiftEndReading" placeholder="उदा. 4528.5" oninput="calculateShiftHours()">
+      <div style="background:#071022; border:1px solid #334155; padding:10px; margin:10px 0;">
+        <span style="font-size:12px; color:#94a3b8;">आजचे चाललेले तास:</span>
+        <b id="shiftCalculatedHours" style="color:#22c55e; font-size:16px; margin-left:8px;">0.0 तास</b>
+      </div>
+      <label>डंपर फेऱ्या (Trips):</label>
+      <input type="number" id="shiftTripsInput" placeholder="उदा. 18">
+      <label>ड्रायव्हर रोज भत्ता (₹):</label>
+      <input type="number" id="shiftBattaInput" placeholder="उदा. 300">
+      <button class="btn-submit btn-amber" onclick="submitEveningShiftWhatsApp()">🛑 मालकाला शिफ्ट रिपोर्ट पाठवा</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: CUSTOMER JOB & LEDGER -->
+  <div id="screenCustomerLedger" class="screen">
+    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel" style="border-color: #eab308;">
+      <div class="card-header" style="color: #facc15;">४. पार्टीचे भाडे व सलग हिशोब (१५-२० दिवस)</div>
+      <label>पार्टीचे नाव:</label>
+      <input type="text" id="custNameInput" readonly style="color:#f59e0b; font-weight:bold;">
+      <label>पार्टीचा WhatsApp नंबर:</label>
+      <input type="tel" id="custPhoneInput" placeholder="उदा. 98XXXXXXXX">
+      <div class="grid-2">
+        <div>
+          <label>कामाचा दिवस क्र.:</label>
+          <input type="number" id="custDayNumber" value="1">
+        </div>
+        <div>
+          <label>भाडे दर (₹/तास):</label>
+          <input type="number" id="custHourlyRate" value="1200" oninput="calculateOngoingRent()">
+        </div>
+      </div>
+      <div>
+        <label>आज चाललेले तास:</label>
+        <input type="number" step="0.1" id="custTodayHours" placeholder="उदा. 8.5" oninput="calculateOngoingRent()">
+      </div>
+      <div style="background:#071022; border:2px solid #eab308; padding:12px; margin:12px 0;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>आजचे भाडे:</span><b id="liveCustTodayRent">₹ 0</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>सलग एकूण तास:</span><b id="liveTotalHoursAccumulated" style="color:#38bdf8;">0.0 तास</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>एकूण भाडे बिल:</span><b id="liveTotalAccumulatedRent">₹ 0</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:900; color:#ef4444; border-top:1px solid #1e293b; padding-top:6px; margin-top:4px;">
+          <span>बाकी शिल्लक (Pending):</span><b id="livePartyPendingAmt">₹ 0</b>
+        </div>
+      </div>
+      <button class="btn-submit btn-yellow" onclick="sendInvoiceToCustomerWhatsApp()">📲 पार्टीला थेट WhatsApp वर बिल पाठवा</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 9: BREAKDOWN -->
+  <div id="screenBreakdown" class="screen">
+    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel">
+      <div class="card-header" style="color: #ef4444;">५. ब्रेकडाऊन अलर्ट</div>
+      <label>बिघाडाचा प्रकार निवडा:</label>
+      <select id="issueTypeInput">
+        <option value="होस पाईप फुटला (Hose Leak)">होस पाईप फुटला (Hose Leak)</option>
+        <option value="टायर फुटला / पंक्चर (Tyre Issue)">टायर फुटला / पंक्चर (Tyre Issue)</option>
+        <option value="इंजिन गरम झाले (Engine Heating)">इंजिन गरम झाले (Engine Heating)</option>
+        <option value="इतर तांत्रिक अडचण (Other)">इतर तांत्रिक अडचण</option>
+      </select>
+      <label>तपशील:</label>
+      <input type="text" id="issueDetailsInput" placeholder="बिघाडाबद्दल थोडक्यात सांगा">
+      <button class="btn-submit btn-red" onclick="alert('🚨 मालकाला ब्रेकडाऊन अलर्ट पाठवला आहे!'); navigate('screenOpMenu');">🚨 मालकाला ब्रेकडाऊन अलर्ट पाठवा</button>
+    </div>
+  </div>
+
+  <script>
+    // ========================================================
+    // १. FIREBASE CONFIGURATION
+    // ========================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9upkHBBr659Ob3K7TudoC9i-H1PwfOFo",
+      authDomain: "jcb-fleet-system.firebaseapp.com",
+      databaseURL: "https://jcb-fleet-system-default-rtdb.firebaseio.com",
+      projectId: "jcb-fleet-system",
+      storageBucket: "jcb-fleet-system.appspot.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // सुपर ॲडमिन (विक्रम सर)
+    const SUPER_ADMIN = {
+      user: "vikram_admin",
+      pass: "vikram123"
+    };
+
+    // तीन कायमस्वरूपी डिफॉल्ट ग्राहक
+    const HARDCODED_CLIENTS = [
+      {
+        id: "CLIENT-01",
+        businessName: "पाटील अर्थमूव्हर्स (पुणे)",
+        user: "patil",
+        pass: "patil123",
+        phone: "9822011111",
+        status: "ACTIVE",
+        fleet: [
+          { id: "M1", name: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", pin: "1111", hoursToday: 7.5, activeParty: "अमोल पाटील" },
+          { id: "M2", name: "JCB 3DX Plus (MH-12-CD-5678)", driver: "सचिन कदम", pin: "2222", hoursToday: 8.0, activeParty: "हायवे साईट 4" }
+        ],
+        operatorHistory: [
+          { date: "04/10/2026", time: "18:30", machine: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", party: "अमोल पाटील", work: "शेततळे खोदणे", startMeter: 4520.0, endMeter: 4527.5, hours: 7.5, trips: 14, diesel: "48 Ltr" }
+        ]
+      },
+      {
+        id: "CLIENT-02",
+        businessName: "कदम जेसीबी सर्व्हिसेस (सातारा)",
+        user: "kadam",
+        pass: "kadam123",
+        phone: "9822022222",
+        status: "ACTIVE",
+        fleet: [
+          { id: "M1", name: "JCB 4DX Excavator (MH-11-Q-9900)", driver: "विकास मोरे", pin: "1111", hoursToday: 6.0, activeParty: "शेततळे काम" }
+        ],
+        operatorHistory: []
+      },
+      {
+        id: "CLIENT-03",
+        businessName: "पवार कन्स्ट्रक्शन (नाशिक)",
+        user: "pawar",
+        pass: "pawar123",
+        phone: "9822033333",
+        status: "ACTIVE",
+        fleet: [
+          { id: "M1", name: "JCB 3DX (MH-15-XY-5555)", driver: "गणेश पवार", pin: "1111", hoursToday: 5.0, activeParty: "विहीर काम" }
+        ],
+        operatorHistory: []
+      }
+    ];
+
+    let clientsDatabase = HARDCODED_CLIENTS;
+    let currentSessionClient = null;
+    let currentSessionMachine = null;
+
+    // Firebase Realtime Listener
+    db.ref('clients').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data && Array.isArray(data) && data.length > 0) {
+        clientsDatabase = data;
+      } else if (data && typeof data === 'object') {
+        clientsDatabase = Object.values(data);
+      } else {
+        clientsDatabase = HARDCODED_CLIENTS;
+        db.ref('clients').set(HARDCODED_CLIENTS);
+      }
+
+      if (document.getElementById('screenSuperAdmin').classList.contains('active')) {
+        renderSuperAdminDashboard();
+      }
+      if (currentSessionClient) {
+        const updated = clientsDatabase.find(c => c.id === currentSessionClient.id);
+        if (updated) {
+          currentSessionClient = updated;
+          if (currentSessionClient.status === "LOCKED") {
+            document.getElementById('lockOverlay').style.display = "flex";
+          } else {
+            document.getElementById('lockOverlay').style.display = "none";
+          }
+        }
+      }
+    });
+
+    function syncDataToCloud() {
+      db.ref('clients').set(clientsDatabase);
+    }
+
+    // ========================================================
+    // पासवर्ड शो / हाईड टॉगल फंक्शन (👁️)
+    // ========================================================
+    function togglePasswordVisibility(inputId, btnId) {
+      const passInput = document.getElementById(inputId);
+      const eyeBtn = document.getElementById(btnId);
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        eyeBtn.innerText = "🙈";
+      } else {
+        passInput.type = "password";
+        eyeBtn.innerText = "👁️️";
+      }
+    }
+
+    // ========================================================
+    // युनिव्हर्सल लॉगिन हँडलर (१००% सुरक्षित - पासवर्ड कधीही उघड होणार नाही)
+    // ========================================================
+    function handleUniversalLogin() {
+      const u = document.getElementById('loginUserId').value.trim().toLowerCase();
+      const p = document.getElementById('loginPassword').value.trim();
+
+      // १. सुपर ॲडमिन (विक्रम सर) लॉगिन
+      if (u === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
+        document.getElementById('loginUserId').value = '';
+        document.getElementById('loginPassword').value = '';
+        renderSuperAdminDashboard();
+        navigate('screenSuperAdmin');
+        return;
+      }
+
+      // २. थेट हार्डकोडेड खात्यांसाठी त्वरित पडताळणी
+      if (u === "patil" && p === "patil123") {
+        const c = clientsDatabase.find(x => x.user.toLowerCase() === "patil") || HARDCODED_CLIENTS[0];
+        proceedLogin(c);
+        return;
+      }
+      if (u === "kadam" && p === "kadam123") {
+        const c = clientsDatabase.find(x => x.user.toLowerCase() === "kadam") || HARDCODED_CLIENTS[1];
+        proceedLogin(c);
+        return;
+      }
+      if (u === "pawar" && p === "pawar123") {
+        const c = clientsDatabase.find(x => x.user.toLowerCase() === "pawar") || HARDCODED_CLIENTS[2];
+        proceedLogin(c);
+        return;
+      }
+
+      // ३. डेटाबेसमधील इतर सर्व ग्राहकांची सुरक्षित तपासणी
+      const client = clientsDatabase.find(c => 
+        (c.user && c.user.trim().toLowerCase() === u) || 
+        (c.phone && c.phone.trim() === u)
+      );
+
+      if (client) {
+        if (client.pass && client.pass.trim() === p) {
+          proceedLogin(client);
+        } else {
+          // सिक्युरिटी: पासवर्ड अजिबात उघड केला जाणार नाही!
+          alert("❌ चुकीचा पासवर्ड! कृपया योग्य पासवर्ड प्रविष्ट करा.");
+        }
+      } else {
+        alert("❌ हा User ID सिस्टीममध्ये उपलब्ध नाही! कृपया अचूक आयडी टाका.");
+      }
+    }
+
+    function proceedLogin(client) {
+      if (client.status === "LOCKED") {
+        document.getElementById('lockOverlay').style.display = "flex";
+        return;
+      }
+
+      currentSessionClient = client;
+      document.getElementById('loginUserId').value = '';
+      document.getElementById('loginPassword').value = '';
+      document.getElementById('ownerClientTitle').innerText = client.businessName;
+
+      renderClientOwnerView();
+      navigate('screenClientOwner');
+    }
+
+    // ========================================================
+    // सुपर ॲडमिन फंक्शन्स (विक्रम सर)
+    // ========================================================
+    function renderSuperAdminDashboard() {
+      const total = clientsDatabase.length;
+      const active = clientsDatabase.filter(c => c.status === "ACTIVE").length;
+      const locked = total - active;
+      const totalFleet = clientsDatabase.reduce((sum, c) => sum + (c.fleet ? c.fleet.length : 0), 0);
+
+      document.getElementById('statTotalClients').innerText = total;
+      document.getElementById('statActiveClients').innerText = active;
+      document.getElementById('statLockedClients').innerText = locked;
+      document.getElementById('statTotalFleet').innerText = totalFleet;
+
+      const container = document.getElementById('superAdminClientsList');
+      container.innerHTML = '';
+
+      clientsDatabase.forEach(c => {
+        const isAct = c.status === "ACTIVE";
+        container.innerHTML += `
+          <div class="client-card ${isAct ? 'active-border' : 'locked-border'}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <b style="font-size:15px; color:#f59e0b;">${c.businessName}</b>
+                <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">
+                  User ID: <b style="color:#38bdf8;">${c.user}</b> | 
+                  चालू Password: <b style="color:#22c55e;">${c.pass}</b>
+                </div>
+                <div style="font-size:11px; color:#94a3b8;">फोन: ${c.phone} | मशिन्स: ${c.fleet ? c.fleet.length : 0} JCB</div>
+              </div>
+              <span style="background:${isAct ? '#15803d' : '#b91c1c'}; color:#fff; font-size:10px; font-weight:bold; padding:2px 6px;">
+                ${c.status}
+              </span>
+            </div>
+
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button onclick="toggleClientStatus('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:12px; background:${isAct ? '#dc2626' : '#22c55e'}; color:#fff;">
+                ${isAct ? '🔒 खाते बंद करा (Lock)' : '🟢 खाते सुरू करा (Activate)'}
+              </button>
+              <button onclick="superAdminDirectLogin('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:12px; background:#2563eb; color:#fff;">
+                👁️ थेट डॅशबोर्ड पाहा
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function toggleClientStatus(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (client) {
+        client.status = (client.status === "ACTIVE") ? "LOCKED" : "ACTIVE";
+        syncDataToCloud();
+        alert(`✓ ${client.businessName} चे खाते ${client.status} झाले!`);
+      }
+    }
+
+    function superAdminDirectLogin(clientId) {
+      currentSessionClient = clientsDatabase.find(c => c.id === clientId);
+      document.getElementById('ownerClientTitle').innerText = currentSessionClient.businessName;
+      renderClientOwnerView();
+      navigate('screenClientOwner');
+    }
+
+    function createNewClientAccount() {
+      const name = document.getElementById('newClientBusiness').value.trim();
+      const user = document.getElementById('newClientUser').value.trim();
+      const pass = document.getElementById('newClientPass').value.trim();
+      const phone = document.getElementById('newClientPhone').value.trim();
+      const count = parseInt(document.getElementById('newClientMachinesCount').value) || 1;
+
+      if (!name || !user || !pass) {
+        alert("कृपया नाव, User ID आणि Password भरा!");
+        return;
+      }
+
+      let generatedFleet = [];
+      for (let i = 1; i <= count; i++) {
+        generatedFleet.push({
+          id: "M" + i,
+          name: `JCB MACHINE ${i}`,
+          driver: `चालक ${i}`,
+          pin: "1111",
+          hoursToday: 0.0,
+          activeParty: "नवीन काम"
+        });
+      }
+
+      clientsDatabase.push({
+        id: "CLIENT-" + (clientsDatabase.length + 1),
+        businessName: name,
+        user: user,
+        pass: pass,
+        phone: phone,
+        status: "ACTIVE",
+        fleet: generatedFleet,
+        operatorHistory: []
+      });
+
+      syncDataToCloud();
+      document.getElementById('newClientBusiness').value = '';
+      document.getElementById('newClientUser').value = '';
+      document.getElementById('newClientPass').value = '';
+      document.getElementById('newClientPhone').value = '';
+      document.getElementById('newClientMachinesCount').value = '';
+
+      alert(`✓ ${name} चे खाते क्लाऊडवर सेव्ह झाले!`);
+    }
+
+    // ========================================================
+    // क्लायंट मालक डॅशबोर्ड व पासवर्ड बदलणे
+    // ========================================================
+    function renderClientOwnerView() {
+      renderClientOwnerMachines();
+      renderOperatorWorkHistory();
+      renderClientMachinesSelection();
+    }
+
+    function handleClientChangePassword() {
+      const newP = document.getElementById('clientChangeNewPass').value.trim();
+      if (!newP || newP.length < 4) {
+        alert("पासवर्ड किमान ४ अक्षरांचा असावा!");
+        return;
+      }
+      currentSessionClient.pass = newP;
+      syncDataToCloud();
+      document.getElementById('clientChangeNewPass').value = '';
+      alert(`✓ पासवर्ड बदलला गेला! (विक्रम सरांच्या ॲडमिन स्क्रीनवर हा पासवर्ड आपोआप अपडेट झाला आहे).`);
+    }
+
+    function renderClientOwnerMachines() {
+      const container = document.getElementById('clientOwnerMachinesList');
+      container.innerHTML = '';
+      if (!currentSessionClient.fleet) return;
+      currentSessionClient.fleet.forEach(m => {
+        container.innerHTML += `
+          <div style="background:#071022; border:1px solid #1e293b; padding:10px; margin-bottom:8px;">
+            <b style="color:#f59e0b;">${m.name}</b><br>
+            <span style="font-size:12px; color:#cbd5e1;">चालक: ${m.driver} | आजचे काम: <b>${m.hoursToday} तास</b></span><br>
+            <span style="font-size:11px; color:#22c55e;">चालू पार्टी: ${m.activeParty || 'उपलब्ध'}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderOperatorWorkHistory() {
+      const container = document.getElementById('operatorWorkHistoryList');
+      container.innerHTML = '';
+      const history = currentSessionClient.operatorHistory || [];
+
+      if (history.length === 0) {
+        container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">अद्याप कोणतीही नोंद उपलब्ध नाही.</div>';
+        return;
+      }
+
+      history.forEach(h => {
+        container.innerHTML += `
+          <div class="log-item">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <b style="color:#f59e0b;">${h.machine}</b>
+              <span style="color:#94a3b8; font-size:11px;">📅 ${h.date} (${h.time})</span>
+            </div>
+            <div>चालक: <b>${h.driver}</b> | पार्टी: <b style="color:#22c55e;">${h.party}</b></div>
+            <div style="color:#cbd5e1; margin-top:2px;">काम: <i>${h.work || 'सामान्य काम'}</i></div>
+            <div style="display:flex; justify-content:space-between; margin-top:4px; font-weight:bold; color:#38bdf8;">
+              <span>रीडिंग: ${h.startMeter} ➔ ${h.endMeter}</span>
+              <span style="color:#f59e0b;">काम: ${h.hours} तास</span>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
+              डंपर फेऱ्या: ${h.trips || 0} | डिझेल: ${h.diesel || 'नोंद नाही'}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderClientMachinesSelection() {
+      const container = document.getElementById('clientFleetContainer');
+      container.innerHTML = '';
+      if (!currentSessionClient.fleet) return;
+      currentSessionClient.fleet.forEach((m, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card-panel';
+        card.style.cursor = 'pointer';
+        card.onclick = () => loginOperatorMachine(idx);
+        card.innerHTML = `
+          <div style="font-size:24px;">🚜</div>
+          <div style="font-size:14px; font-weight:900; color:#f8fafc; margin-top:6px;">${m.name}</div>
+          <div style="font-size:11px; color:#f59e0b; margin-top:2px;">चालक: ${m.driver}</div>
+          <div style="font-size:10px; color:#22c55e; margin-top:4px;">पार्टी: ${m.activeParty || 'उपलब्ध'}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function loginOperatorMachine(idx) {
+      const m = currentSessionClient.fleet[idx];
+      const pin = prompt(`🔒 ${m.name} चा ऑपरेटर PIN टाका (डिफॉल्ट: ${m.pin}):`);
+      if (pin === m.pin) {
+        currentSessionMachine = m;
+        document.getElementById('opMachineName').innerText = m.name;
+        document.getElementById('opDriverTitle').innerText = `चालक: ${m.driver}`;
+        document.getElementById('opActiveCustomer').innerText = `सध्याची पार्टी: ${m.activeParty || 'नोंद नाही'}`;
+        navigate('screenOpMenu');
+      } else if (pin !== null) {
+        alert("❌ चुकीचा ऑपरेटर PIN!");
+      }
+    }
+
+    function saveMorningShift() {
+      const cust = document.getElementById('morningCustNameInput').value.trim();
+      const start = document.getElementById('startReadingInput').value;
+      const work = document.getElementById('morningWorkTypeInput').value.trim();
+      if (!cust || !start) { alert("कृपया माहिती भरा!"); return; }
+      currentSessionMachine.activeParty = cust;
+      currentSessionMachine.workType = work;
+      document.getElementById('shiftStartReading').value = start;
+      syncDataToCloud();
+      alert(`✓ ${cust} च्या कामाची सकाळची नोंद झाली!`);
+      navigate('screenOpMenu');
+    }
+
+    function calculateShiftHours() {
+      const start = parseFloat(document.getElementById('shiftStartReading').value) || 0;
+      const end = parseFloat(document.getElementById('shiftEndReading').value) || 0;
+      const run = (end > start) ? (end - start) : 0;
+      document.getElementById('shiftCalculatedHours').innerText = `${run.toFixed(1)} तास`;
+      return run;
+    }
+
+    function submitEveningShiftWhatsApp() {
+      const run = calculateShiftHours();
+      if (run <= 0) { alert("संध्याकाळचे रीडिंग सकाळपेक्षा जास्त हवे!"); return; }
+      
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('mr-IN');
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
+      
+      currentSessionClient.operatorHistory.unshift({
+        date: dateStr,
+        time: timeStr,
+        machine: currentSessionMachine.name,
+        driver: currentSessionMachine.driver,
+        party: currentSessionMachine.activeParty || "सामान्य काम",
+        work: currentSessionMachine.workType || "माती काम",
+        startMeter: parseFloat(document.getElementById('shiftStartReading').value) || 0,
+        endMeter: parseFloat(document.getElementById('shiftEndReading').value) || 0,
+        hours: run,
+        trips: document.getElementById('shiftTripsInput').value || 0,
+        diesel: document.getElementById('dieselLitersInput') ? (document.getElementById('dieselLitersInput').value + " Ltr") : "नोंद नाही"
+      });
+
+      currentSessionMachine.hoursToday = run;
+      syncDataToCloud();
+      alert("✓ ऑपरेटरच्या कामाची नोंद क्लाऊडवर सेव्ह झाली!");
+      navigate('screenOpMenu');
+    }
+
+    function openCustomerJobScreen() {
+      document.getElementById('custNameInput').value = currentSessionMachine.activeParty || '';
+      calculateOngoingRent();
+      navigate('screenCustomerLedger');
+    }
+
+    function calculateOngoingRent() {
+      const hours = parseFloat(document.getElementById('custTodayHours').value) || 0;
+      const rate = parseFloat(document.getElementById('custHourlyRate').value) || 0;
+      const rent = hours * rate;
+      document.getElementById('liveCustTodayRent').innerText = `₹ ${rent.toFixed(0)}`;
+      document.getElementById('liveTotalHoursAccumulated').innerText = `${hours.toFixed(1)} तास`;
+      document.getElementById('liveTotalAccumulatedRent').innerText = `₹ ${rent.toFixed(0)}`;
+      document.getElementById('livePartyPendingAmt').innerText = `₹ ${rent.toFixed(0)}`;
+      return rent;
+    }
+
+    function sendInvoiceToCustomerWhatsApp() {
+      const phone = document.getElementById('custPhoneInput').value.trim();
+      if (!phone) { alert("पार्टीचा १० अंकी WhatsApp नंबर टाका!"); return; }
+      const cleanPhone = phone.startsWith('91') ? phone : ('91' + phone);
+      const msg = `🚜 *JCB भाडे बिल*\nपार्टी: ${currentSessionMachine.activeParty}\nएकूण भाडे बिल: ₹ ${calculateOngoingRent()}\nधन्यवाद!`;
+      window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function submitDieselWhatsApp() {
+      alert("✓ डिझेल नोंद सेव्ह झाली!");
+      navigate('screenOpMenu');
+    }
+
+    function logoutSession() {
+      currentSessionClient = null;
+      currentSessionMachine = null;
+      document.getElementById('lockOverlay').style.display = "none";
+      navigate('screenUniversalLogin');
+    }
+
+    function navigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+  </script>
+</body>
+</html>

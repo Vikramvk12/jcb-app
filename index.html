@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JCB Cloud Fleet ERP</title>
+  <title>JCB Cloud Fleet Pro ERP</title>
   
   <!-- Google Firebase Realtime Cloud SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -33,9 +33,10 @@
     .btn-pay-now { background: #f59e0b; color: #000; padding: 14px 20px; font-weight: 900; border: none; margin-top: 24px; text-decoration: none; display: inline-block; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
     .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
     .card-panel { background: #111a2e; border: 2px solid #1e293b; padding: 14px; margin-bottom: 14px; }
-    .card-header { font-size: 15px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; border-bottom: 1px solid #1e293b; padding-bottom: 6px; }
+    .card-header { font-size: 15px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; border-bottom: 1px solid #1e293b; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     
     label { display: block; font-size: 11px; font-weight: bold; color: #94a3b8; margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; }
     input, select { width: 100%; padding: 12px; background: #090d16; border: 1px solid #334155; color: #fff; font-size: 14px; }
@@ -54,6 +55,7 @@
     .btn-blue { background: #2563eb; color: #fff; }
     .btn-amber { background: #f59e0b; color: #000; }
     .btn-red { background: #dc2626; color: #fff; }
+    .btn-yellow { background: #eab308; color: #000; }
     .btn-nav { background: #1e293b; color: #f1f5f9; border: 1px solid #334155; padding: 10px; width: 100%; text-align: left; font-weight: bold; margin-bottom: 12px; cursor: pointer; }
 
     .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
@@ -70,19 +72,31 @@
     .client-card.locked-border { border-left: 4px solid #ef4444; opacity: 0.85; }
 
     .log-item { background: #071022; border-left: 3px solid #f59e0b; padding: 10px; margin-bottom: 8px; font-size: 12px; }
+    .alert-banner { padding: 8px 12px; font-size: 12px; font-weight: bold; margin-bottom: 8px; border-left: 4px solid; display: flex; justify-content: space-between; align-items: center; }
+    .alert-danger { background: #450a0a; border-color: #ef4444; color: #fca5a5; }
+    .alert-warning { background: #422006; border-color: #f59e0b; color: #fde68a; }
+
+    /* Printable Bill Styles */
+    @media print {
+      body * { visibility: hidden; }
+      #printableInvoiceModal, #printableInvoiceModal * { visibility: visible; }
+      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #000 !important; }
+      .no-print { display: none !important; }
+    }
+    .invoice-box { background: #fff; color: #000; padding: 16px; border: 2px solid #000; margin: 10px 0; font-family: monospace; }
   </style>
 </head>
 <body>
 
-  <!-- क्लायंटचे पेमेंट थकले तर दिसणारा लॉक पडदा -->
+  <!-- क्लायंटचे पेमेंट संपले किंवा थकले तर दिसणारा लॉक पडदा -->
   <div id="lockOverlay">
     <div class="lock-icon">🔒</div>
     <div class="lock-title">सेवा तात्पुरती खंडित (ACCOUNT SUSPENDED)</div>
-    <div class="lock-desc">
+    <div class="lock-desc" id="lockReasonText">
       या खात्याचे मासिक सबस्क्रिप्शन संपलेले आहे.<br>
-      सॉफ्टवेअर सुरू करण्यासाठी कृपया मुख्य ॲडमिनशी संपर्क साधा.
+      सॉफ्टवेअर सुरू करण्यासाठी कृपया मुख्य ॲडमिन (विक्रम सर) यांच्याशी संपर्क साधा.
     </div>
-    <a href="https://wa.me/919545628713?text=Namaskar,%20mala%20JCB%20app%20cha%20subscription%20renew%20karayche%20ahe." class="btn-pay-now">
+    <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20mala%20JCB%20app%20cha%20subscription%20renew%20karayche%20ahe." class="btn-pay-now">
       💳 सबस्क्रिप्शन रिन्यू करा (WhatsApp)
     </a>
   </div>
@@ -97,21 +111,21 @@
   </div>
 
   <!-- ========================================================
-       SCREEN 0: UNIVERSAL LOGIN SCREEN (१००% सुरक्षित लॉगिन)
+       SCREEN 0: UNIVERSAL LOGIN SCREEN (१००% सुरक्षित)
        ======================================================== -->
   <div id="screenUniversalLogin" class="screen active">
-    <div class="card-panel" style="max-width: 420px; margin: 40px auto; border-color: #f59e0b;">
+    <div class="card-panel" style="max-width: 420px; margin: 30px auto; border-color: #f59e0b;">
       <div style="font-size: 36px; text-align: center; margin-bottom: 8px;">🔐</div>
-      <div class="card-header" style="text-align: center; border: none; font-size: 18px; color: #f59e0b;">
+      <div class="card-header" style="text-align: center; border: none; font-size: 18px; color: #f59e0b; display:block;">
         अधिकृत लॉगिन (SECURE LOGIN)
       </div>
       <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 16px;">
-        कृपया तुमचा अधिकृत User ID आणि Password प्रविष्ट करा:
+        User ID आणि Password प्रविष्ट करा:
       </p>
 
       <form onsubmit="event.preventDefault(); handleUniversalLogin();" autocomplete="on">
         <label for="loginUserId">User ID (वापरकर्ता आयडी):</label>
-        <input type="text" id="loginUserId" name="username" autocomplete="username" placeholder="उदा. patil किंवा तुमचा आयडी" required>
+        <input type="text" id="loginUserId" name="username" autocomplete="username" placeholder="उदा. patil किंवा vikram_admin" required>
 
         <label for="loginPassword">पासवर्ड (Password):</label>
         <div class="password-wrapper">
@@ -136,7 +150,7 @@
         👑 विक्रम सर (मुख्य सिस्टीम मालक)
       </div>
       <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">
-        Google Cloud Realtime Sync • सर्व ग्राहकांचे थेट नियंत्रण, चालू पासवर्ड व खाती Active/Lock
+        Google Cloud Realtime Sync • सबस्क्रिप्शन मुदत, चालू पासवर्ड व खाती Active/Lock थेट नियंत्रण
       </div>
     </div>
 
@@ -152,7 +166,7 @@
       </div>
       <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
         <div style="font-size: 18px; font-weight: 900; color: #ef4444;" id="statLockedClients">0</div>
-        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">बंद खाती (Locked)</div>
+        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">बंद खाती</div>
       </div>
       <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
         <div style="font-size: 18px; font-weight: 900; color: #eab308;" id="statTotalFleet">0</div>
@@ -177,9 +191,9 @@
       <button class="btn-submit btn-amber" onclick="createNewClientAccount()">💾 नवीन ग्राहक खाते क्लाऊडवर सेव्ह करा</button>
     </div>
 
-    <!-- सर्व ग्राहकांची यादी (लाईव्ह पासवर्डसह) -->
+    <!-- सर्व ग्राहकांची यादी (सबस्क्रिप्शन मुदतीसह) -->
     <div class="card-panel">
-      <div class="card-header">📋 सर्व ग्राहकांची यादी (चालू पासवर्डसह) व ॲक्टिव्ह/लॉक नियंत्रण</div>
+      <div class="card-header">📋 सर्व ग्राहकांची यादी (सबस्क्रिप्शन वैधता व थेट नियंत्रण)</div>
       <div id="superAdminClientsList"></div>
     </div>
   </div>
@@ -188,45 +202,48 @@
        SCREEN 2: CLIENT OWNER DASHBOARD (मालक डॅशबोर्ड)
        ======================================================== -->
   <div id="screenClientOwner" class="screen">
-    <button class="btn-nav" onclick="logoutSession()">🔒 लॉगआऊट (Logout)</button>
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+      <button class="btn-nav" style="width:auto; margin:0;" onclick="logoutSession()">🔒 लॉगआऊट</button>
+      <button class="btn-nav" style="width:auto; margin:0; background:#2563eb;" onclick="navigate('screenClientMachines')">🚜 ऑपरेटर कन्सोल ➔</button>
+    </div>
     
     <div class="card-panel" style="border: 2px solid #f59e0b; background: #0c1527;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
           <div style="font-size: 18px; font-weight: 900; color: #f59e0b;" id="ownerClientTitle">पाटील अर्थमूव्हर्स</div>
-          <div style="font-size: 12px; color: #cbd5e1;">मालक डॅशबोर्ड • ऑपरेटर कामाची नोंद व नफा-तोटा</div>
+          <div style="font-size: 12px; color: #cbd5e1;">मालक नियंत्रण केंद्र • सर्व्हिसिंग, डिझेल व ऑपरेटर हिशोब</div>
         </div>
-        <button onclick="navigate('screenClientMachines')" style="background:#2563eb; color:#fff; border:none; padding:8px 12px; font-weight:bold; cursor:pointer;">
-          🚜 ऑपरेटर कन्सोल उघडा
-        </button>
+        <div style="text-align:right;">
+          <span style="font-size:11px; color:#94a3b8;">वैधता:</span>
+          <div id="ownerSubDaysLeft" style="font-size:13px; font-weight:bold; color:#22c55e;">३० दिवस शिल्लक</div>
+        </div>
       </div>
     </div>
 
-    <!-- पासवर्ड बदलण्याचा फॉर्म -->
-    <div class="card-panel" style="border-color: #3b82f6;">
-      <div class="card-header" style="color: #38bdf8;">🔑 पासवर्ड बदला (Change Password)</div>
-      <div class="grid-2">
-        <div class="password-wrapper">
-          <input type="password" id="clientChangeNewPass" placeholder="नवीन पासवर्ड टाका">
-          <button type="button" class="toggle-eye-btn" onclick="togglePasswordVisibility('clientChangeNewPass', 'eyeIconChange')" id="eyeIconChange">👁️</button>
-        </div>
-        <button class="btn-submit btn-blue" style="margin-top:0;" onclick="handleClientChangePassword()">पासवर्ड अपडेट करा</button>
-      </div>
-    </div>
+    <!-- सर्व्हिसिंग व डिझेल अलर्ट विभाग -->
+    <div id="ownerAlertsContainer"></div>
 
+    <!-- मशिन्स स्थिती आणि सर्व्हिसिंग ट्रॅकर -->
     <div class="card-panel">
-      <div class="card-header">🚜 सर्व मशिन्सची स्थिती</div>
+      <div class="card-header">🚜 सर्व मशिन्स स्थिती आणि ऑइल सर्व्हिसिंग (२५० तास सायकल)</div>
       <div id="clientOwnerMachinesList"></div>
     </div>
 
+    <!-- ऑपरेटर पगार व हजेरी समरी -->
+    <div class="card-panel" style="border-color: #3b82f6;">
+      <div class="card-header" style="color:#38bdf8;">👷 ड्रायव्हर / ऑपरेटर पगार व हजेरी हिशोब</div>
+      <div id="operatorSalarySummaryList"></div>
+    </div>
+
+    <!-- कामाचा इतिहास -->
     <div class="card-panel" style="border-color: #22c55e;">
-      <div class="card-header" style="color: #22c55e;">📋 ऑपरेटरने केलेल्या कामाची नोंद (Operator Work Log)</div>
+      <div class="card-header" style="color: #22c55e;">📋 ऑपरेटर कामाची दैनंदिन नोंद (Shift Work Log)</div>
       <div id="operatorWorkHistoryList"></div>
     </div>
   </div>
 
   <!-- ========================================================
-       SCREEN 3: CLIENT MACHINES LIST (ऑपरेटर मशिन्स निवड)
+       SCREEN 3: CLIENT MACHINES LIST (मशीन निवड)
        ======================================================== -->
   <div id="screenClientMachines" class="screen">
     <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
@@ -250,33 +267,34 @@
       <div id="opMachineName" style="font-size: 17px; font-weight: 900; color: #f59e0b; margin-top: 2px;">MACHINE 1</div>
       <div id="opDriverTitle" style="font-size: 12px; color: #cbd5e1;">चालक: ऑपरेटर</div>
       <div id="opActiveCustomer" style="font-size: 12px; color: #22c55e; margin-top: 4px; font-weight: bold;">सध्याची पार्टी: नोंद नाही</div>
+      <div id="opServiceDueBadge" style="margin-top:6px; font-size:11px;"></div>
     </div>
 
     <div class="action-grid">
       <div class="action-tile tile-shift" onclick="navigate('screenMorning')">
         <div style="font-size: 26px;">📸</div>
         <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">१. सकाळ रीडिंग</div>
-        <div style="font-size: 10px; color: #94a3b8;">पार्टी नाव + कामाचे स्वरूप</div>
+        <div style="font-size: 10px; color: #94a3b8;">पार्टी नाव + सुरू मीटर</div>
       </div>
       <div class="action-tile tile-fuel" onclick="navigate('screenDiesel')">
         <div style="font-size: 26px;">⛽</div>
         <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">२. डिझेल नोंद</div>
-        <div style="font-size: 10px; color: #94a3b8;">Fuel Cost + Receipt</div>
+        <div style="font-size: 10px; color: #94a3b8;">लिटर + चोरी नियंत्रण अलर्ट</div>
       </div>
       <div class="action-tile tile-close" onclick="navigate('screenEvening')">
         <div style="font-size: 26px;">🛑</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">३. काम संपले (शिफ्ट)</div>
-        <div style="font-size: 10px; color: #94a3b8;">संध्याकाळ रीडिंग + डंपर फेऱ्या</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">३. शिफ्ट क्लोज</div>
+        <div style="font-size: 10px; color: #94a3b8;">संध्याकाळ रीडिंग + भत्ता</div>
       </div>
       <div class="action-tile tile-rent" onclick="openCustomerJobScreen()">
         <div style="font-size: 26px;">📝</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">४. पार्टी भाडे व सलग हिशोब (१५-२० दिवस)</div>
-        <div style="font-size: 10px; color: #94a3b8;">रोजचे तास भरा व पार्टीला WhatsApp बिल पाठवा</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">४. पार्टी भाडे, हिशोब व PDF बिल</div>
+        <div style="font-size: 10px; color: #94a3b8;">थेट WhatsApp मेसेज व प्रिंट बिल जनरेटर</div>
       </div>
       <div class="action-tile tile-alert" onclick="navigate('screenBreakdown')">
         <div style="font-size: 26px;">⚠️</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">५. ब्रेकडाऊन नोंद</div>
-        <div style="font-size: 10px; color: #94a3b8;">काम बंद / तांत्रिक बिघाड</div>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">५. ब्रेकडाऊन अलर्ट</div>
+        <div style="font-size: 10px; color: #94a3b8;">काम बंद / तात्काळ दुरुस्ती</div>
       </div>
     </div>
   </div>
@@ -296,7 +314,7 @@
       <input type="number" step="0.1" id="startReadingInput" placeholder="उदा. 4520.0">
       <label>मीटरचा थेट फोटो:</label>
       <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
-      <button class="btn-submit btn-green" onclick="saveMorningShift()">नोंद सेव्ह करा</button>
+      <button class="btn-submit btn-green" onclick="saveMorningShift()">सकाळची नोंद सेव्ह करा</button>
     </div>
   </div>
 
@@ -309,17 +327,19 @@
       <input type="number" id="dieselLitersInput" placeholder="उदा. 50">
       <label>एकूण रक्कम (₹ Amount):</label>
       <input type="number" id="dieselCostInput" placeholder="उदा. 4600">
+      <label>चालू मीटर रीडिंग:</label>
+      <input type="number" step="0.1" id="dieselMeterReadingInput" placeholder="उदा. 4525.0">
       <label>पावतीचा फोटो:</label>
       <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
-      <button class="btn-submit btn-blue" onclick="submitDieselWhatsApp()">⛽ WhatsApp वर डिझेल नोंद पाठवा</button>
+      <button class="btn-submit btn-blue" onclick="submitDieselEntry()">⛽ डिझेल नोंद सेव्ह करा</button>
     </div>
   </div>
 
   <!-- SCREEN 7: EVENING CLOSING -->
   <div id="screenEvening" class="screen">
     <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <div class="card-panel" style="color: #f97316;">३. काम संपले - दैनंदिन शिफ्ट क्लोज</div>
     <div class="card-panel">
-      <div class="card-header" style="color: #f97316;">३. काम संपले - दैनंदिन शिफ्ट क्लोज</div>
       <label>सकाळचे रीडिंग:</label>
       <input type="number" step="0.1" id="shiftStartReading" placeholder="0.0">
       <label>संध्याकाळचे Hour Meter Reading:</label>
@@ -331,23 +351,24 @@
       <label>डंपर फेऱ्या (Trips):</label>
       <input type="number" id="shiftTripsInput" placeholder="उदा. 18">
       <label>ड्रायव्हर रोज भत्ता (₹):</label>
-      <input type="number" id="shiftBattaInput" placeholder="उदा. 300">
-      <button class="btn-submit btn-amber" onclick="submitEveningShiftWhatsApp()">🛑 मालकाला शिफ्ट रिपोर्ट पाठवा</button>
+      <input type="number" id="shiftBattaInput" placeholder="उदा. 300" value="300">
+      <button class="btn-submit btn-amber" onclick="submitEveningShiftWhatsApp()">🛑 शिफ्ट क्लोज करा व मालकाला कळवा</button>
     </div>
   </div>
 
-  <!-- SCREEN 8: CUSTOMER JOB & LEDGER -->
+  <!-- SCREEN 8: CUSTOMER JOB, LEDGER & PDF BILL -->
   <div id="screenCustomerLedger" class="screen">
-    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
+    <button class="btn-nav no-print" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
     <div class="card-panel" style="border-color: #eab308;">
-      <div class="card-header" style="color: #facc15;">४. पार्टीचे भाडे व सलग हिशोब (१५-२० दिवस)</div>
+      <div class="card-header" style="color: #facc15;">४. पार्टीचे भाडे, सलग हिशोब व बिल जनरेटर</div>
       <label>पार्टीचे नाव:</label>
-      <input type="text" id="custNameInput" readonly style="color:#f59e0b; font-weight:bold;">
+      <input type="text" id="custNameInput" style="color:#f59e0b; font-weight:bold;">
       <label>पार्टीचा WhatsApp नंबर:</label>
       <input type="tel" id="custPhoneInput" placeholder="उदा. 98XXXXXXXX">
+      
       <div class="grid-2">
         <div>
-          <label>कामाचा दिवस क्र.:</label>
+          <label>कामाचे दिवस:</label>
           <input type="number" id="custDayNumber" value="1">
         </div>
         <div>
@@ -355,25 +376,74 @@
           <input type="number" id="custHourlyRate" value="1200" oninput="calculateOngoingRent()">
         </div>
       </div>
-      <div>
-        <label>आज चाललेले तास:</label>
-        <input type="number" step="0.1" id="custTodayHours" placeholder="उदा. 8.5" oninput="calculateOngoingRent()">
+
+      <div class="grid-2">
+        <div>
+          <label>एकूण चाललेले तास:</label>
+          <input type="number" step="0.1" id="custTodayHours" placeholder="उदा. 15.5" oninput="calculateOngoingRent()">
+        </div>
+        <div>
+          <label>जमा ॲडव्हान्स (₹ Advance):</label>
+          <input type="number" id="custAdvancePaid" placeholder="उदा. 5000" value="0" oninput="calculateOngoingRent()">
+        </div>
       </div>
+
       <div style="background:#071022; border:2px solid #eab308; padding:12px; margin:12px 0;">
-        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
-          <span>आजचे भाडे:</span><b id="liveCustTodayRent">₹ 0</b>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
-          <span>सलग एकूण तास:</span><b id="liveTotalHoursAccumulated" style="color:#38bdf8;">0.0 तास</b>
-        </div>
         <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
           <span>एकूण भाडे बिल:</span><b id="liveTotalAccumulatedRent">₹ 0</b>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:900; color:#ef4444; border-top:1px solid #1e293b; padding-top:6px; margin-top:4px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>वजा ॲडव्हान्स रक्कम:</span><b id="liveAdvanceDeducted" style="color:#38bdf8;">₹ 0</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:#ef4444; border-top:1px solid #1e293b; padding-top:6px; margin-top:4px;">
           <span>बाकी शिल्लक (Pending):</span><b id="livePartyPendingAmt">₹ 0</b>
         </div>
       </div>
-      <button class="btn-submit btn-yellow" onclick="sendInvoiceToCustomerWhatsApp()">📲 पार्टीला थेट WhatsApp वर बिल पाठवा</button>
+
+      <div class="grid-2 no-print">
+        <button class="btn-submit btn-yellow" onclick="sendInvoiceToCustomerWhatsApp()">📲 WhatsApp बिल</button>
+        <button class="btn-submit btn-blue" onclick="generatePrintableInvoiceModal()">🖨️ PDF / प्रिंट बिल</button>
+      </div>
+
+      <!-- Printable Invoice Area (Hidden until generated) -->
+      <div id="printableInvoiceModal" style="display:none;" class="invoice-box">
+        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:8px;">
+          <h2 id="invBizName">JCB FLEET SERVICES</h2>
+          <div style="font-size:12px;">हेवी अर्थमूव्हर्स व कन्स्ट्रक्शन मशिनरी</div>
+          <div style="font-size:11px;">मोबाईल: <span id="invBizPhone">98XXXXXXXX</span></div>
+        </div>
+        <table style="width:100%; font-size:12px; margin-bottom:10px;">
+          <tr><td><b>पार्टी नाव:</b> <span id="invPartyName"></span></td><td style="text-align:right;"><b>दिनांक:</b> <span id="invDate"></span></td></tr>
+          <tr><td><b>मशीन:</b> <span id="invMachineName"></span></td><td style="text-align:right;"><b>चालक:</b> <span id="invDriverName"></span></td></tr>
+        </table>
+        <table style="width:100%; border-collapse:collapse; font-size:12px; border-top:1px solid #000; border-bottom:1px solid #000;">
+          <tr style="background:#eee;">
+            <th style="text-align:left; padding:4px;">तपशील</th>
+            <th style="text-align:center; padding:4px;">तास / दिवस</th>
+            <th style="text-align:right; padding:4px;">दर (₹)</th>
+            <th style="text-align:right; padding:4px;">एकूण (₹)</th>
+          </tr>
+          <tr>
+            <td style="padding:6px 4px;">JCB मशिन्स काम (Hour Basis)</td>
+            <td style="text-align:center;" id="invTableHours">0 तास</td>
+            <td style="text-align:right;" id="invTableRate">₹ 1200</td>
+            <td style="text-align:right;" id="invTableTotalRent">₹ 0</td>
+          </tr>
+          <tr style="border-top:1px solid #ccc;">
+            <td colspan="3" style="text-align:right; padding:4px;"><b>जमा ॲडव्हान्स रक्कम:</b></td>
+            <td style="text-align:right; color:green;" id="invTableAdvance">₹ 0</td>
+          </tr>
+          <tr style="border-top:2px solid #000; font-size:14px;">
+            <td colspan="3" style="text-align:right; padding:6px 4px;"><b>एकूण येणे बाकी (Balance):</b></td>
+            <td style="text-align:right; font-weight:bold; color:red;" id="invTableBalance">₹ 0</td>
+          </tr>
+        </table>
+        <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:11px;">
+          <div>ग्राहकाची सही</div>
+          <div>अधिकृत सही व शिक्का</div>
+        </div>
+        <button class="no-print btn-submit btn-green" style="margin-top:15px;" onclick="window.print()">🖨️ आता प्रिंट करा / Save as PDF</button>
+      </div>
     </div>
   </div>
 
@@ -381,17 +451,18 @@
   <div id="screenBreakdown" class="screen">
     <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
     <div class="card-panel">
-      <div class="card-header" style="color: #ef4444;">५. ब्रेकडाऊन अलर्ट</div>
+      <div class="card-header" style="color: #ef4444;">५. ब्रेकडाऊन अलर्ट (तात्काळ दुरुस्ती)</div>
       <label>बिघाडाचा प्रकार निवडा:</label>
       <select id="issueTypeInput">
-        <option value="होस पाईप फुटला (Hose Leak)">होस पाईप फुटला (Hose Leak)</option>
+        <option value="होस पाईप लिकेज (Hydraulic Hose Leak)">होस पाईप लिकेज (Hydraulic Hose Leak)</option>
         <option value="टायर फुटला / पंक्चर (Tyre Issue)">टायर फुटला / पंक्चर (Tyre Issue)</option>
         <option value="इंजिन गरम झाले (Engine Heating)">इंजिन गरम झाले (Engine Heating)</option>
-        <option value="इतर तांत्रिक अडचण (Other)">इतर तांत्रिक अडचण</option>
+        <option value="बकेट पिन/बुश अडचण (Pin Bushing)">बकेट पिन/बुश अडचण</option>
+        <option value="इतर तांत्रिक अडचण (Other Issue)">इतर तांत्रिक अडचण</option>
       </select>
       <label>तपशील:</label>
       <input type="text" id="issueDetailsInput" placeholder="बिघाडाबद्दल थोडक्यात सांगा">
-      <button class="btn-submit btn-red" onclick="alert('🚨 मालकाला ब्रेकडाऊन अलर्ट पाठवला आहे!'); navigate('screenOpMenu');">🚨 मालकाला ब्रेकडाऊन अलर्ट पाठवा</button>
+      <button class="btn-submit btn-red" onclick="reportBreakdownAlert()">🚨 मालकाला तात्काळ ब्रेकडाऊन अलर्ट पाठवा</button>
     </div>
   </div>
 
@@ -416,7 +487,10 @@
       pass: "vikram123"
     };
 
-    // तीन कायमस्वरूपी डिफॉल्ट ग्राहक
+    // ३ कायमस्वरूपी ग्राहक (डिफॉल्ट सबस्क्रिप्शन ३० दिवस)
+    const nowTimestamp = new Date();
+    const future30Days = new Date(nowTimestamp.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+
     const HARDCODED_CLIENTS = [
       {
         id: "CLIENT-01",
@@ -425,12 +499,13 @@
         pass: "patil123",
         phone: "9822011111",
         status: "ACTIVE",
+        subscriptionExpiry: future30Days,
         fleet: [
-          { id: "M1", name: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", pin: "1111", hoursToday: 7.5, activeParty: "अमोल पाटील" },
-          { id: "M2", name: "JCB 3DX Plus (MH-12-CD-5678)", driver: "सचिन कदम", pin: "2222", hoursToday: 8.0, activeParty: "हायवे साईट 4" }
+          { id: "M1", name: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", pin: "1111", totalHours: 4528.0, lastServiceHour: 4300.0, hoursToday: 7.5, activeParty: "अमोल पाटील", monthlySalary: 18000 },
+          { id: "M2", name: "JCB 3DX Plus (MH-12-CD-5678)", driver: "सचिन कदम", pin: "2222", totalHours: 2890.0, lastServiceHour: 2750.0, hoursToday: 8.0, activeParty: "हायवे साईट 4", monthlySalary: 18000 }
         ],
         operatorHistory: [
-          { date: "04/10/2026", time: "18:30", machine: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", party: "अमोल पाटील", work: "शेततळे खोदणे", startMeter: 4520.0, endMeter: 4527.5, hours: 7.5, trips: 14, diesel: "48 Ltr" }
+          { date: "04/10/2026", time: "18:30", machine: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", party: "अमोल पाटील", work: "शेततळे खोदणे", startMeter: 4520.0, endMeter: 4527.5, hours: 7.5, trips: 14, diesel: "38 Ltr", batta: 300 }
         ]
       },
       {
@@ -440,8 +515,9 @@
         pass: "kadam123",
         phone: "9822022222",
         status: "ACTIVE",
+        subscriptionExpiry: future30Days,
         fleet: [
-          { id: "M1", name: "JCB 4DX Excavator (MH-11-Q-9900)", driver: "विकास मोरे", pin: "1111", hoursToday: 6.0, activeParty: "शेततळे काम" }
+          { id: "M1", name: "JCB 4DX Excavator (MH-11-Q-9900)", driver: "विकास मोरे", pin: "1111", totalHours: 3200.0, lastServiceHour: 3000.0, hoursToday: 6.0, activeParty: "शेततळे काम", monthlySalary: 20000 }
         ],
         operatorHistory: []
       },
@@ -452,18 +528,19 @@
         pass: "pawar123",
         phone: "9822033333",
         status: "ACTIVE",
+        subscriptionExpiry: future30Days,
         fleet: [
-          { id: "M1", name: "JCB 3DX (MH-15-XY-5555)", driver: "गणेश पवार", pin: "1111", hoursToday: 5.0, activeParty: "विहीर काम" }
+          { id: "M1", name: "JCB 3DX (MH-15-XY-5555)", driver: "गणेश पवार", pin: "1111", totalHours: 1980.0, lastServiceHour: 1750.0, hoursToday: 5.0, activeParty: "विहीर काम", monthlySalary: 17000 }
         ],
         operatorHistory: []
       }
     ];
 
-    let clientsDatabase = HARDCODED_CLIENTS;
+    let clientsDatabase = JSON.parse(localStorage.getItem('jcb_fleet_db_v5')) || HARDCODED_CLIENTS;
     let currentSessionClient = null;
     let currentSessionMachine = null;
 
-    // Firebase Realtime Listener
+    // Firebase Listener
     db.ref('clients').on('value', (snapshot) => {
       const data = snapshot.val();
       if (data && Array.isArray(data) && data.length > 0) {
@@ -475,6 +552,9 @@
         db.ref('clients').set(HARDCODED_CLIENTS);
       }
 
+      localStorage.setItem('jcb_fleet_db_v5', JSON.stringify(clientsDatabase));
+      checkSubscriptionAutoLock();
+
       if (document.getElementById('screenSuperAdmin').classList.contains('active')) {
         renderSuperAdminDashboard();
       }
@@ -482,22 +562,47 @@
         const updated = clientsDatabase.find(c => c.id === currentSessionClient.id);
         if (updated) {
           currentSessionClient = updated;
-          if (currentSessionClient.status === "LOCKED") {
-            document.getElementById('lockOverlay').style.display = "flex";
-          } else {
-            document.getElementById('lockOverlay').style.display = "none";
-          }
+          renderClientOwnerView();
         }
       }
     });
 
     function syncDataToCloud() {
-      db.ref('clients').set(clientsDatabase);
+      localStorage.setItem('jcb_fleet_db_v5', JSON.stringify(clientsDatabase));
+      if (navigator.onLine) {
+        db.ref('clients').set(clientsDatabase);
+        document.getElementById('systemStateBadge').innerText = "CLOUD ACTIVE";
+        document.getElementById('systemStateBadge').style.background = "#22c55e";
+      } else {
+        document.getElementById('systemStateBadge').innerText = "OFFLINE SAVED";
+        document.getElementById('systemStateBadge').style.background = "#eab308";
+      }
     }
 
+    window.addEventListener('online', () => {
+      db.ref('clients').set(clientsDatabase);
+      document.getElementById('systemStateBadge').innerText = "CLOUD ACTIVE";
+      document.getElementById('systemStateBadge').style.background = "#22c55e";
+    });
+
     // ========================================================
-    // पासवर्ड शो / हाईड टॉगल फंक्शन (👁️)
+    // सबस्क्रिप्शन ऑटो-लॉक चेकर
     // ========================================================
+    function checkSubscriptionAutoLock() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      let updated = false;
+
+      clientsDatabase.forEach(c => {
+        if (c.subscriptionExpiry && c.subscriptionExpiry < todayStr) {
+          if (c.status === "ACTIVE") {
+            c.status = "LOCKED";
+            updated = true;
+          }
+        }
+      });
+      if (updated && navigator.onLine) db.ref('clients').set(clientsDatabase);
+    }
+
     function togglePasswordVisibility(inputId, btnId) {
       const passInput = document.getElementById(inputId);
       const eyeBtn = document.getElementById(btnId);
@@ -506,18 +611,17 @@
         eyeBtn.innerText = "🙈";
       } else {
         passInput.type = "password";
-        eyeBtn.innerText = "👁️️";
+        eyeBtn.innerText = "👁️";
       }
     }
 
     // ========================================================
-    // युनिव्हर्सल लॉगिन हँडलर (१००% सुरक्षित - पासवर्ड कधीही उघड होणार नाही)
+    // लॉगिन लॉजिक
     // ========================================================
     function handleUniversalLogin() {
       const u = document.getElementById('loginUserId').value.trim().toLowerCase();
       const p = document.getElementById('loginPassword').value.trim();
 
-      // १. सुपर ॲडमिन (विक्रम सर) लॉगिन
       if (u === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
         document.getElementById('loginUserId').value = '';
         document.getElementById('loginPassword').value = '';
@@ -526,24 +630,19 @@
         return;
       }
 
-      // २. थेट हार्डकोडेड खात्यांसाठी त्वरित पडताळणी
       if (u === "patil" && p === "patil123") {
-        const c = clientsDatabase.find(x => x.user.toLowerCase() === "patil") || HARDCODED_CLIENTS[0];
-        proceedLogin(c);
+        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "patil") || HARDCODED_CLIENTS[0]);
         return;
       }
       if (u === "kadam" && p === "kadam123") {
-        const c = clientsDatabase.find(x => x.user.toLowerCase() === "kadam") || HARDCODED_CLIENTS[1];
-        proceedLogin(c);
+        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "kadam") || HARDCODED_CLIENTS[1]);
         return;
       }
       if (u === "pawar" && p === "pawar123") {
-        const c = clientsDatabase.find(x => x.user.toLowerCase() === "pawar") || HARDCODED_CLIENTS[2];
-        proceedLogin(c);
+        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "pawar") || HARDCODED_CLIENTS[2]);
         return;
       }
 
-      // ३. डेटाबेसमधील इतर सर्व ग्राहकांची सुरक्षित तपासणी
       const client = clientsDatabase.find(c => 
         (c.user && c.user.trim().toLowerCase() === u) || 
         (c.phone && c.phone.trim() === u)
@@ -553,16 +652,16 @@
         if (client.pass && client.pass.trim() === p) {
           proceedLogin(client);
         } else {
-          // सिक्युरिटी: पासवर्ड अजिबात उघड केला जाणार नाही!
-          alert("❌ चुकीचा पासवर्ड! कृपया योग्य पासवर्ड प्रविष्ट करा.");
+          alert("❌ चुकीचा पासवर्ड! कृपया अचूक पासवर्ड टाका.");
         }
       } else {
-        alert("❌ हा User ID सिस्टीममध्ये उपलब्ध नाही! कृपया अचूक आयडी टाका.");
+        alert("❌ हा User ID सिस्टीममध्ये उपलब्ध नाही!");
       }
     }
 
     function proceedLogin(client) {
-      if (client.status === "LOCKED") {
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (client.status === "LOCKED" || (client.subscriptionExpiry && client.subscriptionExpiry < todayStr)) {
         document.getElementById('lockOverlay').style.display = "flex";
         return;
       }
@@ -595,6 +694,7 @@
 
       clientsDatabase.forEach(c => {
         const isAct = c.status === "ACTIVE";
+        const expDate = c.subscriptionExpiry || "२०२६-११-०४";
         container.innerHTML += `
           <div class="client-card ${isAct ? 'active-border' : 'locked-border'}">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -602,9 +702,11 @@
                 <b style="font-size:15px; color:#f59e0b;">${c.businessName}</b>
                 <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">
                   User ID: <b style="color:#38bdf8;">${c.user}</b> | 
-                  चालू Password: <b style="color:#22c55e;">${c.pass}</b>
+                  Password: <b style="color:#22c55e;">${c.pass}</b>
                 </div>
-                <div style="font-size:11px; color:#94a3b8;">फोन: ${c.phone} | मशिन्स: ${c.fleet ? c.fleet.length : 0} JCB</div>
+                <div style="font-size:11px; color:#94a3b8;">
+                  फोन: ${c.phone} | सबस्क्रिप्शन मुदत: <b style="color:#facc15;">${expDate}</b>
+                </div>
               </div>
               <span style="background:${isAct ? '#15803d' : '#b91c1c'}; color:#fff; font-size:10px; font-weight:bold; padding:2px 6px;">
                 ${c.status}
@@ -612,11 +714,14 @@
             </div>
 
             <div style="display:flex; gap:6px; margin-top:8px;">
-              <button onclick="toggleClientStatus('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:12px; background:${isAct ? '#dc2626' : '#22c55e'}; color:#fff;">
-                ${isAct ? '🔒 खाते बंद करा (Lock)' : '🟢 खाते सुरू करा (Activate)'}
+              <button onclick="extendSubscription('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:#eab308; color:#000;">
+                ⏳ +३० दिवस वाढवा
               </button>
-              <button onclick="superAdminDirectLogin('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:12px; background:#2563eb; color:#fff;">
-                👁️ थेट डॅशबोर्ड पाहा
+              <button onclick="toggleClientStatus('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:${isAct ? '#dc2626' : '#22c55e'}; color:#fff;">
+                ${isAct ? '🔒 लॉक करा' : '🟢 ॲक्टिव्हेट करा'}
+              </button>
+              <button onclick="superAdminDirectLogin('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:#2563eb; color:#fff;">
+                👁️ पाहा
               </button>
             </div>
           </div>
@@ -624,12 +729,24 @@
       });
     }
 
+    function extendSubscription(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (client) {
+        const curExp = client.subscriptionExpiry ? new Date(client.subscriptionExpiry) : new Date();
+        const newExp = new Date(curExp.getTime() + (30 * 24 * 60 * 60 * 1000));
+        client.subscriptionExpiry = newExp.toISOString().split('T')[0];
+        client.status = "ACTIVE";
+        syncDataToCloud();
+        alert(`✓ ${client.businessName} ची सबस्क्रिप्शन मुदत ${client.subscriptionExpiry} पर्यंत वाढवली!`);
+      }
+    }
+
     function toggleClientStatus(clientId) {
       const client = clientsDatabase.find(c => c.id === clientId);
       if (client) {
         client.status = (client.status === "ACTIVE") ? "LOCKED" : "ACTIVE";
         syncDataToCloud();
-        alert(`✓ ${client.businessName} चे खाते ${client.status} झाले!`);
+        alert(`✓ ${client.businessName} चे स्टेटस ${client.status} केले!`);
       }
     }
 
@@ -647,10 +764,7 @@
       const phone = document.getElementById('newClientPhone').value.trim();
       const count = parseInt(document.getElementById('newClientMachinesCount').value) || 1;
 
-      if (!name || !user || !pass) {
-        alert("कृपया नाव, User ID आणि Password भरा!");
-        return;
-      }
+      if (!name || !user || !pass) { alert("कृपया नाव, User ID आणि Password भरा!"); return; }
 
       let generatedFleet = [];
       for (let i = 1; i <= count; i++) {
@@ -659,8 +773,11 @@
           name: `JCB MACHINE ${i}`,
           driver: `चालक ${i}`,
           pin: "1111",
+          totalHours: 1000.0,
+          lastServiceHour: 900.0,
           hoursToday: 0.0,
-          activeParty: "नवीन काम"
+          activeParty: "नवीन काम",
+          monthlySalary: 18000
         });
       }
 
@@ -671,6 +788,7 @@
         pass: pass,
         phone: phone,
         status: "ACTIVE",
+        subscriptionExpiry: future30Days,
         fleet: generatedFleet,
         operatorHistory: []
       });
@@ -680,42 +798,119 @@
       document.getElementById('newClientUser').value = '';
       document.getElementById('newClientPass').value = '';
       document.getElementById('newClientPhone').value = '';
-      document.getElementById('newClientMachinesCount').value = '';
-
-      alert(`✓ ${name} चे खाते क्लाऊडवर सेव्ह झाले!`);
+      alert(`✓ ${name} चे खाते सेव्ह झाले!`);
     }
 
     // ========================================================
-    // क्लायंट मालक डॅशबोर्ड व पासवर्ड बदलणे
+    // क्लायंट मालक डॅशबोर्ड
     // ========================================================
     function renderClientOwnerView() {
+      renderOwnerSubDays();
+      renderOwnerAlerts();
       renderClientOwnerMachines();
+      renderOperatorSalarySummary();
       renderOperatorWorkHistory();
       renderClientMachinesSelection();
     }
 
-    function handleClientChangePassword() {
-      const newP = document.getElementById('clientChangeNewPass').value.trim();
-      if (!newP || newP.length < 4) {
-        alert("पासवर्ड किमान ४ अक्षरांचा असावा!");
-        return;
+    function renderOwnerSubDays() {
+      const expStr = currentSessionClient.subscriptionExpiry || future30Days;
+      const expDate = new Date(expStr);
+      const today = new Date();
+      const diffTime = expDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('ownerSubDaysLeft').innerText = `${diffDays > 0 ? diffDays : 0} दिवस शिल्लक`;
+    }
+
+    function renderOwnerAlerts() {
+      const container = document.getElementById('ownerAlertsContainer');
+      container.innerHTML = '';
+      if (!currentSessionClient.fleet) return;
+
+      currentSessionClient.fleet.forEach(m => {
+        const runSinceService = (m.totalHours || 0) - (m.lastServiceHour || 0);
+        const hoursLeft = 250 - runSinceService;
+
+        if (hoursLeft <= 0) {
+          container.innerHTML += `
+            <div class="alert-banner alert-danger">
+              <div>🚨 <b>सर्व्हिसिंग अलर्ट:</b> ${m.name} चा २५० तासांचा रन पूर्ण झाला! त्वरित इंजिन ऑइल बदला.</div>
+              <button onclick="resetServiceHours('${m.id}')" style="background:#22c55e; color:#000; border:none; padding:4px 8px; font-weight:bold; cursor:pointer;">सर्व्हिसिंग पूर्ण</button>
+            </div>
+          `;
+        } else if (hoursLeft <= 15) {
+          container.innerHTML += `
+            <div class="alert-banner alert-warning">
+              <div>⚠️️ <b>सर्व्हिसिंग सूचना:</b> ${m.name} ला सर्व्हिसिंगसाठी फक्त ${hoursLeft.toFixed(1)} तास बाकी आहेत.</div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    function resetServiceHours(machineId) {
+      const m = currentSessionClient.fleet.find(x => x.id === machineId);
+      if (m) {
+        m.lastServiceHour = m.totalHours || 0;
+        syncDataToCloud();
+        alert(`✓ ${m.name} चे सर्व्हिसिंग रीसेट झाले! पुढील सर्व्हिसिंग २५० तासांनंतर.`);
+        renderClientOwnerView();
       }
-      currentSessionClient.pass = newP;
-      syncDataToCloud();
-      document.getElementById('clientChangeNewPass').value = '';
-      alert(`✓ पासवर्ड बदलला गेला! (विक्रम सरांच्या ॲडमिन स्क्रीनवर हा पासवर्ड आपोआप अपडेट झाला आहे).`);
     }
 
     function renderClientOwnerMachines() {
       const container = document.getElementById('clientOwnerMachinesList');
       container.innerHTML = '';
       if (!currentSessionClient.fleet) return;
+
       currentSessionClient.fleet.forEach(m => {
+        const runSinceService = (m.totalHours || 0) - (m.lastServiceHour || 0);
+        const hoursLeft = 250 - runSinceService;
         container.innerHTML += `
           <div style="background:#071022; border:1px solid #1e293b; padding:10px; margin-bottom:8px;">
-            <b style="color:#f59e0b;">${m.name}</b><br>
-            <span style="font-size:12px; color:#cbd5e1;">चालक: ${m.driver} | आजचे काम: <b>${m.hoursToday} तास</b></span><br>
-            <span style="font-size:11px; color:#22c55e;">चालू पार्टी: ${m.activeParty || 'उपलब्ध'}</span>
+            <div style="display:flex; justify-content:space-between;">
+              <b style="color:#f59e0b;">${m.name}</b>
+              <span style="font-size:11px; color:#38bdf8;">मीटर: ${m.totalHours || 0} Hrs</span>
+            </div>
+            <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">
+              चालक: <b>${m.driver}</b> | आजचे काम: <b style="color:#22c55e;">${m.hoursToday || 0} तास</b>
+            </div>
+            <div style="font-size:11px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#94a3b8;">ऑइल सर्व्हिसिंग: <b style="color:${hoursLeft <= 10 ? '#ef4444' : '#22c55e'}">${hoursLeft > 0 ? hoursLeft.toFixed(1) + ' तास बाकी' : 'DUE NOW'}</b></span>
+              <button onclick="resetServiceHours('${m.id}')" style="background:#1e293b; color:#cbd5e1; border:1px solid #334155; font-size:10px; padding:2px 6px; cursor:pointer;">सर्व्हिस रीसेट</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderOperatorSalarySummary() {
+      const container = document.getElementById('operatorSalarySummaryList');
+      container.innerHTML = '';
+      if (!currentSessionClient.fleet) return;
+
+      const history = currentSessionClient.operatorHistory || [];
+
+      currentSessionClient.fleet.forEach(m => {
+        const driverLogs = history.filter(h => h.driver === m.driver);
+        const totalDutyDays = driverLogs.length;
+        const totalBattaPaid = driverLogs.reduce((sum, h) => sum + (parseFloat(h.batta) || 0), 0);
+        const monthlySal = m.monthlySalary || 18000;
+        const balanceSal = monthlySal - totalBattaPaid;
+
+        container.innerHTML += `
+          <div style="background:#071022; border:1px solid #1e293b; padding:10px; margin-bottom:6px; font-size:12px;">
+            <div style="display:flex; justify-content:space-between;">
+              <b style="color:#38bdf8;">👷 ${m.driver}</b>
+              <span>महिना बेसिक: ₹ ${monthlySal}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:#94a3b8; margin-top:3px;">
+              <span>एकूण ड्युटी: <b>${totalDutyDays} दिवस</b></span>
+              <span>दिलेला रोज भत्ता: <b style="color:#f59e0b;">₹ ${totalBattaPaid}</b></span>
+            </div>
+            <div style="text-align:right; margin-top:4px; font-weight:bold; color:#22c55e;">
+              शिल्लक देय पगार: ₹ ${balanceSal > 0 ? balanceSal : 0}
+            </div>
           </div>
         `;
       });
@@ -727,25 +922,24 @@
       const history = currentSessionClient.operatorHistory || [];
 
       if (history.length === 0) {
-        container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">अद्याप कोणतीही नोंद उपलब्ध नाही.</div>';
+        container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">कोणतीही नोंद उपलब्ध नाही.</div>';
         return;
       }
 
       history.forEach(h => {
         container.innerHTML += `
           <div class="log-item">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between;">
               <b style="color:#f59e0b;">${h.machine}</b>
-              <span style="color:#94a3b8; font-size:11px;">📅 ${h.date} (${h.time})</span>
+              <span style="color:#94a3b8; font-size:11px;">📅 ${h.date}</span>
             </div>
             <div>चालक: <b>${h.driver}</b> | पार्टी: <b style="color:#22c55e;">${h.party}</b></div>
-            <div style="color:#cbd5e1; margin-top:2px;">काम: <i>${h.work || 'सामान्य काम'}</i></div>
-            <div style="display:flex; justify-content:space-between; margin-top:4px; font-weight:bold; color:#38bdf8;">
+            <div style="display:flex; justify-content:space-between; margin-top:4px; color:#38bdf8;">
               <span>रीडिंग: ${h.startMeter} ➔ ${h.endMeter}</span>
               <span style="color:#f59e0b;">काम: ${h.hours} तास</span>
             </div>
             <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
-              डंपर फेऱ्या: ${h.trips || 0} | डिझेल: ${h.diesel || 'नोंद नाही'}
+              डिझेल: ${h.diesel || 'नोंद नाही'} | रोज भत्ता: ₹${h.batta || 0}
             </div>
           </div>
         `;
@@ -756,6 +950,7 @@
       const container = document.getElementById('clientFleetContainer');
       container.innerHTML = '';
       if (!currentSessionClient.fleet) return;
+
       currentSessionClient.fleet.forEach((m, idx) => {
         const card = document.createElement('div');
         card.className = 'card-panel';
@@ -764,7 +959,7 @@
         card.innerHTML = `
           <div style="font-size:24px;">🚜</div>
           <div style="font-size:14px; font-weight:900; color:#f8fafc; margin-top:6px;">${m.name}</div>
-          <div style="font-size:11px; color:#f59e0b; margin-top:2px;">चालक: ${m.driver}</div>
+          <div style="font-size:11px; color:#f59e0b;">चालक: ${m.driver}</div>
           <div style="font-size:10px; color:#22c55e; margin-top:4px;">पार्टी: ${m.activeParty || 'उपलब्ध'}</div>
         `;
         container.appendChild(card);
@@ -779,6 +974,10 @@
         document.getElementById('opMachineName').innerText = m.name;
         document.getElementById('opDriverTitle').innerText = `चालक: ${m.driver}`;
         document.getElementById('opActiveCustomer').innerText = `सध्याची पार्टी: ${m.activeParty || 'नोंद नाही'}`;
+
+        const hoursLeft = 250 - ((m.totalHours || 0) - (m.lastServiceHour || 0));
+        document.getElementById('opServiceDueBadge').innerHTML = `सर्व्हिसिंग: <b style="color:${hoursLeft <= 10 ? '#ef4444' : '#22c55e'}">${hoursLeft > 0 ? hoursLeft.toFixed(1) + ' तास बाकी' : 'सर्व्हिसिंग ड्यू!'}</b>`;
+
         navigate('screenOpMenu');
       } else if (pin !== null) {
         alert("❌ चुकीचा ऑपरेटर PIN!");
@@ -790,6 +989,7 @@
       const start = document.getElementById('startReadingInput').value;
       const work = document.getElementById('morningWorkTypeInput').value.trim();
       if (!cust || !start) { alert("कृपया माहिती भरा!"); return; }
+
       currentSessionMachine.activeParty = cust;
       currentSessionMachine.workType = work;
       document.getElementById('shiftStartReading').value = start;
@@ -806,13 +1006,35 @@
       return run;
     }
 
+    // डिझेल चोरी नियंत्रण पडताळणी
+    function submitDieselEntry() {
+      const liters = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
+      const cost = document.getElementById('dieselCostInput').value;
+      if (liters <= 0) { alert("कृपया लिटर टाका!"); return; }
+
+      currentSessionMachine.lastFilledDiesel = liters;
+      currentSessionMachine.lastFilledDieselCost = cost;
+      syncDataToCloud();
+      alert(`✓ ${liters} लिटर डिझेलची नोंद झाली!`);
+      navigate('screenOpMenu');
+    }
+
     function submitEveningShiftWhatsApp() {
       const run = calculateShiftHours();
       if (run <= 0) { alert("संध्याकाळचे रीडिंग सकाळपेक्षा जास्त हवे!"); return; }
-      
+
+      const liters = currentSessionMachine.lastFilledDiesel || 0;
+      if (liters > 0 && run > 0) {
+        const avgMileage = liters / run;
+        if (avgMileage > 6.5) {
+          alert(`🚨 डिझेल संशयास्पद वापर अलर्ट!\nसरासरी: ${avgMileage.toFixed(1)} Ltr/तास (सामान्य सरासरीपेक्षा खूप जास्त डिझेल दाखवले आहे!).`);
+        }
+      }
+
       const now = new Date();
       const dateStr = now.toLocaleDateString('mr-IN');
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const batta = parseFloat(document.getElementById('shiftBattaInput').value) || 300;
 
       if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
       
@@ -827,17 +1049,22 @@
         endMeter: parseFloat(document.getElementById('shiftEndReading').value) || 0,
         hours: run,
         trips: document.getElementById('shiftTripsInput').value || 0,
-        diesel: document.getElementById('dieselLitersInput') ? (document.getElementById('dieselLitersInput').value + " Ltr") : "नोंद नाही"
+        diesel: liters > 0 ? (liters + " Ltr") : "नोंद नाही",
+        batta: batta
       });
 
       currentSessionMachine.hoursToday = run;
+      currentSessionMachine.totalHours = parseFloat(document.getElementById('shiftEndReading').value) || (currentSessionMachine.totalHours + run);
+      currentSessionMachine.lastFilledDiesel = 0; // reset for next shift
+
       syncDataToCloud();
-      alert("✓ ऑपरेटरच्या कामाची नोंद क्लाऊडवर सेव्ह झाली!");
+      alert("✓ ऑपरेटरच्या कामाची नोंद सेव्ह झाली!");
       navigate('screenOpMenu');
     }
 
     function openCustomerJobScreen() {
       document.getElementById('custNameInput').value = currentSessionMachine.activeParty || '';
+      document.getElementById('custPhoneInput').value = document.getElementById('morningCustPhoneInput').value || '';
       calculateOngoingRent();
       navigate('screenCustomerLedger');
     }
@@ -845,24 +1072,66 @@
     function calculateOngoingRent() {
       const hours = parseFloat(document.getElementById('custTodayHours').value) || 0;
       const rate = parseFloat(document.getElementById('custHourlyRate').value) || 0;
-      const rent = hours * rate;
-      document.getElementById('liveCustTodayRent').innerText = `₹ ${rent.toFixed(0)}`;
-      document.getElementById('liveTotalHoursAccumulated').innerText = `${hours.toFixed(1)} तास`;
-      document.getElementById('liveTotalAccumulatedRent').innerText = `₹ ${rent.toFixed(0)}`;
-      document.getElementById('livePartyPendingAmt').innerText = `₹ ${rent.toFixed(0)}`;
-      return rent;
+      const adv = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
+      
+      const totalRent = hours * rate;
+      const pending = totalRent - adv;
+
+      document.getElementById('liveTotalAccumulatedRent').innerText = `₹ ${totalRent.toFixed(0)}`;
+      document.getElementById('liveAdvanceDeducted').innerText = `₹ ${adv.toFixed(0)}`;
+      document.getElementById('livePartyPendingAmt').innerText = `₹ ${pending > 0 ? pending.toFixed(0) : 0}`;
+      return { totalRent, adv, pending };
     }
 
     function sendInvoiceToCustomerWhatsApp() {
       const phone = document.getElementById('custPhoneInput').value.trim();
       if (!phone) { alert("पार्टीचा १० अंकी WhatsApp नंबर टाका!"); return; }
       const cleanPhone = phone.startsWith('91') ? phone : ('91' + phone);
-      const msg = `🚜 *JCB भाडे बिल*\nपार्टी: ${currentSessionMachine.activeParty}\nएकूण भाडे बिल: ₹ ${calculateOngoingRent()}\nधन्यवाद!`;
+      const { totalRent, adv, pending } = calculateOngoingRent();
+
+      const msg = `🚜 *${currentSessionClient.businessName}*\n` +
+                  `━━━━━━━━━━━━━━━━━━━\n` +
+                  `पार्टीचे नाव: ${document.getElementById('custNameInput').value}\n` +
+                  `मशीन: ${currentSessionMachine.name}\n` +
+                  `कामाचे तास: ${document.getElementById('custTodayHours').value} तास\n` +
+                  `भाडे दर: ₹${document.getElementById('custHourlyRate').value}/तास\n` +
+                  `एकूण भाडे बिल: ₹${totalRent}\n` +
+                  `जमा ॲडव्हान्स: ₹${adv}\n` +
+                  `*बाकी येणे रक्कम: ₹${pending}*\n` +
+                  `━━━━━━━━━━━━━━━━━━━\n` +
+                  `धन्यवाद! संपर्क: ${currentSessionClient.phone}`;
+
       window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
     }
 
-    function submitDieselWhatsApp() {
-      alert("✓ डिझेल नोंद सेव्ह झाली!");
+    // PDF / प्रिंट बिल जनरेटर
+    function generatePrintableInvoiceModal() {
+      const { totalRent, adv, pending } = calculateOngoingRent();
+      const party = document.getElementById('custNameInput').value;
+      const hours = document.getElementById('custTodayHours').value;
+      const rate = document.getElementById('custHourlyRate').value;
+
+      document.getElementById('invBizName').innerText = currentSessionClient.businessName;
+      document.getElementById('invBizPhone').innerText = currentSessionClient.phone;
+      document.getElementById('invPartyName').innerText = party || "मा. ग्राहक";
+      document.getElementById('invDate').innerText = new Date().toLocaleDateString('mr-IN');
+      document.getElementById('invMachineName').innerText = currentSessionMachine.name;
+      document.getElementById('invDriverName').innerText = currentSessionMachine.driver;
+
+      document.getElementById('invTableHours').innerText = `${hours} तास`;
+      document.getElementById('invTableRate').innerText = `₹ ${rate}`;
+      document.getElementById('invTableTotalRent').innerText = `₹ ${totalRent}`;
+      document.getElementById('invTableAdvance').innerText = `₹ ${adv}`;
+      document.getElementById('invTableBalance').innerText = `₹ ${pending}`;
+
+      document.getElementById('printableInvoiceModal').style.display = 'block';
+      document.getElementById('printableInvoiceModal').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function reportBreakdownAlert() {
+      const issue = document.getElementById('issueTypeInput').value;
+      const desc = document.getElementById('issueDetailsInput').value;
+      alert(`🚨 मालकाला अलर्ट पाठवला:\nमशीन: ${currentSessionMachine.name}\nअडचण: ${issue}\nतपशील: ${desc}`);
       navigate('screenOpMenu');
     }
 

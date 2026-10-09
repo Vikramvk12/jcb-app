@@ -2,85 +2,318 @@
 <html lang="mr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JCB Cloud Fleet Pro ERP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JCB Fleet Pro ERP | Super Admin Master Edition</title>
   
-  <!-- Google Firebase Realtime Cloud SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; border-radius: 0px !important; }
-    body { background-color: #090d16; padding: 12px; color: #f8fafc; min-height: 100vh; }
-    
-    .top-bar { background: #0f172a; border-bottom: 3px solid #f59e0b; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .brand-title { font-size: 17px; font-weight: 900; color: #f59e0b; }
-    .brand-sub { font-size: 11px; color: #94a3b8; }
-    .badge-live { background: #22c55e; color: #000; font-size: 10px; font-weight: 800; padding: 3px 6px; }
+    :root {
+      --primary-blue: #1a73e8;
+      --primary-dark: #1557b0;
+      --bg-gray: #f4f6fa;
+      --card-white: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-teal: #14b8a6;
+    }
 
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    body { background-color: var(--bg-gray); color: var(--text-dark); min-height: 100vh; padding-bottom: 30px; }
+
+    .app-header {
+      background: var(--primary-blue);
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: 0.3px; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .notif-bell-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      position: relative;
+    }
+    .notif-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-red);
+      border: 1.5px solid #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      display: none;
+    }
+
+    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
     .screen { display: none; }
-    .screen.active { display: block; }
+    .screen.active { display: block; animation: fadeIn 0.15s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Client Suspended Overlay */
-    #lockOverlay {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #090d16; z-index: 999999; padding: 24px; text-align: center;
-      flex-direction: column; justify-content: center; align-items: center;
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
     }
-    .lock-icon { font-size: 54px; margin-bottom: 12px; color: #ef4444; }
-    .lock-title { font-size: 20px; font-weight: 900; color: #f8fafc; }
-    .lock-desc { font-size: 13px; color: #94a3b8; margin-top: 10px; line-height: 1.6; max-width: 320px; }
-    .btn-pay-now { background: #f59e0b; color: #000; padding: 14px 20px; font-weight: 900; border: none; margin-top: 24px; text-decoration: none; display: inline-block; }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 450px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    #lockOverlayScreen {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      z-index: 99999;
+      color: #fff;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .profile-welcome-card {
+      background: var(--card-white);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-light);
+    }
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #e8f0fe;
+      color: var(--primary-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .profile-info .welcome-lbl { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .profile-info .client-name { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-top: 1px; }
+    .profile-info .client-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .party-banner-card {
+      background: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0 10px 0;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .section-divider {
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    .grid-tiles-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .feature-card {
+      background: var(--card-white);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 105px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: transform 0.1s, box-shadow 0.1s;
+      position: relative;
+    }
+    .feature-card:active { transform: scale(0.98); }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .arrow-icon { font-size: 14px; color: #cbd5e1; font-weight: 800; }
+    .card-body { margin-top: 8px; }
+    .card-main-title { font-size: 13.5px; font-weight: 800; color: var(--text-dark); }
+    .card-sub-title { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .panel-card {
+      background: var(--card-white);
+      border-radius: 14px;
+      border: 1px solid var(--border-light);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .panel-header {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-    .card-panel { background: #111a2e; border: 2px solid #1e293b; padding: 14px; margin-bottom: 14px; }
-    .card-header { font-size: 15px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; border-bottom: 1px solid #1e293b; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    
-    label { display: block; font-size: 11px; font-weight: bold; color: #94a3b8; margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; }
-    input, select { width: 100%; padding: 12px; background: #090d16; border: 1px solid #334155; color: #fff; font-size: 14px; }
 
-    /* Password Input Wrapper with Eye Toggle */
-    .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
-    .password-wrapper input { padding-right: 46px; }
-    .toggle-eye-btn {
-      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-      background: transparent; border: none; font-size: 18px; cursor: pointer;
-      color: #94a3b8; padding: 6px; user-select: none;
+    label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 8px; margin-bottom: 4px; text-transform: uppercase; }
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      color: var(--text-dark);
+      font-size: 13px;
     }
-    
-    .btn-submit { width: 100%; padding: 14px; border: none; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 12px; text-transform: uppercase; }
-    .btn-green { background: #22c55e; color: #000; }
-    .btn-blue { background: #2563eb; color: #fff; }
-    .btn-amber { background: #f59e0b; color: #000; }
-    .btn-red { background: #dc2626; color: #fff; }
-    .btn-yellow { background: #eab308; color: #000; }
-    .btn-nav { background: #1e293b; color: #f1f5f9; border: 1px solid #334155; padding: 10px; width: 100%; text-align: left; font-weight: bold; margin-bottom: 12px; cursor: pointer; }
+    input:focus, select:focus { border-color: var(--primary-blue); background: #fff; outline: none; }
 
-    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .action-tile { background: #111a2e; border: 2px solid #334155; padding: 16px 8px; text-align: center; cursor: pointer; min-height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .action-tile:active { background: #1e293b; }
-    .tile-shift { border-color: #22c55e; color: #22c55e; }
-    .tile-fuel { border-color: #3b82f6; color: #38bdf8; }
-    .tile-close { border-color: #f97316; color: #fb923c; }
-    .tile-rent { border-color: #eab308; color: #facc15; grid-column: span 2; }
-    .tile-alert { border-color: #ef4444; color: #f87171; grid-column: span 2; }
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-blue { background: var(--primary-blue); color: #fff; }
+    .btn-green { background: var(--accent-green); color: #fff; }
+    .btn-amber { background: var(--accent-gold); color: #fff; }
+    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-nav {
+      background: #e2e8f0; color: #1e293b; border: none; border-radius: 8px;
+      padding: 9px 12px; font-weight: 700; font-size: 12px; margin-bottom: 12px; cursor: pointer; display: inline-block;
+    }
 
-    .client-card { background: #0c1527; border: 1px solid #1e293b; padding: 12px; margin-bottom: 10px; }
-    .client-card.active-border { border-left: 4px solid #22c55e; }
-    .client-card.locked-border { border-left: 4px solid #ef4444; opacity: 0.85; }
+    .filter-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .quick-chip {
+      background: #e2e8f0; color: #334155; border: none; padding: 5px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: bold; cursor: pointer;
+    }
+    .quick-chip.active { background: var(--primary-blue); color: #fff; }
 
-    .log-item { background: #071022; border-left: 3px solid #f59e0b; padding: 10px; margin-bottom: 8px; font-size: 12px; }
-    .alert-banner { padding: 8px 12px; font-size: 12px; font-weight: bold; margin-bottom: 8px; border-left: 4px solid; display: flex; justify-content: space-between; align-items: center; }
-    .alert-danger { background: #450a0a; border-color: #ef4444; color: #fca5a5; }
-    .alert-warning { background: #422006; border-color: #f59e0b; color: #fde68a; }
+    .pnl-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 4px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 12px;
+    }
 
-    /* Printable Bill Styles */
+    .data-item-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .sub-badge {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      font-weight: 800;
+      display: inline-block;
+    }
+    .sub-active { background: #dcfce7; color: #15803d; }
+    .sub-warning { background: #fef3c7; color: #b45309; }
+    .sub-expired { background: #fee2e2; color: #b91c1c; }
+
+    .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+    .password-wrapper input { padding-right: 40px; }
+    .toggle-eye-btn { position: absolute; right: 10px; background: transparent; border: none; cursor: pointer; }
+
     @media print {
       body * { visibility: hidden; }
       #printableInvoiceModal, #printableInvoiceModal * { visibility: visible; }
-      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #000 !important; }
+      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
       .no-print { display: none !important; }
     }
     .invoice-box { background: #fff; color: #000; padding: 16px; border: 2px solid #000; margin: 10px 0; font-family: monospace; }
@@ -88,673 +321,1356 @@
 </head>
 <body>
 
-  <!-- क्लायंटचे पेमेंट संपले किंवा थकले तर दिसणारा लॉक पडदा -->
-  <div id="lockOverlay">
-    <div class="lock-icon">🔒</div>
-    <div class="lock-title">सेवा तात्पुरती खंडित (ACCOUNT SUSPENDED)</div>
-    <div class="lock-desc" id="lockReasonText">
-      या खात्याचे मासिक सबस्क्रिप्शन संपलेले आहे.<br>
-      सॉफ्टवेअर सुरू करण्यासाठी कृपया मुख्य ॲडमिन (विक्रम सर) यांच्याशी संपर्क साधा.
-    </div>
-    <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20mala%20JCB%20app%20cha%20subscription%20renew%20karayche%20ahe." class="btn-pay-now">
-      💳 सबस्क्रिप्शन रिन्यू करा (WhatsApp)
+  <!-- Lock Screen Overlay -->
+  <div id="lockOverlayScreen">
+    <div style="font-size: 54px; margin-bottom: 10px;">🔒</div>
+    <h2 style="font-size: 20px; font-weight: 900;">ACCOUNT EXPIRED (AUTO LOCKED)</h2>
+    <p style="font-size: 13px; color: #cbd5e1; margin: 10px 0 20px 0; max-width: 320px; line-height: 1.5;">
+      Ya khatyachi masik mudat sampleli ahe. Software parat shuru karnyasathi Vikram Sir yanchyashi sampark sadha.
+    </p>
+    <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20maze%20JCB%20Fleet%20Pro%20subscription%20renew%20karayche%20ahe." 
+       style="background:var(--accent-gold); color:#000; padding:12px 20px; font-weight:900; border-radius:8px; text-decoration:none;">
+      💳 Renew Subscription (WhatsApp)
     </a>
+    <button onclick="logoutSession()" style="margin-top: 20px; background:transparent; border:1px solid #fff; color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer;">
+      Logout Kara
+    </button>
   </div>
 
-  <!-- टॉप हेडर -->
-  <div class="top-bar">
-    <div>
-      <div class="brand-title" id="topHeaderTitle">🚜 JCB FLEET PRO</div>
-      <div class="brand-sub" id="topHeaderSub">Enterprise Heavy Machinery System</div>
-    </div>
-    <div class="badge-live" id="systemStateBadge">CLOUD ACTIVE</div>
-  </div>
-
-  <!-- ========================================================
-       SCREEN 0: UNIVERSAL LOGIN SCREEN (१००% सुरक्षित)
-       ======================================================== -->
-  <div id="screenUniversalLogin" class="screen active">
-    <div class="card-panel" style="max-width: 420px; margin: 30px auto; border-color: #f59e0b;">
-      <div style="font-size: 36px; text-align: center; margin-bottom: 8px;">🔐</div>
-      <div class="card-header" style="text-align: center; border: none; font-size: 18px; color: #f59e0b; display:block;">
-        अधिकृत लॉगिन (SECURE LOGIN)
+  <!-- Notification Center Modal Box -->
+  <div id="notificationModal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
+        <b style="font-size:16px; color:var(--text-dark);">🔔 Notification & Alert Center</b>
+        <button onclick="toggleNotificationModal(false)" style="background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
       </div>
-      <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 16px;">
-        User ID आणि Password प्रविष्ट करा:
-      </p>
+      <div id="notificationListContainer"></div>
+    </div>
+  </div>
 
-      <form onsubmit="event.preventDefault(); handleUniversalLogin();" autocomplete="on">
-        <label for="loginUserId">User ID (वापरकर्ता आयडी):</label>
-        <input type="text" id="loginUserId" name="username" autocomplete="username" placeholder="उदा. patil किंवा vikram_admin" required>
+  <!-- Top Blue Header -->
+  <div class="app-header">
+    <div class="brand-title" id="appHeaderTitle">🚜 JCB Fleet Pro</div>
+    <div class="header-actions">
+      <button class="notif-bell-btn" onclick="openNotificationModal()" title="Alerts & Notifications">
+        🔔
+        <div class="notif-badge-dot" id="notifBadgeDot"></div>
+      </button>
+      <span class="pill-btn" id="headerRoleBadge">Auto-Login Active</span>
+    </div>
+  </div>
 
-        <label for="loginPassword">पासवर्ड (Password):</label>
-        <div class="password-wrapper">
-          <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
-          <button type="button" class="toggle-eye-btn" onclick="togglePasswordVisibility('loginPassword', 'eyeIconLogin')" id="eyeIconLogin" title="पासवर्ड पाहा / लपवा">👁️</button>
+  <div class="container">
+
+    <!-- SCREEN 0: LOGIN CHOICE -->
+    <div id="screenLoginSelect" class="screen active">
+      <div class="panel-card" style="text-align: center; margin-top: 20px;">
+        <div style="font-size: 42px; margin-bottom: 6px;">🚜</div>
+        <h2 style="font-size: 18px; font-weight: 800; color: var(--text-dark);">JCB FLEET PRO LOGIN</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px;">
+          Krupaya login paryay nivada:
+        </p>
+
+        <div class="feature-card" style="margin-bottom: 12px; border-left: 4px solid var(--primary-blue);" onclick="navigate('screenOwnerLogin')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#e8f0fe; color:var(--primary-blue);">👑</div>
+            <span class="arrow-icon">➔</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">१. Malak / Admin Login</div>
+            <div class="card-sub-title">Vikram Sir Super Admin & JCB Owners</div>
+          </div>
         </div>
 
-        <button type="submit" class="btn-submit btn-amber">लॉगिन करा (Sign In)</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ========================================================
-       SCREEN 1: SUPER ADMIN MASTER DASHBOARD (विक्रम सर)
-       ======================================================== -->
-  <div id="screenSuperAdmin" class="screen">
-    <button class="btn-nav" onclick="logoutSession()">🔒 सुपर ॲडमिन लॉगआऊट (Logout)</button>
-    
-    <div class="card-panel" style="border: 2px solid #f59e0b; background: #0c1527;">
-      <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">सर्वोच्च नियंत्रक (Master Controller):</div>
-      <div style="font-size: 20px; font-weight: 900; color: #f59e0b; margin-top: 2px;">
-        👑 विक्रम सर (मुख्य सिस्टीम मालक)
-      </div>
-      <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">
-        Google Cloud Realtime Sync • सबस्क्रिप्शन मुदत, चालू पासवर्ड व खाती Active/Lock थेट नियंत्रण
-      </div>
-    </div>
-
-    <!-- Counters -->
-    <div class="grid-4">
-      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
-        <div style="font-size: 18px; font-weight: 900; color: #f8fafc;" id="statTotalClients">0</div>
-        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">एकूण ग्राहक</div>
-      </div>
-      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
-        <div style="font-size: 18px; font-weight: 900; color: #22c55e;" id="statActiveClients">0</div>
-        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">सुरू खाती</div>
-      </div>
-      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
-        <div style="font-size: 18px; font-weight: 900; color: #ef4444;" id="statLockedClients">0</div>
-        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">बंद खाती</div>
-      </div>
-      <div style="background:#111a2e; border:1px solid #1e293b; padding:10px; text-align:center;">
-        <div style="font-size: 18px; font-weight: 900; color: #eab308;" id="statTotalFleet">0</div>
-        <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">एकूण मशिन्स</div>
-      </div>
-    </div>
-
-    <!-- नवीन ग्राहक जोडण्याचा फॉर्म -->
-    <div class="card-panel">
-      <div class="card-header">➕ नवीन ग्राहक (JCB मालक) जोडा</div>
-      <div class="grid-2">
-        <input type="text" id="newClientBusiness" placeholder="व्यवसायाचे नाव (उदा. पवार अर्थमूव्हर्स)">
-        <input type="text" id="newClientUser" placeholder="लॉगिन User ID (उदा. pawar)">
-      </div>
-      <div class="grid-2" style="margin-top: 8px;">
-        <input type="password" id="newClientPass" placeholder="पासवर्ड (उदा. pawar123)">
-        <input type="tel" id="newClientPhone" placeholder="मोबाईल नंबर">
-      </div>
-      <div style="margin-top: 8px;">
-        <input type="number" id="newClientMachinesCount" placeholder="मशिन्सची संख्या (उदा. 2)">
-      </div>
-      <button class="btn-submit btn-amber" onclick="createNewClientAccount()">💾 नवीन ग्राहक खाते क्लाऊडवर सेव्ह करा</button>
-    </div>
-
-    <!-- सर्व ग्राहकांची यादी (सबस्क्रिप्शन मुदतीसह) -->
-    <div class="card-panel">
-      <div class="card-header">📋 सर्व ग्राहकांची यादी (सबस्क्रिप्शन वैधता व थेट नियंत्रण)</div>
-      <div id="superAdminClientsList"></div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-       SCREEN 2: CLIENT OWNER DASHBOARD (मालक डॅशबोर्ड)
-       ======================================================== -->
-  <div id="screenClientOwner" class="screen">
-    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-      <button class="btn-nav" style="width:auto; margin:0;" onclick="logoutSession()">🔒 लॉगआऊट</button>
-      <button class="btn-nav" style="width:auto; margin:0; background:#2563eb;" onclick="navigate('screenClientMachines')">🚜 ऑपरेटर कन्सोल ➔</button>
-    </div>
-    
-    <div class="card-panel" style="border: 2px solid #f59e0b; background: #0c1527;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-size: 18px; font-weight: 900; color: #f59e0b;" id="ownerClientTitle">पाटील अर्थमूव्हर्स</div>
-          <div style="font-size: 12px; color: #cbd5e1;">मालक नियंत्रण केंद्र • सर्व्हिसिंग, डिझेल व ऑपरेटर हिशोब</div>
-        </div>
-        <div style="text-align:right;">
-          <span style="font-size:11px; color:#94a3b8;">वैधता:</span>
-          <div id="ownerSubDaysLeft" style="font-size:13px; font-weight:bold; color:#22c55e;">३० दिवस शिल्लक</div>
+        <div class="feature-card" style="border-left: 4px solid var(--accent-green);" onclick="navigate('screenOperatorLogin')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#e6fcf5; color:var(--accent-green);">👷</div>
+            <span class="arrow-icon">➔</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">२. Operator Thet Login</div>
+            <div class="card-sub-title">Reading & Diesel Nond</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- सर्व्हिसिंग व डिझेल अलर्ट विभाग -->
-    <div id="ownerAlertsContainer"></div>
+    <!-- SCREEN 0.1: OWNER & SUPER ADMIN LOGIN -->
+    <div id="screenOwnerLogin" class="screen">
+      <button class="btn-nav" onclick="navigate('screenLoginSelect')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">👑 Malak / Super Admin Login</div>
+        <form onsubmit="event.preventDefault(); handleOwnerLogin();">
+          <label>User ID:</label>
+          <input type="text" id="ownerLoginUserId" placeholder="uda. patil kivha vikram_admin" required>
 
-    <!-- मशिन्स स्थिती आणि सर्व्हिसिंग ट्रॅकर -->
-    <div class="card-panel">
-      <div class="card-header">🚜 सर्व मशिन्स स्थिती आणि ऑइल सर्व्हिसिंग (२५० तास सायकल)</div>
-      <div id="clientOwnerMachinesList"></div>
-    </div>
+          <label>Password:</label>
+          <div class="password-wrapper">
+            <input type="password" id="ownerLoginPassword" placeholder="••••••••" required>
+            <button type="button" class="toggle-eye-btn" onclick="togglePasswordVisibility('ownerLoginPassword', 'eyeIconOwner')" id="eyeIconOwner">👁️</button>
+          </div>
 
-    <!-- ऑपरेटर पगार व हजेरी समरी -->
-    <div class="card-panel" style="border-color: #3b82f6;">
-      <div class="card-header" style="color:#38bdf8;">👷 ड्रायव्हर / ऑपरेटर पगार व हजेरी हिशोब</div>
-      <div id="operatorSalarySummaryList"></div>
-    </div>
-
-    <!-- कामाचा इतिहास -->
-    <div class="card-panel" style="border-color: #22c55e;">
-      <div class="card-header" style="color: #22c55e;">📋 ऑपरेटर कामाची दैनंदिन नोंद (Shift Work Log)</div>
-      <div id="operatorWorkHistoryList"></div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-       SCREEN 3: CLIENT MACHINES LIST (मशीन निवड)
-       ======================================================== -->
-  <div id="screenClientMachines" class="screen">
-    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-      <button class="btn-nav" style="width:auto; margin:0;" onclick="navigate('screenClientOwner')">⬅ मालक डॅशबोर्ड</button>
-      <button class="btn-nav" style="width:auto; margin:0; background:#dc2626;" onclick="logoutSession()">लॉगआऊट</button>
-    </div>
-    
-    <div style="font-size: 12px; color: #94a3b8; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">
-      काम सुरू करण्यासाठी मशीन निवडा:
-    </div>
-    <div id="clientFleetContainer" class="grid-2"></div>
-  </div>
-
-  <!-- ========================================================
-       SCREEN 4: OPERATOR ACTIONS CONSOLE
-       ======================================================== -->
-  <div id="screenOpMenu" class="screen">
-    <button class="btn-nav" onclick="navigate('screenClientMachines')">⬅ मशिन्स निवडीवर जा</button>
-    <div class="card-panel" style="border-left: 4px solid #22c55e;">
-      <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">चालू सत्र:</div>
-      <div id="opMachineName" style="font-size: 17px; font-weight: 900; color: #f59e0b; margin-top: 2px;">MACHINE 1</div>
-      <div id="opDriverTitle" style="font-size: 12px; color: #cbd5e1;">चालक: ऑपरेटर</div>
-      <div id="opActiveCustomer" style="font-size: 12px; color: #22c55e; margin-top: 4px; font-weight: bold;">सध्याची पार्टी: नोंद नाही</div>
-      <div id="opServiceDueBadge" style="margin-top:6px; font-size:11px;"></div>
-    </div>
-
-    <div class="action-grid">
-      <div class="action-tile tile-shift" onclick="navigate('screenMorning')">
-        <div style="font-size: 26px;">📸</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">१. सकाळ रीडिंग</div>
-        <div style="font-size: 10px; color: #94a3b8;">पार्टी नाव + सुरू मीटर</div>
-      </div>
-      <div class="action-tile tile-fuel" onclick="navigate('screenDiesel')">
-        <div style="font-size: 26px;">⛽</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">२. डिझेल नोंद</div>
-        <div style="font-size: 10px; color: #94a3b8;">लिटर + चोरी नियंत्रण अलर्ट</div>
-      </div>
-      <div class="action-tile tile-close" onclick="navigate('screenEvening')">
-        <div style="font-size: 26px;">🛑</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">३. शिफ्ट क्लोज</div>
-        <div style="font-size: 10px; color: #94a3b8;">संध्याकाळ रीडिंग + भत्ता</div>
-      </div>
-      <div class="action-tile tile-rent" onclick="openCustomerJobScreen()">
-        <div style="font-size: 26px;">📝</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">४. पार्टी भाडे, हिशोब व PDF बिल</div>
-        <div style="font-size: 10px; color: #94a3b8;">थेट WhatsApp मेसेज व प्रिंट बिल जनरेटर</div>
-      </div>
-      <div class="action-tile tile-alert" onclick="navigate('screenBreakdown')">
-        <div style="font-size: 26px;">⚠️</div>
-        <div style="font-size: 13px; font-weight: bold; margin-top: 4px;">५. ब्रेकडाऊन अलर्ट</div>
-        <div style="font-size: 10px; color: #94a3b8;">काम बंद / तात्काळ दुरुस्ती</div>
+          <button type="submit" class="btn-submit btn-blue">Login Kara (Remember Me) ➔</button>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- SCREEN 5: MORNING READING -->
-  <div id="screenMorning" class="screen">
-    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
-    <div class="card-panel">
-      <div class="card-header">१. सकाळचे रीडिंग व पार्टी निवड (SHIFT START)</div>
-      <label>पार्टी / ग्राहकाचे नाव:</label>
-      <input type="text" id="morningCustNameInput" placeholder="उदा. अमोल पाटील">
-      <label>पार्टीचा WhatsApp नंबर:</label>
-      <input type="tel" id="morningCustPhoneInput" placeholder="उदा. 98XXXXXXXX">
-      <label>कामाचे ठिकाण व स्वरूप (Work Details):</label>
-      <input type="text" id="morningWorkTypeInput" placeholder="उदा. शेततळे खोदणे / विहीर / माती काम">
-      <label>सकाळचे Hour Meter Reading:</label>
-      <input type="number" step="0.1" id="startReadingInput" placeholder="उदा. 4520.0">
-      <label>मीटरचा थेट फोटो:</label>
-      <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
-      <button class="btn-submit btn-green" onclick="saveMorningShift()">सकाळची नोंद सेव्ह करा</button>
-    </div>
-  </div>
+    <!-- SCREEN 0.2: OPERATOR LOGIN -->
+    <div id="screenOperatorLogin" class="screen">
+      <button class="btn-nav" onclick="navigate('screenLoginSelect')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">👷 Operator Thet Login</div>
+        <form onsubmit="event.preventDefault(); handleOperatorPinLogin();">
+          <label>Malakacha User ID:</label>
+          <input type="text" id="opOwnerUserIdInput" placeholder="uda. patil" required>
 
-  <!-- SCREEN 6: DIESEL ENTRY -->
-  <div id="screenDiesel" class="screen">
-    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
-    <div class="card-panel">
-      <div class="card-header">२. डिझेल नोंद (DIESEL ENTRY)</div>
-      <label>भरलेले डिझेल (Liters):</label>
-      <input type="number" id="dieselLitersInput" placeholder="उदा. 50">
-      <label>एकूण रक्कम (₹ Amount):</label>
-      <input type="number" id="dieselCostInput" placeholder="उदा. 4600">
-      <label>चालू मीटर रीडिंग:</label>
-      <input type="number" step="0.1" id="dieselMeterReadingInput" placeholder="उदा. 4525.0">
-      <label>पावतीचा फोटो:</label>
-      <input type="file" accept="image/*" capture="camera" style="border: 1px dashed #38bdf8; background:#071022; padding:10px;">
-      <button class="btn-submit btn-blue" onclick="submitDieselEntry()">⛽ डिझेल नोंद सेव्ह करा</button>
-    </div>
-  </div>
+          <label>Tumcha 4-Anki Operator PIN:</label>
+          <input type="password" maxlength="6" id="opPinInput" placeholder="uda. 1111 / 2222" required>
 
-  <!-- SCREEN 7: EVENING CLOSING -->
-  <div id="screenEvening" class="screen">
-    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
-    <div class="card-panel" style="color: #f97316;">३. काम संपले - दैनंदिन शिफ्ट क्लोज</div>
-    <div class="card-panel">
-      <label>सकाळचे रीडिंग:</label>
-      <input type="number" step="0.1" id="shiftStartReading" placeholder="0.0">
-      <label>संध्याकाळचे Hour Meter Reading:</label>
-      <input type="number" step="0.1" id="shiftEndReading" placeholder="उदा. 4528.5" oninput="calculateShiftHours()">
-      <div style="background:#071022; border:1px solid #334155; padding:10px; margin:10px 0;">
-        <span style="font-size:12px; color:#94a3b8;">आजचे चाललेले तास:</span>
-        <b id="shiftCalculatedHours" style="color:#22c55e; font-size:16px; margin-left:8px;">0.0 तास</b>
+          <button type="submit" class="btn-submit btn-green">Operator Console Ughada (Remember Me) ➔</button>
+        </form>
       </div>
-      <label>डंपर फेऱ्या (Trips):</label>
-      <input type="number" id="shiftTripsInput" placeholder="उदा. 18">
-      <label>ड्रायव्हर रोज भत्ता (₹):</label>
-      <input type="number" id="shiftBattaInput" placeholder="उदा. 300" value="300">
-      <button class="btn-submit btn-amber" onclick="submitEveningShiftWhatsApp()">🛑 शिफ्ट क्लोज करा व मालकाला कळवा</button>
     </div>
-  </div>
 
-  <!-- SCREEN 8: CUSTOMER JOB, LEDGER & PDF BILL -->
-  <div id="screenCustomerLedger" class="screen">
-    <button class="btn-nav no-print" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
-    <div class="card-panel" style="border-color: #eab308;">
-      <div class="card-header" style="color: #facc15;">४. पार्टीचे भाडे, सलग हिशोब व बिल जनरेटर</div>
-      <label>पार्टीचे नाव:</label>
-      <input type="text" id="custNameInput" style="color:#f59e0b; font-weight:bold;">
-      <label>पार्टीचा WhatsApp नंबर:</label>
-      <input type="tel" id="custPhoneInput" placeholder="उदा. 98XXXXXXXX">
+    <!-- SCREEN 1: SUPER ADMIN DASHBOARD -->
+    <div id="screenSuperAdmin" class="screen">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <button class="btn-nav" style="margin:0;" onclick="logoutSession()">🔒 Super Admin Logout</button>
+      </div>
+
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--accent-gold);">
+        <div class="profile-avatar">👑</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Master Command Center</div>
+          <div class="client-name">Vikram Sir (Software Owner)</div>
+          <div class="client-sub">₹250/Machine Monthly SaaS Membership</div>
+        </div>
+      </div>
+
+      <button onclick="navigate('screenAppBusinessPnl'); renderSaasBusinessPnl();" style="width:100%; padding:13px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:none; border-radius:10px; color:#fff; font-weight:800; font-size:13px; cursor:pointer; margin-bottom:14px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+        📊 App Che Membership Nafa-Tota Khate (App P&L) ➔
+      </button>
+
+      <div class="grid-3">
+        <div class="panel-card" style="padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:800;" id="statTotalClients">0</div>
+          <div style="font-size:10px; color:var(--text-muted);">Ekun Clients</div>
+        </div>
+        <div class="panel-card" style="padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:800; color:var(--primary-blue);" id="statTotalFleet">0</div>
+          <div style="font-size:10px; color:var(--text-muted);">Ekun Machines</div>
+        </div>
+        <div class="panel-card" style="padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:800; color:var(--accent-green);" id="statTotalFeeReceived">₹ 0</div>
+          <div style="font-size:10px; color:var(--text-muted);">Monthly Turnover</div>
+        </div>
+      </div>
+
+      <div class="filter-box">
+        <input type="text" id="superAdminSearchInput" placeholder="🔍 Grahak, User ID kivha Phone number shodha..." oninput="renderSuperAdminDashboard()">
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">➕ Navin Grahak Joda (₹250/Machine Plan)</div>
+        <div class="grid-2">
+          <input type="text" id="newClientBusiness" placeholder="Vyavsayache Naav (uda. Pawar Earthmovers)">
+          <input type="text" id="newClientUser" placeholder="Login User ID (uda. pawar)">
+        </div>
+        <div class="grid-2" style="margin-top: 6px;">
+          <input type="password" id="newClientPass" placeholder="Password (uda. pawar123)">
+          <input type="tel" id="newClientPhone" placeholder="WhatsApp Number">
+        </div>
+        <div class="grid-2" style="margin-top: 6px; align-items:center;">
+          <input type="number" id="newClientMachinesCount" placeholder="Machines Sankhya" value="2" oninput="updateNewClientFeeCalc()">
+          <div style="background:#f8fafc; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-size:12px;">
+            Fee: <b id="newClientCalculatedFee" style="color:var(--accent-gold);">₹ 500</b> (@ ₹250/M)
+          </div>
+        </div>
+        <button class="btn-submit btn-amber" onclick="createNewClientAccount()">💾 Grahak Account Save Kara</button>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">📋 Grahak Yadi & Management Hub</div>
+        <div id="superAdminClientsList"></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 1.4: APP BUSINESS P&L -->
+    <div id="screenAppBusinessPnl" class="screen">
+      <button class="btn-nav" onclick="navigate('screenSuperAdmin')">⬅ Mage Ja (Super Admin Main)</button>
       
-      <div class="grid-2">
-        <div>
-          <label>कामाचे दिवस:</label>
-          <input type="number" id="custDayNumber" value="1">
-        </div>
-        <div>
-          <label>भाडे दर (₹/तास):</label>
-          <input type="number" id="custHourlyRate" value="1200" oninput="calculateOngoingRent()">
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--accent-green);">
+        <div class="profile-avatar" style="background:#e6fcf5; color:var(--accent-green);">📊</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Membership Account</div>
+          <div class="client-name">App Nafa-Tota Khate (P&L)</div>
+          <div class="client-sub">Vikram Sir Platform Revenue & Kharch</div>
         </div>
       </div>
 
-      <div class="grid-2">
-        <div>
-          <label>एकूण चाललेले तास:</label>
-          <input type="number" step="0.1" id="custTodayHours" placeholder="उदा. 15.5" oninput="calculateOngoingRent()">
+      <div class="panel-card" style="border: 1.5px solid var(--accent-green); background:#f0fdf4; margin-bottom:12px;">
+        <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">TUMCHA NIVAL APP NAFA (NET PROFIT):</div>
+        <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="saasNetProfit">₹ 0</div>
+      </div>
+
+      <div class="section-title-row">
+        <div style="font-size:16px;">⊞</div>
+        <div class="section-title">App Membership Boxes (Touch to open page)</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="grid-tiles-2x2">
+        <div class="feature-card" onclick="openSaasBoxDetailScreen('clients')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">👥</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">Ekun Clients</div>
+            <div class="card-sub-title" id="saasTotalClientsCount" style="font-size:14px; font-weight:800; color:var(--text-dark); margin-top:2px;">0 Grahak</div>
+          </div>
         </div>
-        <div>
-          <label>जमा ॲडव्हान्स (₹ Advance):</label>
-          <input type="number" id="custAdvancePaid" placeholder="उदा. 5000" value="0" oninput="calculateOngoingRent()">
+
+        <div class="feature-card" onclick="openSaasBoxDetailScreen('machines')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#f3e8ff; color:#7c3aed;">🚜</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">All Machines & Owners</div>
+            <div class="card-sub-title" id="saasTotalMachinesCount" style="font-size:14px; font-weight:800; color:var(--text-dark); margin-top:2px;">0 JCB (@ ₹250)</div>
+          </div>
+        </div>
+
+        <div class="feature-card" style="border-left: 3.5px solid var(--accent-green);" onclick="openSaasBoxDetailScreen('received')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#e6fcf5; color:#059669;">₹</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">Received Payment</div>
+            <div class="card-sub-title" id="saasFeeReceived" style="font-size:15px; font-weight:800; color:var(--accent-green); margin-top:2px;">₹ 0</div>
+          </div>
+        </div>
+
+        <div class="feature-card" style="border-left: 3.5px solid var(--accent-red);" onclick="openSaasBoxDetailScreen('pending')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#fee2e2; color:#b91c1c;">⏳</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">Pending Fee</div>
+            <div class="card-sub-title" id="saasFeePending" style="font-size:15px; font-weight:800; color:var(--accent-red); margin-top:2px;">₹ 0</div>
+          </div>
+        </div>
+
+        <div class="feature-card" style="border-left: 3.5px solid var(--accent-gold);" onclick="openSaasBoxDetailScreen('expenses')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#fef3c7; color:#d97706;">⚡</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">Server Kharch</div>
+            <div class="card-sub-title" id="saasExpenseBreakdown" style="font-size:15px; font-weight:800; color:var(--accent-red); margin-top:2px;">₹ 0</div>
+          </div>
+        </div>
+
+        <div class="feature-card" onclick="openSaasBoxDetailScreen('gross')">
+          <div class="card-top">
+            <div class="icon-badge" style="background:#e8f0fe; color:var(--primary-blue);">📑</div>
+            <span class="arrow-icon">›</span>
+          </div>
+          <div class="card-body">
+            <div class="card-main-title">Gross Turnover</div>
+            <div class="card-sub-title" id="saasGrossBilling" style="font-size:15px; font-weight:800; color:var(--primary-blue); margin-top:2px;">₹ 0</div>
+          </div>
         </div>
       </div>
 
-      <div style="background:#071022; border:2px solid #eab308; padding:12px; margin:12px 0;">
-        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
-          <span>एकूण भाडे बिल:</span><b id="liveTotalAccumulatedRent">₹ 0</b>
+      <div class="panel-card" style="margin-top:14px;">
+        <div class="panel-header">➕ App Sathi Jhalele Kharch Nondva (Server/Hosting)</div>
+        <div class="grid-2">
+          <input type="text" id="newSaasExpenseTitle" placeholder="Kharchache Naav (uda. Cloud Server)">
+          <input type="number" id="newSaasExpenseAmount" placeholder="Rakkam ₹">
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
-          <span>वजा ॲडव्हान्स रक्कम:</span><b id="liveAdvanceDeducted" style="color:#38bdf8;">₹ 0</b>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:#ef4444; border-top:1px solid #1e293b; padding-top:6px; margin-top:4px;">
-          <span>बाकी शिल्लक (Pending):</span><b id="livePartyPendingAmt">₹ 0</b>
-        </div>
-      </div>
-
-      <div class="grid-2 no-print">
-        <button class="btn-submit btn-yellow" onclick="sendInvoiceToCustomerWhatsApp()">📲 WhatsApp बिल</button>
-        <button class="btn-submit btn-blue" onclick="generatePrintableInvoiceModal()">🖨️ PDF / प्रिंट बिल</button>
-      </div>
-
-      <!-- Printable Invoice Area (Hidden until generated) -->
-      <div id="printableInvoiceModal" style="display:none;" class="invoice-box">
-        <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:8px;">
-          <h2 id="invBizName">JCB FLEET SERVICES</h2>
-          <div style="font-size:12px;">हेवी अर्थमूव्हर्स व कन्स्ट्रक्शन मशिनरी</div>
-          <div style="font-size:11px;">मोबाईल: <span id="invBizPhone">98XXXXXXXX</span></div>
-        </div>
-        <table style="width:100%; font-size:12px; margin-bottom:10px;">
-          <tr><td><b>पार्टी नाव:</b> <span id="invPartyName"></span></td><td style="text-align:right;"><b>दिनांक:</b> <span id="invDate"></span></td></tr>
-          <tr><td><b>मशीन:</b> <span id="invMachineName"></span></td><td style="text-align:right;"><b>चालक:</b> <span id="invDriverName"></span></td></tr>
-        </table>
-        <table style="width:100%; border-collapse:collapse; font-size:12px; border-top:1px solid #000; border-bottom:1px solid #000;">
-          <tr style="background:#eee;">
-            <th style="text-align:left; padding:4px;">तपशील</th>
-            <th style="text-align:center; padding:4px;">तास / दिवस</th>
-            <th style="text-align:right; padding:4px;">दर (₹)</th>
-            <th style="text-align:right; padding:4px;">एकूण (₹)</th>
-          </tr>
-          <tr>
-            <td style="padding:6px 4px;">JCB मशिन्स काम (Hour Basis)</td>
-            <td style="text-align:center;" id="invTableHours">0 तास</td>
-            <td style="text-align:right;" id="invTableRate">₹ 1200</td>
-            <td style="text-align:right;" id="invTableTotalRent">₹ 0</td>
-          </tr>
-          <tr style="border-top:1px solid #ccc;">
-            <td colspan="3" style="text-align:right; padding:4px;"><b>जमा ॲडव्हान्स रक्कम:</b></td>
-            <td style="text-align:right; color:green;" id="invTableAdvance">₹ 0</td>
-          </tr>
-          <tr style="border-top:2px solid #000; font-size:14px;">
-            <td colspan="3" style="text-align:right; padding:6px 4px;"><b>एकूण येणे बाकी (Balance):</b></td>
-            <td style="text-align:right; font-weight:bold; color:red;" id="invTableBalance">₹ 0</td>
-          </tr>
-        </table>
-        <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:11px;">
-          <div>ग्राहकाची सही</div>
-          <div>अधिकृत सही व शिक्का</div>
-        </div>
-        <button class="no-print btn-submit btn-green" style="margin-top:15px;" onclick="window.print()">🖨️ आता प्रिंट करा / Save as PDF</button>
+        <button class="btn-submit btn-amber" onclick="addSaasExpense()">💾 Kharch P&L Madhe Joda</button>
       </div>
     </div>
-  </div>
 
-  <!-- SCREEN 9: BREAKDOWN -->
-  <div id="screenBreakdown" class="screen">
-    <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ मागे जा</button>
-    <div class="card-panel">
-      <div class="card-header" style="color: #ef4444;">५. ब्रेकडाऊन अलर्ट (तात्काळ दुरुस्ती)</div>
-      <label>बिघाडाचा प्रकार निवडा:</label>
-      <select id="issueTypeInput">
-        <option value="होस पाईप लिकेज (Hydraulic Hose Leak)">होस पाईप लिकेज (Hydraulic Hose Leak)</option>
-        <option value="टायर फुटला / पंक्चर (Tyre Issue)">टायर फुटला / पंक्चर (Tyre Issue)</option>
-        <option value="इंजिन गरम झाले (Engine Heating)">इंजिन गरम झाले (Engine Heating)</option>
-        <option value="बकेट पिन/बुश अडचण (Pin Bushing)">बकेट पिन/बुश अडचण</option>
-        <option value="इतर तांत्रिक अडचण (Other Issue)">इतर तांत्रिक अडचण</option>
-      </select>
-      <label>तपशील:</label>
-      <input type="text" id="issueDetailsInput" placeholder="बिघाडाबद्दल थोडक्यात सांगा">
-      <button class="btn-submit btn-red" onclick="reportBreakdownAlert()">🚨 मालकाला तात्काळ ब्रेकडाऊन अलर्ट पाठवा</button>
+    <!-- SCREEN 1.4.1: DETAIL SCREEN -->
+    <div id="screenSaasBoxDetailPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenAppBusinessPnl')">⬅ Mage Ja (Membership Boxes)</button>
+
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--primary-blue);">
+        <div class="profile-avatar" id="saasBoxDetailAvatar">📋</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Membership Breakdown</div>
+          <div class="client-name" id="saasBoxDetailTitle">Detail Title</div>
+          <div class="client-sub" id="saasBoxDetailSub">Savistar Itemized Data</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header" id="saasBoxDetailHeader">📋 Records List</div>
+        <div id="saasBoxDetailContent"></div>
+      </div>
     </div>
+
+    <!-- SCREEN 1.5: SUPER ADMIN CLIENT DETAIL -->
+    <div id="screenSuperAdminClientDetail" class="screen">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <button class="btn-nav" style="margin:0;" onclick="navigate('screenSuperAdmin')">⬅ Mage Ja (Grahak Yadi)</button>
+        <button class="btn-nav" style="margin:0; background:var(--primary-blue); color:#fff;" onclick="superAdminDirectLogin(selectedSaClientId)">👑 Malak Dashboard ➔</button>
+      </div>
+
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--primary-blue);">
+        <div class="profile-avatar">🏢</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Grahak Management Hub</div>
+          <div class="client-name" id="saClientDetailTitle">Patil Earthmovers</div>
+          <div class="client-sub" id="saClientDetailMeta">User ID: patil</div>
+        </div>
+      </div>
+
+      <div class="panel-card" style="border:1.5px solid var(--accent-gold); background:#fffbeb;">
+        <div class="panel-header" style="color:var(--accent-gold);">➕ Ya Grahakasathi Navin Machine Joda</div>
+        <div class="grid-2">
+          <input type="text" id="saAddMachineNameInput" placeholder="Machine che naav (uda. 3. Pokland / JCB 3DX)">
+          <input type="text" id="saAddMachineDriverInput" placeholder="Chalakache naav (Driver)">
+        </div>
+        <div class="grid-2" style="margin-top:6px;">
+          <input type="password" maxlength="6" id="saAddMachinePinInput" placeholder="4-Anki Operator PIN (uda. 3333)">
+          <input type="number" id="saAddMachineRateInput" placeholder="Bhade Dar ₹/Taas (uda. 2000)" value="2000">
+        </div>
+        <button class="btn-submit btn-amber" onclick="saSaveNewMachineForClient()">💾 Hi Machine Grahakachya Fleetat Joda</button>
+      </div>
+
+      <div class="grid-tiles-2x2">
+        <div class="feature-card" onclick="openSaSection('machines')">
+          <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">🚜</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">१. Machines Control</div><div class="card-sub-title">1x1 Box Machine Yadi</div></div>
+        </div>
+
+        <div class="feature-card" onclick="openSaSection('diesel')">
+          <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">२. Diesel Ledger</div><div class="card-sub-title">Pump & Liters Data</div></div>
+        </div>
+
+        <div class="feature-card" onclick="openSaSection('pnl')">
+          <div class="card-top"><div class="icon-badge" style="background:#ede9fe; color:#6d28d9;">📊</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">३. Nafa-Tota Taleband</div><div class="card-sub-title">Billing, Kharch & Net Profit</div></div>
+        </div>
+
+        <div class="feature-card" onclick="openSaSection('salary')">
+          <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">📅</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">४. Operator Pagar</div><div class="card-sub-title">Uchhal & Salary Logs</div></div>
+        </div>
+
+        <div class="feature-card" onclick="openSaSection('billing')" style="grid-column: span 2;">
+          <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#f59e0b;">📝</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">५. Party Bhade & PDF Bill</div><div class="card-sub-title">Bill Records, Taas & Invoice</div></div>
+        </div>
+
+        <div class="feature-card" onclick="openSaSection('night')" style="grid-column: span 2;">
+          <div class="card-top"><div class="icon-badge" style="background:#ccfbf1; color:#0f766e;">🌙</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">६. Night Closing Records</div><div class="card-sub-title">Meter Reading va Kamache Taas</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 1.6: SUPER ADMIN 1X1 MACHINE LIST -->
+    <div id="screenSaMachineListPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenSuperAdminClientDetail')">⬅ Mage Ja (Section Buttons)</button>
+      <div class="panel-card">
+        <div class="panel-header">🚜 Machines List (1x1 Box - Touch karun controls ughada)</div>
+        <div id="saMachine1x1Container"></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 1.7: DEDICATED MACHINE ACTION PAGE -->
+    <div id="screenSaMachineActionPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenSaMachineListPage')">⬅ Mage Ja (1x1 Machines Yadi)</button>
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--accent-gold);">
+        <div class="profile-avatar">🚜</div>
+        <div class="profile-info">
+          <div class="client-name" id="saActionMachineTitle">1. Vikram</div>
+          <div class="client-sub" id="saActionMachineMeta">Chalak: Rahul Shinde</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">⚙️ Machine Actions & Controls</div>
+        <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+          <button id="btnSaToggleStatus" onclick="saActionToggleStatus()" class="btn-submit" style="margin-top:0;">
+            Status Badla
+          </button>
+          <button onclick="saActionChangePin()" class="btn-submit btn-blue" style="margin-top:0;">
+            🔑 Operator PIN Badla
+          </button>
+          <button onclick="saActionChangeDriver()" class="btn-submit btn-amber" style="margin-top:0;">
+            👷 Chalak / Driver Che Naav Badla
+          </button>
+          <button onclick="saActionDeleteMachine()" class="btn-submit btn-red" style="margin-top:0;">
+            🗑️ Hi Machine Kayamchi Delete Kara
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: CLIENT OWNER MAIN HUB -->
+    <div id="screenClientOwner" class="screen">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <button class="btn-nav" style="margin:0;" id="ownerBackBtn" onclick="handleOwnerBackNavigation()">🔒 Logout</button>
+        <button class="btn-nav" style="margin:0; background:var(--primary-blue); color:#fff;" onclick="navigateOwnerProtected('screenClientMachines')">🚜 Operator View ➔</button>
+      </div>
+
+      <div class="profile-welcome-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Welcome</div>
+          <div class="client-name" id="ownerClientTitle">SK Palashi (Patil)</div>
+          <div class="client-sub" id="ownerSubDaysLeft">Code: 35 • 30 Divas Baki</div>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <div style="font-size:16px;">⊞</div>
+        <div class="section-title">Entries</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="grid-tiles-2x2">
+        <div class="feature-card" onclick="navigateOwnerProtected('screenOwnerMachinesPage')">
+          <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">🚜</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Machines Console</div>
+            <div class="card-sub-title" id="menuMachinesCountBadge">2 Machines</div>
+          </div>
+        </div>
+
+        <div class="feature-card" onclick="navigateOwnerProtected('screenDieselLedger')">
+          <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Diesel & Pump</div>
+            <div class="card-sub-title" id="menuDieselLtrBadge">0 Ltr</div>
+          </div>
+        </div>
+
+        <div class="feature-card" onclick="navigateOwnerProtected('screenDayByDayPage')">
+          <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">₹</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Advance / Pagar</div>
+            <div class="card-sub-title">Advance entries</div>
+          </div>
+        </div>
+
+        <div class="feature-card" onclick="navigateOwnerProtected('screenNightClosingPage')">
+          <div class="card-top"><div class="icon-badge" style="background:#f3e8ff; color:#7c3aed;">🌙</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Night Closing</div>
+            <div class="card-sub-title">Reading & Taas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title-row" style="margin-top: 20px;">
+        <div style="font-size:16px;">📄</div>
+        <div class="section-title">Reports</div>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="grid-tiles-2x2">
+        <div class="feature-card" onclick="navigateOwnerProtected('screenOwnerBillingPage'); openOwnerBillingPage();">
+          <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">📑</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Party Bill (PDF)</div>
+            <div class="card-sub-title">Date-wise auto sum</div>
+          </div>
+        </div>
+
+        <div class="feature-card" onclick="navigateOwnerProtected('screenProfitLossPage')">
+          <div class="card-top"><div class="icon-badge" style="background:#ede9fe; color:#6d28d9;">📊</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Nafa-Tota Taleband</div>
+            <div class="card-sub-title" id="menuNetProfitBadge">₹ 0.00 Net</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card" style="margin-top: 20px;">
+        <div class="panel-header">🔐 Security Vault (Password Badla)</div>
+        <div class="grid-2" style="margin-bottom:0;">
+          <input type="password" id="clientChangeNewPass" placeholder="Navin Password">
+          <button class="btn-submit btn-blue" style="margin-top:0;" onclick="handleClientChangePassword()">Update</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 1: MACHINES CONSOLE -->
+    <div id="screenOwnerMachinesPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">🚜 FLEET SUMMARY</div>
+        <div class="grid-3" style="text-align:center;">
+          <div><div style="font-size:11px; color:var(--text-muted);">Ekun</div><b id="fleetTotalMachinesCount">0</b></div>
+          <div><div style="font-size:11px; color:var(--text-muted);">Aaj Taas</div><b id="fleetTotalHoursToday" style="color:var(--primary-blue);">0.0</b></div>
+          <div><div style="font-size:11px; color:var(--text-muted);">Service Due</div><b id="fleetTotalServiceDueCount" style="color:var(--accent-red);">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel-card" style="border:1.5px solid var(--primary-blue);">
+        <div class="panel-header" style="color:var(--primary-blue);">➕ Navin Machine Joda</div>
+        <div class="grid-2">
+          <input type="text" id="ownerAddMachineNameInput" placeholder="Machine che naav (uda. JCB 3DX)">
+          <input type="text" id="ownerAddMachineDriverInput" placeholder="Chalakache naav (Driver)">
+        </div>
+        <div class="grid-2" style="margin-top:6px;">
+          <input type="password" maxlength="6" id="ownerAddMachinePinInput" placeholder="4-Anki Operator PIN">
+          <input type="number" id="ownerAddMachineRateInput" placeholder="Bhade Dar ₹/Taas" value="2000">
+        </div>
+        <button class="btn-submit btn-blue" onclick="ownerSaveNewMachine()">💾 Machine Save Kara</button>
+      </div>
+
+      <div id="clientOwnerMachinesList" class="grid-tiles-2x2"></div>
+    </div>
+
+    <!-- PAGE 2: DIESEL & PUMP LEDGER -->
+    <div id="screenDieselLedger" class="screen">
+      <button class="btn-nav" id="btnBackDiesel" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">⛽ Diesel & Pump Ledger</div>
+        <div class="grid-2">
+          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Ekun Diesel</div>
+            <div style="font-size:16px; font-weight:800; color:var(--primary-blue);" id="detailDieselLiters">0 Ltr</div>
+          </div>
+          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Ekun Bill</div>
+            <div style="font-size:16px; font-weight:800;" id="detailDieselTotalBill">₹ 0</div>
+          </div>
+          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Paid Rakkam</div>
+            <div style="font-size:16px; font-weight:800; color:var(--accent-green);" id="detailDieselPaid">₹ 0</div>
+          </div>
+          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Pump Baki</div>
+            <div style="font-size:16px; font-weight:800; color:var(--accent-red);" id="detailDieselPending">₹ 0</div>
+          </div>
+        </div>
+
+        <div class="filter-box" style="margin-top:12px;">
+          <input type="text" id="dieselSearchInput" placeholder="🔍 Pump, Machine kivha Chalak shodha..." oninput="renderFullDieselEntriesList()">
+          <div style="display:flex; gap:6px; margin:8px 0;">
+            <button class="quick-chip" onclick="setQuickDateFilter('diesel', 'all')">Sarv</button>
+            <button class="quick-chip active" onclick="setQuickDateFilter('diesel', 'last30')">📅 Magil 30 Divas</button>
+          </div>
+          <div class="grid-2" style="margin-bottom:0;">
+            <input type="date" id="dieselFromDate" onchange="renderFullDieselEntriesList()">
+            <input type="date" id="dieselToDate" onchange="renderFullDieselEntriesList()">
+          </div>
+        </div>
+
+        <div class="panel-card" style="background:#f8fafc; border:1px solid #e2e8f0; margin-bottom:12px;">
+          <div style="font-size:12px; font-weight:800; color:var(--text-dark); margin-bottom:6px;">💳 Pump Payment Jama Nond:</div>
+          <div class="grid-2">
+            <input type="number" id="pumpPaymentAmountInput" placeholder="Jama Rakkam ₹">
+            <input type="text" id="pumpPaymentRemarkInput" placeholder="Shera (PhonePe / Cash)">
+          </div>
+          <button class="btn-submit btn-green" onclick="addPumpPayment()">✅ Payment Save Kara</button>
+        </div>
+
+        <div id="fullDieselEntriesListContainer"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: PROFIT & LOSS -->
+    <div id="screenProfitLossPage" class="screen">
+      <button class="btn-nav" id="btnBackPnl" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="filter-box">
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button class="quick-chip" onclick="setQuickDateFilter('pnl', 'all')">Sarv Data</button>
+          <button class="quick-chip active" onclick="setQuickDateFilter('pnl', 'last30')">📅 Magil 30 Divas</button>
+        </div>
+        <div class="grid-2" style="margin-bottom:0;">
+          <input type="date" id="pnlFromDate" onchange="renderProfitAndLossOverview()">
+          <input type="date" id="pnlToDate" onchange="renderProfitAndLossOverview()">
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">📊 Nafa-Tota Taleband (P&L)</div>
+        <div class="grid-2">
+          <div style="background:#f8fafc; padding:10px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted);">Ekun Kamai:</div>
+            <div style="font-size:16px; font-weight:800; color:var(--accent-gold);" id="pnlTotalIncomeDisplay">₹ 0.00</div>
+          </div>
+          <div style="background:#f8fafc; padding:10px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted);">Ekun Kharch:</div>
+            <div style="font-size:16px; font-weight:800; color:var(--accent-red);" id="pnlTotalExpenseDisplay">₹ 0.00</div>
+          </div>
+        </div>
+
+        <div style="background:#e6fcf5; border:1px solid #10b981; border-radius:10px; padding:12px; margin:12px 0;">
+          <div style="font-size:11px; color:var(--text-muted);">NIVAL NAFA (NET PROFIT):</div>
+          <div style="font-size:22px; font-weight:900; color:var(--accent-green);" id="pnlNetProfitDisplay">₹ 0.00</div>
+        </div>
+
+        <div class="pnl-row"><span>Ekun Taas:</span><b id="pnlBreakdownTotalHours">0.0 Taas</b></div>
+        <div class="pnl-row"><span>Machine Kamai:</span><b id="pnlBreakdownGrossBilling">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Diesel Kharch:</span><b id="pnlBreakdownDieselCost" style="color:var(--accent-red);">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Operator Uchhal / Advance:</span><b id="pnlBreakdownDriverAdvances" style="color:var(--accent-red);">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Itar Durusti Kharch:</span><b id="pnlBreakdownOtherExpenses" style="color:var(--accent-red);">₹ 0.00</b></div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">➕ Navin Kharch Nondva (Oil/Filter)</div>
+        <div class="grid-2">
+          <input type="text" id="newExpenseTitleInput" placeholder="Kharchache Naav">
+          <input type="number" id="newExpenseAmountInput" placeholder="Rakkam ₹">
+        </div>
+        <button class="btn-submit btn-amber" onclick="addNewPnlExpenseEntry()">💾 Kharch Save Kara</button>
+      </div>
+    </div>
+
+    <!-- PAGE 4: OPERATOR PAGAR & DAY BY DAY WORKING -->
+    <div id="screenDayByDayPage" class="screen">
+      <button class="btn-nav" id="btnBackSalary" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">👷 Operator Pagar & Uchhal Khate</div>
+        <div id="operatorSalarySummaryList"></div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">📅 Day by Day Working</div>
+        <div class="filter-box">
+          <input type="text" id="dailyWorkSearchInput" placeholder="🔍 Party kivha Chalak shodha..." oninput="renderDayByDayWorking()">
+          <div style="display:flex; gap:6px; margin:8px 0;">
+            <button class="quick-chip" onclick="setQuickDateFilter('daily', 'all')">Sarv</button>
+            <button class="quick-chip active" onclick="setQuickDateFilter('daily', 'last30')">📅 Magil 30 Divas</button>
+          </div>
+          <div class="grid-2" style="margin-bottom:0;">
+            <input type="date" id="dailyFromDate" onchange="renderDayByDayWorking()">
+            <input type="date" id="dailyToDate" onchange="renderDayByDayWorking()">
+          </div>
+        </div>
+        <div id="dayByDayWorkingContainer"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 4.5: INDIVIDUAL DRIVER LEDGER & UCHHAL PAGE -->
+    <div id="screenDriverLedgerPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenDayByDayPage')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header" id="ledgerDriverNameTitle">👷 Operator Pagar Khate</div>
+        <div class="grid-2">
+          <div style="background:#f8fafc; padding:8px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Tharlela Pagar</div>
+            <b id="ledgerDriverBasicSalary">₹ 0</b>
+          </div>
+          <div style="background:#f8fafc; padding:8px; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:var(--text-muted);">Ghetleli Uchhal</div>
+            <b id="ledgerDriverTotalUchhal" style="color:var(--accent-red);">₹ 0</b>
+          </div>
+        </div>
+        <div style="background:#e6fcf5; padding:10px; border-radius:8px; text-align:center; margin:10px 0;">
+          <div style="font-size:11px; color:var(--text-muted);">Hatat Shillak (Net Bal)</div>
+          <b id="ledgerDriverNetBalance" style="color:var(--accent-green); font-size:16px;">₹ 0</b>
+        </div>
+
+        <div class="panel-card" style="background:#f8fafc; border:1px solid #e2e8f0;">
+          <div style="font-size:12px; font-weight:800; margin-bottom:6px;">💵 Navin Uchhal Nondva:</div>
+          <div class="grid-2">
+            <input type="number" id="newUchhalAmountInput" placeholder="Rakkam ₹">
+            <input type="text" id="newUchhalRemarkInput" placeholder="Shera (PhonePe/Cash)">
+          </div>
+          <button class="btn-submit btn-green" onclick="addDriverUchhalEntry()">✅ Uchhal Nondva</button>
+        </div>
+        <div id="driverUchhalHistoryList"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: NIGHT CLOSING -->
+    <div id="screenNightClosingPage" class="screen">
+      <button class="btn-nav" id="btnBackNight" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">🌙 Night Closing (Reading & Taas)</div>
+        <div class="filter-box">
+          <input type="text" id="nightSearchInput" placeholder="🔍 Machine kivha Chalak shodha..." oninput="renderNightClosingMachineWise()">
+          <div style="display:flex; gap:6px; margin:8px 0;">
+            <button class="quick-chip" onclick="setQuickDateFilter('night', 'all')">Sarv</button>
+            <button class="quick-chip active" onclick="setQuickDateFilter('night', 'last30')">📅 Magil 30 Divas</button>
+          </div>
+          <div class="grid-2" style="margin-bottom:0;">
+            <input type="date" id="nightFromDate" onchange="renderNightClosingMachineWise()">
+            <input type="date" id="nightToDate" onchange="renderNightClosingMachineWise()">
+          </div>
+        </div>
+        <div id="nightClosingMachineWiseList"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 6: OWNER BILLING -->
+    <div id="screenOwnerBillingPage" class="screen">
+      <button class="btn-nav no-print" id="btnBackBilling" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">📝 Party Bhade Hishob & PDF Bill</div>
+        <div class="grid-2">
+          <div>
+            <label>Machine:</label>
+            <select id="billMachineSelect" onchange="autoLoadPartiesForSelectedMachine()"></select>
+          </div>
+          <div>
+            <label>Party:</label>
+            <select id="billPartySelect" onchange="calculateAutoAccumulatedHours()"></select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <input type="text" id="billingPartySearchBox" placeholder="🔍 Party type karun shodha..." oninput="filterBillingPartiesList()">
+        </div>
+
+        <div style="background:#e8f0fe; padding:10px; border-radius:8px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px;">
+            <span>Kaam Divas:</span><b id="billAutoDaysCount">0 Divas</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:2px;">
+            <span>Ekun Taas (Auto Sum):</span><b id="billAutoHoursTotal" style="color:var(--primary-blue);">0.0 Taas</b>
+          </div>
+        </div>
+
+        <label>WhatsApp Number:</label>
+        <input type="tel" id="custPhoneInput" placeholder="98XXXXXXXX">
+
+        <div class="grid-2">
+          <div>
+            <label>Dar (₹/Taas):</label>
+            <input type="number" id="custHourlyRate" value="2000" oninput="calculateOngoingRent()">
+          </div>
+          <div>
+            <label>Ekun Taas:</label>
+            <input type="number" step="0.1" id="custTodayHours" oninput="calculateOngoingRent()">
+          </div>
+        </div>
+
+        <label>Advance (₹):</label>
+        <input type="number" id="custAdvancePaid" value="0" oninput="calculateOngoingRent()">
+
+        <div style="background:#f8fafc; padding:12px; border-radius:8px; margin:12px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:13px;">
+            <span>Ekun Bill:</span><b id="liveTotalAccumulatedRent">₹ 0</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:4px;">
+            <span>Vaja Advance:</span><b id="liveAdvanceDeducted" style="color:var(--primary-blue);">₹ 0</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:var(--accent-red); margin-top:6px; border-top:1px solid #e2e8f0; padding-top:6px;">
+            <span>Baki Shillak:</span><b id="livePartyPendingAmt">₹ 0</b>
+          </div>
+        </div>
+
+        <div class="grid-2 no-print">
+          <button class="btn-submit btn-amber" onclick="sendInvoiceToCustomerWhatsApp()">📲 WhatsApp Bill</button>
+          <button class="btn-submit btn-blue" onclick="generatePrintableInvoiceModal()">🖨️ PDF Bill</button>
+        </div>
+
+        <div id="printableInvoiceModal" style="display:none;" class="invoice-box">
+          <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:6px; margin-bottom:8px;">
+            <h2 id="invBizName">JCB SERVICES</h2>
+            <div style="font-size:12px;">Machinery Tax Invoice</div>
+          </div>
+          <table style="width:100%; font-size:12px; margin-bottom:8px;">
+            <tr><td><b>Party:</b> <span id="invPartyName"></span></td><td style="text-align:right;"><b>Date:</b> <span id="invDate"></span></td></tr>
+            <tr><td><b>Machine:</b> <span id="invMachineName"></span></td><td style="text-align:right;"><b>Kalavadhi:</b> <span id="invDaysCount"></span></td></tr>
+          </table>
+          <table style="width:100%; border-collapse:collapse; font-size:12px; border-top:1px solid #000; border-bottom:1px solid #000;">
+            <tr style="background:#eee;">
+              <th style="text-align:left; padding:4px;">Tapshil</th>
+              <th style="text-align:center;">Taas</th>
+              <th style="text-align:right;">Dar</th>
+              <th style="text-align:right;">Ekun</th>
+            </tr>
+            <tr>
+              <td style="padding:6px 4px;">JCB Excavation Work</td>
+              <td style="text-align:center;" id="invTableHours">0</td>
+              <td style="text-align:right;" id="invTableRate">₹ 2000</td>
+              <td style="text-align:right;" id="invTableTotalRent">₹ 0</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align:right; padding:4px;"><b>Vaja Advance:</b></td>
+              <td style="text-align:right; color:green;" id="invTableAdvance">₹ 0</td>
+            </tr>
+            <tr style="font-size:14px; font-weight:bold; border-top:1px solid #000;">
+              <td colspan="3" style="text-align:right; padding:6px 4px;"><b>Baki Balance:</b></td>
+              <td style="text-align:right; color:red;" id="invTableBalance">₹ 0</td>
+            </tr>
+          </table>
+          <button class="no-print btn-submit btn-green" style="margin-top:10px;" onclick="window.print()">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: OPERATOR MACHINE SELECT -->
+    <div id="screenClientMachines" class="screen">
+      <button class="btn-nav" onclick="navigateOwnerProtected('screenClientOwner')">⬅ Malak Dashboard</button>
+      <div id="clientFleetContainer" class="grid-tiles-2x2"></div>
+    </div>
+
+    <!-- SCREEN 4: OPERATOR ACTIONS CONSOLE -->
+    <div id="screenOpMenu" class="screen">
+      <button class="btn-nav" onclick="logoutSession()">⬅ Logout</button>
+      
+      <div class="profile-welcome-card" style="margin-bottom:10px;">
+        <div class="profile-avatar">🚜</div>
+        <div class="profile-info">
+          <div class="welcome-lbl">Driver Session</div>
+          <div class="client-name" id="opMachineName">1. Vikram</div>
+          <div class="client-sub" id="opDriverTitle">Rahul Shinde</div>
+        </div>
+      </div>
+
+      <div class="party-banner-card">
+        <div>
+          <div style="font-size:10.5px; color:#047857; font-weight:700; text-transform:uppercase;">Konachyat Kaam Chalu Ahe:</div>
+          <div id="opActiveCustomer" style="font-size:15px; font-weight:900; color:#065f46; margin-top:2px;">Amol Patil</div>
+        </div>
+        <button onclick="promptSwitchActiveParty()" style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+          🔄 Party Badla
+        </button>
+      </div>
+
+      <div class="grid-tiles-2x2">
+        <div class="feature-card" onclick="openMorningScreen()">
+          <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">📸</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">१. Sakal Reading</div><div class="card-sub-title">Start meter & party</div></div>
+        </div>
+        <div class="feature-card" onclick="navigate('screenDiesel')">
+          <div class="card-top"><div class="icon-badge" style="background:#e6fcf5;">⛽</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">२. Diesel Nond</div><div class="card-sub-title">Pump & Liters</div></div>
+        </div>
+        <div class="feature-card" onclick="navigate('screenEvening')">
+          <div class="card-top"><div class="icon-badge" style="background:#fef3c7;">🛑</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">३. Shift Close</div><div class="card-sub-title">End meter & trips</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: MORNING READING -->
+    <div id="screenMorning" class="screen">
+      <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">
+          <span>१. Sakalche Reading (Shift Start)</span>
+          <button onclick="promptAddNewPartyOperator()" style="background:var(--accent-gold); color:#000; border:none; padding:5px 9px; font-weight:800; font-size:11px; border-radius:6px; cursor:pointer;">
+            ➕ Navin Party Joda
+          </button>
+        </div>
+
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px; margin-bottom:12px;">
+          <label style="color:#047857; margin-top:0;">Konachyat Kaam Chalu Ahe (Chaloo Party):</label>
+          <select id="morningPartySelect" onchange="handleMorningPartySelectChange()" style="margin-top:4px; font-weight:bold; color:#065f46;"></select>
+        </div>
+
+        <label>Kamache Thikan / Swaroop:</label>
+        <input type="text" id="morningWorkTypeInput" placeholder="uda. Shettale / Vihir / Mati Kaam">
+
+        <label>Hour Meter Reading:</label>
+        <input type="number" step="0.1" id="startReadingInput" placeholder="4520.0">
+        
+        <button class="btn-submit btn-green" onclick="saveMorningShift()">Sakalchi Nond Save Kara</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: DIESEL ENTRY -->
+    <div id="screenDiesel" class="screen">
+      <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">२. Diesel Nond</div>
+        
+        <label>Petrol Pump Nivada:</label>
+        <select id="dieselPumpSelect" onchange="toggleCustomPumpInput()">
+          <option value="Indian Oil">Indian Oil</option>
+          <option value="Bharat Petroleum">Bharat Petroleum</option>
+          <option value="HP Petroleum">HP Petroleum</option>
+          <option value="Reliance Pump">Reliance Pump</option>
+          <option value="OTHER">Itar (Nav type kara)</option>
+        </select>
+
+        <div id="customPumpInputWrapper" style="display:none; margin-top:6px;">
+          <label>Itar Pump Che Naav:</label>
+          <input type="text" id="dieselCustomPumpNameInput" placeholder="Pump che naav type kara">
+        </div>
+
+        <label>Dar (₹ Rate/Ltr):</label>
+        <input type="number" step="0.01" id="dieselRateInput" value="98.80" oninput="calculateDieselFromCostOrLiters('rate')">
+        <div class="grid-2">
+          <div><label>Bill (₹):</label><input type="number" step="0.01" id="dieselCostInput" oninput="calculateDieselFromCostOrLiters('cost')"></div>
+          <div><label>Liters:</label><input type="number" step="0.01" id="dieselLitersInput" oninput="calculateDieselFromCostOrLiters('liters')"></div>
+        </div>
+        <label>Dilele Cash (₹):</label>
+        <input type="number" step="0.01" id="dieselPaidInput" value="0">
+        <button class="btn-submit btn-blue" onclick="submitDieselEntry()">Save Kara</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 7: EVENING CLOSING -->
+    <div id="screenEvening" class="screen">
+      <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">३. Sandhyakalche Reading (Shift Close)</div>
+
+        <div style="background:#e8f0fe; padding:8px 10px; border-radius:6px; margin-bottom:10px; font-size:12px;">
+          <span>Chaloo Kaam Party: </span><b id="eveningPartyDisplayName" style="color:var(--primary-blue);">Amol Patil</b>
+        </div>
+
+        <label>Sakal Reading:</label>
+        <input type="number" step="0.1" id="shiftStartReading">
+
+        <label>Band Reading:</label>
+        <input type="number" step="0.1" id="shiftEndReading" oninput="calculateShiftHours()">
+
+        <div style="background:#f8fafc; padding:8px; margin:8px 0; border-radius:6px;">
+          <span style="font-size:11px; color:var(--text-muted);">Chalalele Taas:</span>
+          <b id="shiftCalculatedHours" style="color:var(--accent-green); margin-left:6px;">0.0 Taas</b>
+        </div>
+
+        <label>Dumper Pherya (Trips):</label>
+        <input type="number" id="shiftTripsInput" placeholder="uda. 18">
+
+        <button class="btn-submit btn-amber" onclick="submitEveningShiftWhatsApp()">Shift Close Kara</button>
+      </div>
+    </div>
+
   </div>
 
+  <!-- JAVASCRIPT MASTER AUTO & AUTO-LOGIN ENGINE -->
   <script>
-    // ========================================================
-    // १. FIREBASE CONFIGURATION
-    // ========================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9upkHBBr659Ob3K7TudoC9i-H1PwfOFo",
-      authDomain: "jcb-fleet-system.firebaseapp.com",
-      databaseURL: "https://jcb-fleet-system-default-rtdb.firebaseio.com",
-      projectId: "jcb-fleet-system",
-      storageBucket: "jcb-fleet-system.appspot.com"
-    };
+    function navigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo(0, 0);
+      }
+    }
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // सुपर ॲडमिन (विक्रम सर)
-    const SUPER_ADMIN = {
-      user: "vikram_admin",
-      pass: "vikram123"
-    };
-
-    // ३ कायमस्वरूपी ग्राहक (डिफॉल्ट सबस्क्रिप्शन ३० दिवस)
-    const nowTimestamp = new Date();
-    const future30Days = new Date(nowTimestamp.getTime() + (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+    const SUPER_ADMIN = { user: "vikram_admin", pass: "vikram123" };
 
     const HARDCODED_CLIENTS = [
       {
         id: "CLIENT-01",
-        businessName: "पाटील अर्थमूव्हर्स (पुणे)",
+        businessName: "SK Palashi (Patil)",
         user: "patil",
         pass: "patil123",
         phone: "9822011111",
         status: "ACTIVE",
-        subscriptionExpiry: future30Days,
+        subscriptionExpiry: "2026-11-08",
+        paidMachinesCount: 2,
         fleet: [
-          { id: "M1", name: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", pin: "1111", totalHours: 4528.0, lastServiceHour: 4300.0, hoursToday: 7.5, activeParty: "अमोल पाटील", monthlySalary: 18000 },
-          { id: "M2", name: "JCB 3DX Plus (MH-12-CD-5678)", driver: "सचिन कदम", pin: "2222", totalHours: 2890.0, lastServiceHour: 2750.0, hoursToday: 8.0, activeParty: "हायवे साईट 4", monthlySalary: 18000 }
+          { 
+            id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE",
+            totalHours: 4528.0, lastServiceHour: 4300.0, hoursToday: 7.5, activeParty: "Amol Patil", 
+            monthlySalary: 22000, defaultHourlyRate: 2000,
+            advanceHistory: [{ date: "02/10/2026", amount: 2000, remark: "Gharkharch" }]
+          },
+          { 
+            id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE",
+            totalHours: 2890.0, lastServiceHour: 2750.0, hoursToday: 8.0, activeParty: "Highway Site", 
+            monthlySalary: 15000, defaultHourlyRate: 1800,
+            advanceHistory: [{ date: "03/10/2026", amount: 1000, remark: "Rokh" }]
+          }
+        ],
+        dieselHistory: [
+          { date: "07/10/2026", pump: "Bharat Petroleum", machine: "1. Vikram", driver: "Rahul Shinde", liters: 100.0, rate: 98.80, cost: 9880.0, paid: 5000.0, pending: 4880.0 }
         ],
         operatorHistory: [
-          { date: "04/10/2026", time: "18:30", machine: "JCB 3DX (MH-12-AB-1234)", driver: "राहुल शिंदे", party: "अमोल पाटील", work: "शेततळे खोदणे", startMeter: 4520.0, endMeter: 4527.5, hours: 7.5, trips: 14, diesel: "38 Ltr", batta: 300 }
-        ]
-      },
-      {
-        id: "CLIENT-02",
-        businessName: "कदम जेसीबी सर्व्हिसेस (सातारा)",
-        user: "kadam",
-        pass: "kadam123",
-        phone: "9822022222",
-        status: "ACTIVE",
-        subscriptionExpiry: future30Days,
-        fleet: [
-          { id: "M1", name: "JCB 4DX Excavator (MH-11-Q-9900)", driver: "विकास मोरे", pin: "1111", totalHours: 3200.0, lastServiceHour: 3000.0, hoursToday: 6.0, activeParty: "शेततळे काम", monthlySalary: 20000 }
+          { date: "01/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.0, hourlyRate: 2000, startMeter: 4500.0, endMeter: 4508.0 },
+          { date: "02/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.5, hourlyRate: 2000, startMeter: 4508.0, endMeter: 4516.5 },
+          { date: "07/10/2026", machine: "2. Gold man", driver: "Sachin Kadam", party: "Highway Site", hours: 8.0, hourlyRate: 1800, startMeter: 2882.0, endMeter: 2890.0 }
         ],
-        operatorHistory: []
-      },
-      {
-        id: "CLIENT-03",
-        businessName: "पवार कन्स्ट्रक्शन (नाशिक)",
-        user: "pawar",
-        pass: "pawar123",
-        phone: "9822033333",
-        status: "ACTIVE",
-        subscriptionExpiry: future30Days,
-        fleet: [
-          { id: "M1", name: "JCB 3DX (MH-15-XY-5555)", driver: "गणेश पवार", pin: "1111", totalHours: 1980.0, lastServiceHour: 1750.0, hoursToday: 5.0, activeParty: "विहीर काम", monthlySalary: 17000 }
-        ],
-        operatorHistory: []
+        otherExpenses: [{ date: "04/10/2026", title: "Oil Filter", amount: 1800 }]
       }
     ];
 
-    let clientsDatabase = JSON.parse(localStorage.getItem('jcb_fleet_db_v5')) || HARDCODED_CLIENTS;
+    let clientsDatabase = JSON.parse(localStorage.getItem('jcb_fleet_db_master_v45')) || HARDCODED_CLIENTS;
+    let saasExpensesDatabase = JSON.parse(localStorage.getItem('jcb_saas_expenses_v45')) || [
+      { title: "Cloud Hosting & Server", amount: 500, date: "01/10/2026" }
+    ];
+
     let currentSessionClient = null;
     let currentSessionMachine = null;
-
-    // Firebase Listener
-    db.ref('clients').on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data && Array.isArray(data) && data.length > 0) {
-        clientsDatabase = data;
-      } else if (data && typeof data === 'object') {
-        clientsDatabase = Object.values(data);
-      } else {
-        clientsDatabase = HARDCODED_CLIENTS;
-        db.ref('clients').set(HARDCODED_CLIENTS);
-      }
-
-      localStorage.setItem('jcb_fleet_db_v5', JSON.stringify(clientsDatabase));
-      checkSubscriptionAutoLock();
-
-      if (document.getElementById('screenSuperAdmin').classList.contains('active')) {
-        renderSuperAdminDashboard();
-      }
-      if (currentSessionClient) {
-        const updated = clientsDatabase.find(c => c.id === currentSessionClient.id);
-        if (updated) {
-          currentSessionClient = updated;
-          renderClientOwnerView();
-        }
-      }
-    });
+    let isOwnerLoggedIn = false;
+    let isSuperAdminImpersonating = false;
+    let selectedSaClientId = null;
+    let activeSaMachineIdx = null;
+    let selectedLedgerDriverIdx = null;
 
     function syncDataToCloud() {
-      localStorage.setItem('jcb_fleet_db_v5', JSON.stringify(clientsDatabase));
-      if (navigator.onLine) {
-        db.ref('clients').set(clientsDatabase);
-        document.getElementById('systemStateBadge').innerText = "CLOUD ACTIVE";
-        document.getElementById('systemStateBadge').style.background = "#22c55e";
-      } else {
-        document.getElementById('systemStateBadge').innerText = "OFFLINE SAVED";
-        document.getElementById('systemStateBadge').style.background = "#eab308";
-      }
+      localStorage.setItem('jcb_fleet_db_master_v45', JSON.stringify(clientsDatabase));
+      localStorage.setItem('jcb_saas_expenses_v45', JSON.stringify(saasExpensesDatabase));
+      updateNotificationBellDot();
     }
 
-    window.addEventListener('online', () => {
-      db.ref('clients').set(clientsDatabase);
-      document.getElementById('systemStateBadge').innerText = "CLOUD ACTIVE";
-      document.getElementById('systemStateBadge').style.background = "#22c55e";
-    });
-
-    // ========================================================
-    // सबस्क्रिप्शन ऑटो-लॉक चेकर
-    // ========================================================
-    function checkSubscriptionAutoLock() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      let updated = false;
+    function runAutoSubscriptionEngine() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
       clientsDatabase.forEach(c => {
-        if (c.subscriptionExpiry && c.subscriptionExpiry < todayStr) {
-          if (c.status === "ACTIVE") {
-            c.status = "LOCKED";
-            updated = true;
-          }
-        }
+        if (!c.subscriptionExpiry) c.subscriptionExpiry = "2026-11-08";
+        const expDate = new Date(c.subscriptionExpiry);
+        expDate.setHours(0, 0, 0, 0);
+
+        const diffTime = expDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        c.daysRemaining = diffDays;
+
+        if (diffDays <= 0) c.status = "LOCKED";
+        else if (c.status !== "MANUAL_LOCK") c.status = "ACTIVE";
       });
-      if (updated && navigator.onLine) db.ref('clients').set(clientsDatabase);
+      syncDataToCloud();
     }
 
-    function togglePasswordVisibility(inputId, btnId) {
-      const passInput = document.getElementById(inputId);
-      const eyeBtn = document.getElementById(btnId);
-      if (passInput.type === "password") {
-        passInput.type = "text";
-        eyeBtn.innerText = "🙈";
-      } else {
-        passInput.type = "password";
-        eyeBtn.innerText = "👁️";
+    // ========================================================
+    // 🔔 NOTIFICATION SYSTEM (ROLE-BASED: FAKT VIKRAM SIR / ADMIN LA DISNAR)
+    // ========================================================
+    function updateNotificationBellDot() {
+      const dot = document.getElementById('notifBadgeDot');
+      if (!dot) return;
+
+      const savedSession = JSON.parse(localStorage.getItem('jcb_active_session_v45'));
+      const isSuperAdminUser = savedSession && savedSession.type === 'OWNER' && savedSession.isSuperAdmin;
+
+      // Sadharana malak/driver na dot disu naye
+      if (!isSuperAdminUser) {
+        dot.style.display = 'none';
+        return;
+      }
+
+      let hasAlerts = false;
+      clientsDatabase.forEach(c => {
+        const fCount = (c.fleet || []).length;
+        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+        if (fCount > pCount) hasAlerts = true;
+        if (c.daysRemaining !== undefined && c.daysRemaining <= 3) hasAlerts = true;
+      });
+
+      dot.style.display = hasAlerts ? 'block' : 'none';
+    }
+
+    function toggleNotificationModal(show) {
+      const modal = document.getElementById('notificationModal');
+      modal.style.display = show ? 'flex' : 'none';
+    }
+
+    function openNotificationModal() {
+      const listContainer = document.getElementById('notificationListContainer');
+      listContainer.innerHTML = '';
+
+      const savedSession = JSON.parse(localStorage.getItem('jcb_active_session_v45'));
+      const isSuperAdminUser = savedSession && savedSession.type === 'OWNER' && savedSession.isSuperAdmin;
+
+      // JAR SADHA MALAK KIVHA DRIVER ASEL TAR FAKT TYANCHYA MACHINE CEH NOTIFICATION DISNAR
+      if (!isSuperAdminUser) {
+        listContainer.innerHTML = `
+          <div style="text-align:center; padding:16px 10px;">
+            <div style="font-size:26px;">🚜</div>
+            <div style="font-size:13px; font-weight:bold; margin-top:4px;">Tumche Account Surakshit Ahe!</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Malak / Driver view madhe system alert nahi.</div>
+          </div>
+        `;
+        toggleNotificationModal(true);
+        return;
+      }
+
+      // FAKT SUPER ADMIN (VIKRAM SIR) SATHI SARV CLIENTS CHE LIVE ALERTS
+      let hasAlerts = false;
+
+      clientsDatabase.forEach(c => {
+        const fCount = (c.fleet || []).length;
+        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+        const pendAmt = Math.max(0, (fCount - pCount) * 250);
+
+        // 1. Pending fee alert
+        if (pendAmt > 0) {
+          hasAlerts = true;
+          listContainer.innerHTML += `
+            <div style="background:#fee2e2; border-left:4px solid var(--accent-red); padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px;">
+              <b style="color:#b91c1c;">⚠️ Pending Fee Alert:</b> <b>${c.businessName}</b>
+              <div style="margin-top:2px;">Baki Rakkam: <b style="color:#b91c1c;">₹${pendAmt}</b> (${fCount - pCount} Navin / Baki Machines)</div>
+              <div style="font-size:11px; color:#64748b; margin-top:2px;">User ID: ${c.user} | Phone: ${c.phone}</div>
+            </div>
+          `;
+        }
+
+        // 2. Expiry alert
+        if (c.daysRemaining !== undefined && c.daysRemaining <= 3 && c.daysRemaining > 0) {
+          hasAlerts = true;
+          listContainer.innerHTML += `
+            <div style="background:#fef3c7; border-left:4px solid var(--accent-gold); padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px;">
+              <b style="color:#b45309;">⏳ Expiry Alert:</b> <b>${c.businessName}</b>
+              <div style="margin-top:2px;">Mudat ${c.daysRemaining} divasanchyat sampat ahe!</div>
+            </div>
+          `;
+        }
+      });
+
+      if (!hasAlerts) {
+        listContainer.innerHTML = `
+          <div style="text-align:center; padding:20px 10px; color:#10b981;">
+            <div style="font-size:32px;">✅</div>
+            <div style="font-size:13px; font-weight:bold; margin-top:6px;">Sarv Accounts Surakshit Ahet!</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Kontihi pending fee kivha expiry alert nahi.</div>
+          </div>
+        `;
+      }
+
+      toggleNotificationModal(true);
+    }
+
+    function checkAutoLogin() {
+      const savedSession = JSON.parse(localStorage.getItem('jcb_active_session_v45'));
+      if (!savedSession) return;
+
+      if (savedSession.type === 'OWNER') {
+        if (savedSession.isSuperAdmin) {
+          isOwnerLoggedIn = true;
+          isSuperAdminImpersonating = false;
+          renderSuperAdminDashboard();
+          navigate('screenSuperAdmin');
+        } else {
+          const client = clientsDatabase.find(c => c.user.toLowerCase() === savedSession.userId.toLowerCase());
+          if (client) {
+            if (client.status === "LOCKED") {
+              document.getElementById('lockOverlayScreen').style.display = 'flex';
+              return;
+            }
+            isOwnerLoggedIn = true;
+            isSuperAdminImpersonating = false;
+            proceedLogin(client);
+          }
+        }
+      } else if (savedSession.type === 'OPERATOR') {
+        const client = clientsDatabase.find(c => c.user.toLowerCase() === savedSession.ownerId.toLowerCase());
+        if (client) {
+          if (client.status === "LOCKED") {
+            document.getElementById('lockOverlayScreen').style.display = 'flex';
+            return;
+          }
+          const machine = (client.fleet || []).find(m => m.id === savedSession.machineId);
+          if (machine) {
+            currentSessionClient = client;
+            currentSessionMachine = machine;
+            isOwnerLoggedIn = false;
+            updateOperatorConsoleUI();
+            navigate('screenOpMenu');
+          }
+        }
       }
     }
 
-    // ========================================================
-    // लॉगिन लॉजिक
-    // ========================================================
-    function handleUniversalLogin() {
-      const u = document.getElementById('loginUserId').value.trim().toLowerCase();
-      const p = document.getElementById('loginPassword').value.trim();
+    function parseDateDMY(dStr) {
+      if (!dStr) return new Date();
+      const parts = dStr.split('/');
+      if (parts.length === 3) return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+      return new Date(dStr);
+    }
+
+    function setQuickDateFilter(target, mode) {
+      const today = new Date();
+      let fromDateStr = '', toDateStr = today.toISOString().split('T')[0];
+
+      if (mode === 'last30') {
+        const past30 = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+        fromDateStr = past30.toISOString().split('T')[0];
+      }
+
+      if (target === 'diesel') {
+        document.getElementById('dieselFromDate').value = fromDateStr;
+        document.getElementById('dieselToDate').value = toDateStr;
+        renderFullDieselEntriesList();
+      } else if (target === 'pnl') {
+        document.getElementById('pnlFromDate').value = fromDateStr;
+        document.getElementById('pnlToDate').value = toDateStr;
+        renderProfitAndLossOverview();
+      } else if (target === 'daily') {
+        document.getElementById('dailyFromDate').value = fromDateStr;
+        document.getElementById('dailyToDate').value = toDateStr;
+        renderDayByDayWorking();
+      } else if (target === 'night') {
+        document.getElementById('nightFromDate').value = fromDateStr;
+        document.getElementById('nightToDate').value = toDateStr;
+        renderNightClosingMachineWise();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      runAutoSubscriptionEngine();
+      checkAutoLogin();
+
+      const today = new Date();
+      const past30 = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+      const todayStr = today.toISOString().split('T')[0];
+      const past30Str = past30.toISOString().split('T')[0];
+
+      ['dieselFromDate', 'pnlFromDate', 'dailyFromDate', 'nightFromDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = past30Str;
+      });
+      ['dieselToDate', 'pnlToDate', 'dailyToDate', 'nightToDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = todayStr;
+      });
+    });
+
+    function handleOwnerLogin() {
+      runAutoSubscriptionEngine();
+
+      const u = document.getElementById('ownerLoginUserId').value.trim().toLowerCase();
+      const p = document.getElementById('ownerLoginPassword').value.trim();
+
+      if (!u || !p) { alert("User ID & Password bhara!"); return; }
 
       if (u === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
-        document.getElementById('loginUserId').value = '';
-        document.getElementById('loginPassword').value = '';
+        localStorage.setItem('jcb_active_session_v45', JSON.stringify({
+          type: 'OWNER',
+          userId: u,
+          isSuperAdmin: true
+        }));
+
+        isOwnerLoggedIn = true;
+        isSuperAdminImpersonating = false;
         renderSuperAdminDashboard();
         navigate('screenSuperAdmin');
         return;
       }
 
-      if (u === "patil" && p === "patil123") {
-        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "patil") || HARDCODED_CLIENTS[0]);
-        return;
-      }
-      if (u === "kadam" && p === "kadam123") {
-        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "kadam") || HARDCODED_CLIENTS[1]);
-        return;
-      }
-      if (u === "pawar" && p === "pawar123") {
-        proceedLogin(clientsDatabase.find(x => x.user.toLowerCase() === "pawar") || HARDCODED_CLIENTS[2]);
-        return;
-      }
-
-      const client = clientsDatabase.find(c => 
-        (c.user && c.user.trim().toLowerCase() === u) || 
-        (c.phone && c.phone.trim() === u)
-      );
-
+      const client = clientsDatabase.find(c => c.user.toLowerCase() === u && c.pass === p);
       if (client) {
-        if (client.pass && client.pass.trim() === p) {
-          proceedLogin(client);
+        if (client.status === "LOCKED") {
+          document.getElementById('lockOverlayScreen').style.display = 'flex';
+          return;
+        }
+
+        localStorage.setItem('jcb_active_session_v45', JSON.stringify({
+          type: 'OWNER',
+          userId: client.user,
+          isSuperAdmin: false
+        }));
+
+        isOwnerLoggedIn = true;
+        isSuperAdminImpersonating = false;
+        proceedLogin(client);
+      } else {
+        alert("Chukicha User ID kivha Password!");
+      }
+    }
+
+    function handleOperatorPinLogin() {
+      runAutoSubscriptionEngine();
+
+      const ownerId = document.getElementById('opOwnerUserIdInput').value.trim().toLowerCase();
+      const opPin = document.getElementById('opPinInput').value.trim();
+
+      if (!ownerId || !opPin) { alert("Malak User ID ani PIN taaka!"); return; }
+
+      const client = clientsDatabase.find(c => c.user.toLowerCase() === ownerId);
+      if (client) {
+        if (client.status === "LOCKED") {
+          document.getElementById('lockOverlayScreen').style.display = 'flex';
+          return;
+        }
+
+        const matched = client.fleet.find(m => String(m.pin).trim() === String(opPin));
+        if (matched) {
+          localStorage.setItem('jcb_active_session_v45', JSON.stringify({
+            type: 'OPERATOR',
+            ownerId: client.user,
+            machineId: matched.id
+          }));
+
+          currentSessionClient = client;
+          currentSessionMachine = matched;
+          isOwnerLoggedIn = false;
+          updateOperatorConsoleUI();
+          navigate('screenOpMenu');
         } else {
-          alert("❌ चुकीचा पासवर्ड! कृपया अचूक पासवर्ड टाका.");
+          alert("Chukicha Operator PIN!");
         }
       } else {
-        alert("❌ हा User ID सिस्टीममध्ये उपलब्ध नाही!");
+        alert("Chukicha Malak User ID!");
       }
     }
 
     function proceedLogin(client) {
-      const todayStr = new Date().toISOString().split('T')[0];
-      if (client.status === "LOCKED" || (client.subscriptionExpiry && client.subscriptionExpiry < todayStr)) {
-        document.getElementById('lockOverlay').style.display = "flex";
-        return;
-      }
-
       currentSessionClient = client;
-      document.getElementById('loginUserId').value = '';
-      document.getElementById('loginPassword').value = '';
       document.getElementById('ownerClientTitle').innerText = client.businessName;
+      
+      const days = client.daysRemaining !== undefined ? client.daysRemaining : 30;
+      document.getElementById('ownerSubDaysLeft').innerText = `Auto Mode: ${days > 0 ? days + ' Divas Baki' : 'Mudat Sampli'}`;
+      
+      const backBtn = document.getElementById('ownerBackBtn');
+      if (isSuperAdminImpersonating) {
+        backBtn.innerText = "⬅ Super Admin";
+        backBtn.style.background = "#8b5cf6";
+        backBtn.style.color = "#fff";
+      } else {
+        backBtn.innerText = "🔒 Logout";
+        backBtn.style.background = "#e2e8f0";
+        backBtn.style.color = "#1e293b";
+      }
 
       renderClientOwnerView();
       navigate('screenClientOwner');
     }
 
-    // ========================================================
-    // सुपर ॲडमिन फंक्शन्स (विक्रम सर)
-    // ========================================================
-    function renderSuperAdminDashboard() {
-      const total = clientsDatabase.length;
-      const active = clientsDatabase.filter(c => c.status === "ACTIVE").length;
-      const locked = total - active;
-      const totalFleet = clientsDatabase.reduce((sum, c) => sum + (c.fleet ? c.fleet.length : 0), 0);
-
-      document.getElementById('statTotalClients').innerText = total;
-      document.getElementById('statActiveClients').innerText = active;
-      document.getElementById('statLockedClients').innerText = locked;
-      document.getElementById('statTotalFleet').innerText = totalFleet;
-
-      const container = document.getElementById('superAdminClientsList');
-      container.innerHTML = '';
-
-      clientsDatabase.forEach(c => {
-        const isAct = c.status === "ACTIVE";
-        const expDate = c.subscriptionExpiry || "२०२६-११-०४";
-        container.innerHTML += `
-          <div class="client-card ${isAct ? 'active-border' : 'locked-border'}">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <b style="font-size:15px; color:#f59e0b;">${c.businessName}</b>
-                <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">
-                  User ID: <b style="color:#38bdf8;">${c.user}</b> | 
-                  Password: <b style="color:#22c55e;">${c.pass}</b>
-                </div>
-                <div style="font-size:11px; color:#94a3b8;">
-                  फोन: ${c.phone} | सबस्क्रिप्शन मुदत: <b style="color:#facc15;">${expDate}</b>
-                </div>
-              </div>
-              <span style="background:${isAct ? '#15803d' : '#b91c1c'}; color:#fff; font-size:10px; font-weight:bold; padding:2px 6px;">
-                ${c.status}
-              </span>
-            </div>
-
-            <div style="display:flex; gap:6px; margin-top:8px;">
-              <button onclick="extendSubscription('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:#eab308; color:#000;">
-                ⏳ +३० दिवस वाढवा
-              </button>
-              <button onclick="toggleClientStatus('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:${isAct ? '#dc2626' : '#22c55e'}; color:#fff;">
-                ${isAct ? '🔒 लॉक करा' : '🟢 ॲक्टिव्हेट करा'}
-              </button>
-              <button onclick="superAdminDirectLogin('${c.id}')" style="flex:1; padding:8px; border:none; font-weight:bold; cursor:pointer; font-size:11px; background:#2563eb; color:#fff;">
-                👁️ पाहा
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function extendSubscription(clientId) {
-      const client = clientsDatabase.find(c => c.id === clientId);
-      if (client) {
-        const curExp = client.subscriptionExpiry ? new Date(client.subscriptionExpiry) : new Date();
-        const newExp = new Date(curExp.getTime() + (30 * 24 * 60 * 60 * 1000));
-        client.subscriptionExpiry = newExp.toISOString().split('T')[0];
-        client.status = "ACTIVE";
-        syncDataToCloud();
-        alert(`✓ ${client.businessName} ची सबस्क्रिप्शन मुदत ${client.subscriptionExpiry} पर्यंत वाढवली!`);
-      }
-    }
-
-    function toggleClientStatus(clientId) {
-      const client = clientsDatabase.find(c => c.id === clientId);
-      if (client) {
-        client.status = (client.status === "ACTIVE") ? "LOCKED" : "ACTIVE";
-        syncDataToCloud();
-        alert(`✓ ${client.businessName} चे स्टेटस ${client.status} केले!`);
+    function handleOwnerBackNavigation() {
+      if (isSuperAdminImpersonating) {
+        isSuperAdminImpersonating = false;
+        navigate('screenSuperAdminClientDetail');
+      } else {
+        logoutSession();
       }
     }
 
     function superAdminDirectLogin(clientId) {
-      currentSessionClient = clientsDatabase.find(c => c.id === clientId);
-      document.getElementById('ownerClientTitle').innerText = currentSessionClient.businessName;
-      renderClientOwnerView();
-      navigate('screenClientOwner');
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client) return;
+      isOwnerLoggedIn = true;
+      isSuperAdminImpersonating = true;
+      proceedLogin(client);
+    }
+
+    function navigateOwnerProtected(screenId) {
+      if (!isOwnerLoggedIn) {
+        const pin = prompt("🔒 Malak Password taaka:");
+        if (pin === currentSessionClient.pass) {
+          isOwnerLoggedIn = true;
+          navigate(screenId);
+        } else {
+          alert("Chukicha Password!");
+        }
+      } else {
+        navigate(screenId);
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btnId) {
+      const p = document.getElementById(inputId);
+      const b = document.getElementById(btnId);
+      if (p.type === "password") { p.type = "text"; b.innerText = "🙈"; }
+      else { p.type = "password"; b.innerText = "👁️"; }
+    }
+
+    function handleClientChangePassword() {
+      const newPass = document.getElementById('clientChangeNewPass').value.trim();
+      if (!newPass || newPass.length < 4) { alert("Kimam 4 akshare have!"); return; }
+      currentSessionClient.pass = newPass;
+      syncDataToCloud();
+      document.getElementById('clientChangeNewPass').value = '';
+      alert("Password badalla gela!");
+    }
+
+    function updateNewClientFeeCalc() {
+      const count = parseInt(document.getElementById('newClientMachinesCount').value) || 0;
+      document.getElementById('newClientCalculatedFee').innerText = `₹ ${count * 250}`;
     }
 
     function createNewClientAccount() {
@@ -762,390 +1678,1253 @@
       const user = document.getElementById('newClientUser').value.trim();
       const pass = document.getElementById('newClientPass').value.trim();
       const phone = document.getElementById('newClientPhone').value.trim();
-      const count = parseInt(document.getElementById('newClientMachinesCount').value) || 1;
+      const count = parseInt(document.getElementById('newClientMachinesCount').value) || 2;
 
-      if (!name || !user || !pass) { alert("कृपया नाव, User ID आणि Password भरा!"); return; }
+      if (!name || !user || !pass) { alert("Krupaya sarv mahiti bhara!"); return; }
 
       let generatedFleet = [];
       for (let i = 1; i <= count; i++) {
         generatedFleet.push({
           id: "M" + i,
-          name: `JCB MACHINE ${i}`,
-          driver: `चालक ${i}`,
-          pin: "1111",
+          name: i === 1 ? "1. Vikram" : (i === 2 ? "2. Gold man" : `Machine ${i}`),
+          driver: `Chalak ${i}`,
+          pin: i === 1 ? "1111" : "2222",
+          status: "ACTIVE",
           totalHours: 1000.0,
           lastServiceHour: 900.0,
           hoursToday: 0.0,
-          activeParty: "नवीन काम",
-          monthlySalary: 18000
+          activeParty: "General Work",
+          defaultHourlyRate: 2000,
+          monthlySalary: 20000,
+          advanceHistory: []
         });
       }
 
       clientsDatabase.push({
-        id: "CLIENT-" + (clientsDatabase.length + 1),
+        id: "CLIENT-" + Date.now(),
         businessName: name,
         user: user,
         pass: pass,
         phone: phone,
         status: "ACTIVE",
-        subscriptionExpiry: future30Days,
+        subscriptionExpiry: "2026-11-08",
+        paidMachinesCount: count,
         fleet: generatedFleet,
-        operatorHistory: []
+        dieselHistory: [],
+        operatorHistory: [],
+        otherExpenses: []
       });
 
       syncDataToCloud();
+      renderSuperAdminDashboard();
       document.getElementById('newClientBusiness').value = '';
       document.getElementById('newClientUser').value = '';
       document.getElementById('newClientPass').value = '';
       document.getElementById('newClientPhone').value = '';
-      alert(`✓ ${name} चे खाते सेव्ह झाले!`);
+      alert("Navin grahak save zhala!");
     }
 
-    // ========================================================
-    // क्लायंट मालक डॅशबोर्ड
-    // ========================================================
-    function renderClientOwnerView() {
-      renderOwnerSubDays();
-      renderOwnerAlerts();
-      renderClientOwnerMachines();
-      renderOperatorSalarySummary();
-      renderOperatorWorkHistory();
-      renderClientMachinesSelection();
-    }
+    function renderSuperAdminDashboard() {
+      runAutoSubscriptionEngine();
 
-    function renderOwnerSubDays() {
-      const expStr = currentSessionClient.subscriptionExpiry || future30Days;
-      const expDate = new Date(expStr);
-      const today = new Date();
-      const diffTime = expDate - today;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      document.getElementById('ownerSubDaysLeft').innerText = `${diffDays > 0 ? diffDays : 0} दिवस शिल्लक`;
-    }
+      document.getElementById('statTotalClients').innerText = clientsDatabase.length;
+      let totalFleet = 0, totalReceived = 0;
 
-    function renderOwnerAlerts() {
-      const container = document.getElementById('ownerAlertsContainer');
+      clientsDatabase.forEach(c => {
+        const count = (c.fleet || []).length;
+        totalFleet += count;
+        const paidCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : count;
+        totalReceived += (paidCount * 250);
+      });
+
+      document.getElementById('statTotalFleet').innerText = totalFleet;
+      document.getElementById('statTotalFeeReceived').innerText = `₹ ${totalReceived}`;
+
+      const container = document.getElementById('superAdminClientsList');
       container.innerHTML = '';
-      if (!currentSessionClient.fleet) return;
+      const q = (document.getElementById('superAdminSearchInput') ? document.getElementById('superAdminSearchInput').value.trim().toLowerCase() : '');
 
-      currentSessionClient.fleet.forEach(m => {
-        const runSinceService = (m.totalHours || 0) - (m.lastServiceHour || 0);
-        const hoursLeft = 250 - runSinceService;
+      clientsDatabase.forEach(c => {
+        if (q && !c.businessName.toLowerCase().includes(q) && !c.user.toLowerCase().includes(q)) return;
 
-        if (hoursLeft <= 0) {
-          container.innerHTML += `
-            <div class="alert-banner alert-danger">
-              <div>🚨 <b>सर्व्हिसिंग अलर्ट:</b> ${m.name} चा २५० तासांचा रन पूर्ण झाला! त्वरित इंजिन ऑइल बदला.</div>
-              <button onclick="resetServiceHours('${m.id}')" style="background:#22c55e; color:#000; border:none; padding:4px 8px; font-weight:bold; cursor:pointer;">सर्व्हिसिंग पूर्ण</button>
+        const fCount = (c.fleet || []).length;
+        const days = c.daysRemaining !== undefined ? c.daysRemaining : 30;
+        const paidCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+        const totalFee = fCount * 250;
+        const paidAmt = paidCount * 250;
+        const pendAmt = Math.max(0, totalFee - paidAmt);
+        
+        let subBadge = '';
+        if (days <= 0) subBadge = `<span class="sub-badge sub-expired">Expired • Auto Locked</span>`;
+        else if (days <= 3) subBadge = `<span class="sub-badge sub-warning">Renew Soon • ${days} Divas</span>`;
+        else subBadge = `<span class="sub-badge sub-active">Active • ${days} Divas</span>`;
+
+        container.innerHTML += `
+          <div class="data-item-card" style="border-left: 4px solid ${days <= 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <b style="font-size:14px;">${c.businessName}</b>
+              ${subBadge}
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin:4px 0;">
+              User: <b>${c.user}</b> | Pass: <b>${c.pass}</b> | Machines: <b>${fCount}</b>
+            </div>
+            <div style="font-size:11px; margin-bottom:6px;">
+              Fee: <b style="color:var(--accent-green);">₹${paidAmt} Jama</b> | <b style="color:var(--accent-red);">₹${pendAmt} Baki</b>
+            </div>
+            <button onclick="openSuperAdminClientDetailPage('${c.id}')" style="width:100%; padding:9px; background:#e8f0fe; border:1px solid #1a73e8; color:#1a73e8; border-radius:6px; font-weight:800; font-size:12px; cursor:pointer;">
+              ⚙️ Grahak Management & 6 Sections ➔
+            </button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:6px;">
+              <button onclick="editClientFeePayment('${c.id}')" style="padding:7px; background:#2563eb; border:none; color:#fff; border-radius:6px; font-weight:bold; font-size:11px; cursor:pointer;">✏️ Fee Edit</button>
+              <button onclick="removeClientAccount('${c.id}')" style="padding:7px; background:#dc2626; border:none; color:#fff; border-radius:6px; font-weight:bold; font-size:11px; cursor:pointer;">🗑️ Delete</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderSaasBusinessPnl() {
+      let totalMachines = 0, totalReceived = 0, totalPending = 0;
+
+      clientsDatabase.forEach(c => {
+        const fCount = (c.fleet || []).length;
+        totalMachines += fCount;
+        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+        totalReceived += (pCount * 250);
+        totalPending += Math.max(0, (fCount - pCount) * 250);
+      });
+
+      const grossBilling = totalMachines * 250;
+      let totalSaasExpenses = 0;
+      saasExpensesDatabase.forEach(e => { totalSaasExpenses += (parseFloat(e.amount) || 0); });
+
+      const netProfit = totalReceived - totalSaasExpenses;
+
+      document.getElementById('saasGrossBilling').innerText = "₹ " + grossBilling.toLocaleString('en-IN');
+      document.getElementById('saasNetProfit').innerText = "₹ " + netProfit.toLocaleString('en-IN');
+      document.getElementById('saasTotalClientsCount').innerText = clientsDatabase.length + " Grahak";
+      document.getElementById('saasTotalMachinesCount').innerText = totalMachines + " JCB (@ ₹250)";
+      document.getElementById('saasFeeReceived').innerText = "₹ " + totalReceived.toLocaleString('en-IN');
+      document.getElementById('saasFeePending').innerText = "₹ " + totalPending.toLocaleString('en-IN');
+      document.getElementById('saasExpenseBreakdown').innerText = "₹ " + totalSaasExpenses.toLocaleString('en-IN');
+    }
+
+    function saSaveNewMachineForClient() {
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      if (!client) return;
+
+      const mName = document.getElementById('saAddMachineNameInput').value.trim();
+      const mDriver = document.getElementById('saAddMachineDriverInput').value.trim();
+      const mPin = document.getElementById('saAddMachinePinInput').value.trim();
+      const mRate = parseFloat(document.getElementById('saAddMachineRateInput').value) || 2000;
+
+      if (!mName || !mPin) { alert("Machine che naav ani 4-anki PIN avashyak ahe!"); return; }
+
+      if (!client.fleet) client.fleet = [];
+      const newMId = "M" + (Date.now());
+
+      client.fleet.push({
+        id: newMId,
+        name: mName,
+        driver: mDriver || "Chalak",
+        pin: mPin,
+        status: "ACTIVE",
+        totalHours: 0.0,
+        lastServiceHour: 0.0,
+        hoursToday: 0.0,
+        activeParty: "General Work",
+        defaultHourlyRate: mRate,
+        monthlySalary: 20000,
+        advanceHistory: []
+      });
+
+      if (client.paidMachinesCount === undefined) {
+        client.paidMachinesCount = client.fleet.length - 1;
+      }
+
+      syncDataToCloud();
+
+      document.getElementById('saAddMachineNameInput').value = '';
+      document.getElementById('saAddMachineDriverInput').value = '';
+      document.getElementById('saAddMachinePinInput').value = '';
+
+      openSuperAdminClientDetailPage(selectedSaClientId);
+      alert(`✓ Navin machine '${mName}' jodli geli! Ya navin machine sathi ₹250 membership fee pending madhe add zali ahe.`);
+    }
+
+    function ownerSaveNewMachine() {
+      if (!currentSessionClient) return;
+
+      const mName = document.getElementById('ownerAddMachineNameInput').value.trim();
+      const mDriver = document.getElementById('ownerAddMachineDriverInput').value.trim();
+      const mPin = document.getElementById('ownerAddMachinePinInput').value.trim();
+      const mRate = parseFloat(document.getElementById('ownerAddMachineRateInput').value) || 2000;
+
+      if (!mName || !mPin) { alert("Machine che naav ani 4-anki PIN avashyak ahe!"); return; }
+
+      if (!currentSessionClient.fleet) currentSessionClient.fleet = [];
+      const newMId = "M" + (Date.now());
+
+      currentSessionClient.fleet.push({
+        id: newMId,
+        name: mName,
+        driver: mDriver || "Chalak",
+        pin: mPin,
+        status: "ACTIVE",
+        totalHours: 0.0,
+        lastServiceHour: 0.0,
+        hoursToday: 0.0,
+        activeParty: "General Work",
+        defaultHourlyRate: mRate,
+        monthlySalary: 20000,
+        advanceHistory: []
+      });
+
+      if (currentSessionClient.paidMachinesCount === undefined) {
+        currentSessionClient.paidMachinesCount = currentSessionClient.fleet.length - 1;
+      }
+
+      syncDataToCloud();
+
+      document.getElementById('ownerAddMachineNameInput').value = '';
+      document.getElementById('ownerAddMachineDriverInput').value = '';
+      document.getElementById('ownerAddMachinePinInput').value = '';
+
+      renderClientOwnerView();
+      alert(`✓ Navin machine '${mName}' fleetat save zhali! Ya machine che ₹250 membership payment Super Admin kade pending dakhvel.`);
+    }
+
+    function openSaasBoxDetailScreen(boxType) {
+      const avatarEl = document.getElementById('saasBoxDetailAvatar');
+      const titleEl = document.getElementById('saasBoxDetailTitle');
+      const subEl = document.getElementById('saasBoxDetailSub');
+      const headerEl = document.getElementById('saasBoxDetailHeader');
+      const contentEl = document.getElementById('saasBoxDetailContent');
+
+      contentEl.innerHTML = '';
+
+      if (boxType === 'clients') {
+        avatarEl.innerText = "👥";
+        titleEl.innerText = "Ekun App Clients";
+        subEl.innerText = `Total Registered: ${clientsDatabase.length} Grahak`;
+        headerEl.innerText = "📋 Clients Master List";
+
+        clientsDatabase.forEach(c => {
+          contentEl.innerHTML += `
+            <div class="data-item-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size:14px; color:var(--text-dark);">${c.businessName}</b>
+                <span style="font-size:11px; background:#e8f0fe; color:var(--primary-blue); padding:2px 6px; border-radius:4px; font-weight:bold;">${(c.fleet||[]).length} JCB</span>
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin:4px 0;">User: <b>${c.user}</b> | Pass: <b>${c.pass}</b> | Phone: <b>${c.phone}</b></div>
+              <div style="font-size:11px; color:#475569;">Mudat: <b style="color:var(--accent-gold);">${c.subscriptionExpiry || '2026-11-08'}</b> (${c.daysRemaining !== undefined ? c.daysRemaining : 30} Divas Baki)</div>
             </div>
           `;
-        } else if (hoursLeft <= 15) {
-          container.innerHTML += `
-            <div class="alert-banner alert-warning">
-              <div>⚠️️ <b>सर्व्हिसिंग सूचना:</b> ${m.name} ला सर्व्हिसिंगसाठी फक्त ${hoursLeft.toFixed(1)} तास बाकी आहेत.</div>
+        });
+      } else if (boxType === 'machines') {
+        avatarEl.innerText = "🚜";
+        titleEl.innerText = "All Machines & Owners";
+        let totalMCount = 0;
+        clientsDatabase.forEach(c => totalMCount += (c.fleet || []).length);
+        subEl.innerText = `Total Fleet: ${totalMCount} Machines across ${clientsDatabase.length} Owners`;
+        headerEl.innerText = "🏢 Malak & Tyanchya Machines Management";
+
+        clientsDatabase.forEach((client, clientIdx) => {
+          let machinesHtml = '';
+          const fleetList = client.fleet || [];
+
+          if (fleetList.length === 0) {
+            machinesHtml = `<div style="font-size:11px; color:var(--text-muted); padding:6px 0;">Ya malakakade kontihi machine nondavleli nahi.</div>`;
+          } else {
+            fleetList.forEach((m, mIdx) => {
+              const isDeact = (m.status === 'DEACTIVE');
+              machinesHtml += `
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; font-weight:800; color:var(--text-dark);">
+                      🚜 ${m.name}
+                      <span style="font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; margin-left:6px; background:${isDeact ? '#fee2e2' : '#dcfce7'}; color:${isDeact ? '#b91c1c' : '#15803d'};">
+                        ${isDeact ? 'DEACTIVATED' : 'ACTIVE'}
+                      </span>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                      Chalak: <b>${m.driver}</b> | PIN: <b>${m.pin}</b> | Meter: <b>${m.totalHours || 0} Hr</b>
+                    </div>
+                  </div>
+                  
+                  <button onclick="toggleMachineMembershipFromBox(${clientIdx}, ${mIdx})" style="padding:7px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff; white-space:nowrap;">
+                    ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
+                  </button>
+                </div>
+              `;
+            });
+          }
+
+          contentEl.innerHTML += `
+            <div class="panel-card" style="border:1.5px solid #cbd5e1; background:#f8fafc; margin-bottom:14px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:8px;">
+                <div>
+                  <b style="font-size:15px; color:var(--primary-blue);">👑 ${client.businessName}</b>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">User ID: <b>${client.user}</b> | Phone: <b>${client.phone}</b></div>
+                </div>
+                <span style="font-size:11px; background:#e8f0fe; color:var(--primary-blue); padding:3px 8px; border-radius:6px; font-weight:bold;">
+                  ${fleetList.length} JCB
+                </span>
+              </div>
+              <div style="margin-top:6px;">
+                ${machinesHtml}
+              </div>
             </div>
           `;
+        });
+      } else if (boxType === 'received') {
+        avatarEl.innerText = "₹";
+        titleEl.innerText = "Received Payment (Jama Fee)";
+        let totalR = 0;
+        clientsDatabase.forEach(c => {
+          const fCount = (c.fleet || []).length;
+          const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+          totalR += (pCount * 250);
+        });
+        subEl.innerText = `Total Collected: ₹ ${totalR.toLocaleString('en-IN')}`;
+        headerEl.innerText = "💳 Client-wise Received Fee Ledger";
+
+        clientsDatabase.forEach(c => {
+          const fCount = (c.fleet || []).length;
+          const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+          const paidAmt = pCount * 250;
+          if (paidAmt > 0) {
+            contentEl.innerHTML += `
+              <div class="data-item-card" style="border-left:4px solid var(--accent-green);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="font-size:14px; color:var(--text-dark);">${c.businessName}</b>
+                  <b style="font-size:15px; color:var(--accent-green);">₹ ${paidAmt.toLocaleString('en-IN')} Jama</b>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">User ID: <b>${c.user}</b> | Paid for: <b>${pCount} of ${fCount} Machines</b></div>
+              </div>
+            `;
+          }
+        });
+      } else if (boxType === 'pending') {
+        avatarEl.innerText = "⏳";
+        titleEl.innerText = "Pending Fee (Baki Rakkam)";
+        let totalP = 0;
+        clientsDatabase.forEach(c => {
+          const fCount = (c.fleet || []).length;
+          const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+          totalP += Math.max(0, (fCount - pCount) * 250);
+        });
+        subEl.innerText = `Total Market Pending: ₹ ${totalP.toLocaleString('en-IN')}`;
+        headerEl.innerText = "⚠️ Clients with Pending Fee & Quick Payment";
+
+        clientsDatabase.forEach(c => {
+          const fCount = (c.fleet || []).length;
+          const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : fCount;
+          const pendAmt = Math.max(0, (fCount - pCount) * 250);
+          if (pendAmt > 0) {
+            contentEl.innerHTML += `
+              <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="font-size:14px; color:var(--text-dark);">${c.businessName}</b>
+                  <b style="font-size:15px; color:var(--accent-red);">₹ ${pendAmt.toLocaleString('en-IN')} Baki</b>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); margin:3px 0;">
+                  User: <b>${c.user}</b> | Ekun Machines: <b>${fCount} JCB</b> (${fCount - pCount} machine chi fee baki)
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px;">
+                  <button onclick="quickMarkFullPaymentReceived('${c.id}')" style="background:#10b981; color:#fff; border:none; padding:7px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+                    ✅ Payment Jama Kara
+                  </button>
+                  <button onclick="sendRenewalWhatsAppPrompt('${c.id}')" style="background:#25d366; color:#000; border:none; padding:7px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+                    📲 WhatsApp Alert
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+        });
+        if (contentEl.innerHTML === '') {
+          contentEl.innerHTML = '<div style="color:var(--accent-green); font-weight:bold; padding:10px;">Sarv grahakanchi fee purna jama ahe! Konakadehi baki nahi.</div>';
+        }
+      } else if (boxType === 'expenses') {
+        avatarEl.innerText = "⚡";
+        titleEl.innerText = "App Server & Running Kharch";
+        let totalE = 0;
+        saasExpensesDatabase.forEach(e => totalE += (parseFloat(e.amount) || 0));
+        subEl.innerText = `Total Expenses: ₹ ${totalE.toLocaleString('en-IN')}`;
+        headerEl.innerText = "📅 Itemized Expenses History";
+
+        saasExpensesDatabase.forEach(e => {
+          contentEl.innerHTML += `
+            <div class="data-item-card" style="border-left:4px solid var(--accent-gold);">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size:13.5px; color:var(--text-dark);">${e.title}</b>
+                <b style="font-size:14px; color:var(--accent-red);">₹ ${parseFloat(e.amount).toLocaleString('en-IN')}</b>
+              </div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Nond Tarikh: <b>${e.date}</b></div>
+            </div>
+          `;
+        });
+      } else if (boxType === 'gross') {
+        avatarEl.innerText = "📑";
+        titleEl.innerText = "Gross Monthly Membership Turnover";
+        let totalMCount = 0;
+        clientsDatabase.forEach(c => totalMCount += (c.fleet || []).length);
+        const gross = totalMCount * 250;
+        subEl.innerText = `Full Potential Turnover: ₹ ${gross.toLocaleString('en-IN')}`;
+        headerEl.innerText = "📊 Calculation Breakdown (@ ₹250/M)";
+
+        contentEl.innerHTML = `
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; line-height:1.8; font-size:12.5px;">
+            <div>Ekun Active & Registered Clients: <b>${clientsDatabase.length}</b></div>
+            <div>Ekun Machines System Madhe: <b>${totalMCount} JCB</b></div>
+            <div>Darmaha Pratyek Machine Fee: <b>₹ 250</b></div>
+            <div style="border-top:1px solid #e2e8f0; margin-top:8px; padding-top:6px; font-size:14px; font-weight:bold; color:var(--primary-blue);">
+              Ekun Masik Billing: ${totalMCount} × ₹250 = ₹ ${gross.toLocaleString('en-IN')}
+            </div>
+          </div>
+        `;
+      }
+
+      navigate('screenSaasBoxDetailPage');
+    }
+
+    function quickMarkFullPaymentReceived(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client) return;
+
+      const totalMachines = (client.fleet || []).length;
+      const curPaid = (client.paidMachinesCount !== undefined) ? client.paidMachinesCount : 0;
+      const bakiMachines = totalMachines - curPaid;
+
+      if (confirm(`💰 ${client.businessName} kadun baki asleli ₹${bakiMachines * 250} fee purna jama zhali ahe ka?`)) {
+        client.paidMachinesCount = totalMachines;
+        syncDataToCloud();
+        renderSaasBusinessPnl();
+        openSaasBoxDetailScreen('pending');
+        alert(`✓ ${client.businessName} chi sarv ${totalMachines} machines chi fee purna jama nondavli geli!`);
+      }
+    }
+
+    function toggleMachineMembershipFromBox(clientIdx, machineIdx) {
+      const client = clientsDatabase[clientIdx];
+      if (!client || !client.fleet || !client.fleet[machineIdx]) return;
+
+      const m = client.fleet[machineIdx];
+      const newStatus = (m.status === 'DEACTIVE') ? 'ACTIVE' : 'DEACTIVE';
+      m.status = newStatus;
+
+      syncDataToCloud();
+      openSaasBoxDetailScreen('machines');
+      alert(`✓ ${m.name} (${client.businessName}) membership status ${newStatus} kele!`);
+    }
+
+    function addSaasExpense() {
+      const t = document.getElementById('newSaasExpenseTitle').value.trim();
+      const a = parseFloat(document.getElementById('newSaasExpenseAmount').value) || 0;
+      if (!t || a <= 0) { alert("Kharchache naav ani rakkam bhara!"); return; }
+
+      saasExpensesDatabase.unshift({ title: t, amount: a, date: new Date().toLocaleDateString('mr-IN') });
+      syncDataToCloud();
+      document.getElementById('newSaasExpenseTitle').value = '';
+      document.getElementById('newSaasExpenseAmount').value = '';
+      renderSaasBusinessPnl();
+      alert("App kharch save zhala!");
+    }
+
+    function openSuperAdminClientDetailPage(clientId) {
+      selectedSaClientId = clientId;
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client) return;
+
+      document.getElementById('saClientDetailTitle').innerText = client.businessName;
+      document.getElementById('saClientDetailMeta').innerText = `User ID: ${client.user} | Phone: ${client.phone}`;
+      navigate('screenSuperAdminClientDetail');
+    }
+
+    function openSaSection(section) {
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      currentSessionClient = client;
+
+      const backButtons = ['btnBackDiesel', 'btnBackPnl', 'btnBackSalary', 'btnBackBilling', 'btnBackNight'];
+      backButtons.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.onclick = function() { navigate('screenSuperAdminClientDetail'); };
+          btn.innerText = "⬅ Mage Ja (Client Hub)";
         }
       });
+
+      if (section === 'machines') {
+        renderSaMachine1x1();
+        navigate('screenSaMachineListPage');
+      } else if (section === 'diesel') {
+        renderDieselSummaryBox();
+        navigate('screenDieselLedger');
+      } else if (section === 'pnl') {
+        renderProfitAndLossOverview();
+        navigate('screenProfitLossPage');
+      } else if (section === 'salary') {
+        renderOperatorSalarySummary();
+        navigate('screenDayByDayPage');
+      } else if (section === 'billing') {
+        openOwnerBillingPage();
+        navigate('screenOwnerBillingPage');
+      } else if (section === 'night') {
+        renderNightClosingMachineWise();
+        navigate('screenNightClosingPage');
+      }
     }
 
-    function resetServiceHours(machineId) {
-      const m = currentSessionClient.fleet.find(x => x.id === machineId);
-      if (m) {
-        m.lastServiceHour = m.totalHours || 0;
+    function renderSaMachine1x1() {
+      const container = document.getElementById('saMachine1x1Container');
+      container.innerHTML = '';
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      if (!client || !client.fleet) return;
+
+      client.fleet.forEach((m, idx) => {
+        container.innerHTML += `
+          <div class="data-item-card" onclick="openDedicatedMachineActionPage(${idx})" style="cursor:pointer; border-left:4px solid var(--accent-gold); margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <b style="font-size:14px; color:var(--text-dark);">🚜 ${m.name}</b>
+              <span style="font-size:11px; color:var(--primary-blue); font-weight:bold;">Controls ➔</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Chalak: <b>${m.driver}</b> | PIN: <b>${m.pin}</b></div>
+          </div>
+        `;
+      });
+    }
+
+    function openDedicatedMachineActionPage(idx) {
+      activeSaMachineIdx = idx;
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      const m = client.fleet[idx];
+
+      document.getElementById('saActionMachineTitle').innerText = `🚜 ${m.name}`;
+      document.getElementById('saActionMachineMeta').innerText = `Chalak: ${m.driver} | PIN: ${m.pin} | Status: ${m.status}`;
+      
+      const btn = document.getElementById('btnSaToggleStatus');
+      btn.innerText = m.status === 'DEACTIVE' ? '🟢 Machine Active Kara' : '🛑 Machine Deactivate Kara';
+      btn.style.background = m.status === 'DEACTIVE' ? '#10b981' : '#ef4444';
+
+      navigate('screenSaMachineActionPage');
+    }
+
+    function saActionToggleStatus() {
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      const m = client.fleet[activeSaMachineIdx];
+      m.status = m.status === "DEACTIVE" ? "ACTIVE" : "DEACTIVE";
+      syncDataToCloud();
+      openDedicatedMachineActionPage(activeSaMachineIdx);
+    }
+
+    function saActionChangePin() {
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      const m = client.fleet[activeSaMachineIdx];
+      const p = prompt("Navin PIN taaka:", m.pin);
+      if (p) { m.pin = p.trim(); syncDataToCloud(); openDedicatedMachineActionPage(activeSaMachineIdx); }
+    }
+
+    function saActionChangeDriver() {
+      const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+      const m = client.fleet[activeSaMachineIdx];
+      const d = prompt("Navin Chalak Naav:", m.driver);
+      if (d) { m.driver = d.trim(); syncDataToCloud(); openDedicatedMachineActionPage(activeSaMachineIdx); }
+    }
+
+    function saActionDeleteMachine() {
+      if (confirm("Khatri kara: Hi machine kayamchi delete karaychi ka?")) {
+        const client = clientsDatabase.find(c => c.id === selectedSaClientId);
+        client.fleet.splice(activeSaMachineIdx, 1);
         syncDataToCloud();
-        alert(`✓ ${m.name} चे सर्व्हिसिंग रीसेट झाले! पुढील सर्व्हिसिंग २५० तासांनंतर.`);
-        renderClientOwnerView();
+        renderSaMachine1x1();
+        navigate('screenSaMachineListPage');
       }
     }
 
-    function renderClientOwnerMachines() {
-      const container = document.getElementById('clientOwnerMachinesList');
-      container.innerHTML = '';
-      if (!currentSessionClient.fleet) return;
-
-      currentSessionClient.fleet.forEach(m => {
-        const runSinceService = (m.totalHours || 0) - (m.lastServiceHour || 0);
-        const hoursLeft = 250 - runSinceService;
-        container.innerHTML += `
-          <div style="background:#071022; border:1px solid #1e293b; padding:10px; margin-bottom:8px;">
-            <div style="display:flex; justify-content:space-between;">
-              <b style="color:#f59e0b;">${m.name}</b>
-              <span style="font-size:11px; color:#38bdf8;">मीटर: ${m.totalHours || 0} Hrs</span>
-            </div>
-            <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">
-              चालक: <b>${m.driver}</b> | आजचे काम: <b style="color:#22c55e;">${m.hoursToday || 0} तास</b>
-            </div>
-            <div style="font-size:11px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
-              <span style="color:#94a3b8;">ऑइल सर्व्हिसिंग: <b style="color:${hoursLeft <= 10 ? '#ef4444' : '#22c55e'}">${hoursLeft > 0 ? hoursLeft.toFixed(1) + ' तास बाकी' : 'DUE NOW'}</b></span>
-              <button onclick="resetServiceHours('${m.id}')" style="background:#1e293b; color:#cbd5e1; border:1px solid #334155; font-size:10px; padding:2px 6px; cursor:pointer;">सर्व्हिस रीसेट</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function renderOperatorSalarySummary() {
-      const container = document.getElementById('operatorSalarySummaryList');
-      container.innerHTML = '';
-      if (!currentSessionClient.fleet) return;
-
-      const history = currentSessionClient.operatorHistory || [];
-
-      currentSessionClient.fleet.forEach(m => {
-        const driverLogs = history.filter(h => h.driver === m.driver);
-        const totalDutyDays = driverLogs.length;
-        const totalBattaPaid = driverLogs.reduce((sum, h) => sum + (parseFloat(h.batta) || 0), 0);
-        const monthlySal = m.monthlySalary || 18000;
-        const balanceSal = monthlySal - totalBattaPaid;
-
-        container.innerHTML += `
-          <div style="background:#071022; border:1px solid #1e293b; padding:10px; margin-bottom:6px; font-size:12px;">
-            <div style="display:flex; justify-content:space-between;">
-              <b style="color:#38bdf8;">👷 ${m.driver}</b>
-              <span>महिना बेसिक: ₹ ${monthlySal}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; color:#94a3b8; margin-top:3px;">
-              <span>एकूण ड्युटी: <b>${totalDutyDays} दिवस</b></span>
-              <span>दिलेला रोज भत्ता: <b style="color:#f59e0b;">₹ ${totalBattaPaid}</b></span>
-            </div>
-            <div style="text-align:right; margin-top:4px; font-weight:bold; color:#22c55e;">
-              शिल्लक देय पगार: ₹ ${balanceSal > 0 ? balanceSal : 0}
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function renderOperatorWorkHistory() {
-      const container = document.getElementById('operatorWorkHistoryList');
-      container.innerHTML = '';
-      const history = currentSessionClient.operatorHistory || [];
-
-      if (history.length === 0) {
-        container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">कोणतीही नोंद उपलब्ध नाही.</div>';
-        return;
+    function editClientFeePayment(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      const total = (client.fleet || []).length;
+      const cur = client.paidMachinesCount || total;
+      const input = prompt(`Kiti machines che payment jama zhale? (0 te ${total}):`, cur);
+      if (input !== null && !isNaN(input)) {
+        client.paidMachinesCount = Math.max(0, Math.min(total, parseInt(input)));
+        syncDataToCloud();
+        renderSuperAdminDashboard();
+        alert("Fee update jhali!");
       }
-
-      history.forEach(h => {
-        container.innerHTML += `
-          <div class="log-item">
-            <div style="display:flex; justify-content:space-between;">
-              <b style="color:#f59e0b;">${h.machine}</b>
-              <span style="color:#94a3b8; font-size:11px;">📅 ${h.date}</span>
-            </div>
-            <div>चालक: <b>${h.driver}</b> | पार्टी: <b style="color:#22c55e;">${h.party}</b></div>
-            <div style="display:flex; justify-content:space-between; margin-top:4px; color:#38bdf8;">
-              <span>रीडिंग: ${h.startMeter} ➔ ${h.endMeter}</span>
-              <span style="color:#f59e0b;">काम: ${h.hours} तास</span>
-            </div>
-            <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
-              डिझेल: ${h.diesel || 'नोंद नाही'} | रोज भत्ता: ₹${h.batta || 0}
-            </div>
-          </div>
-        `;
-      });
     }
 
-    function renderClientMachinesSelection() {
-      const container = document.getElementById('clientFleetContainer');
-      container.innerHTML = '';
-      if (!currentSessionClient.fleet) return;
-
-      currentSessionClient.fleet.forEach((m, idx) => {
-        const card = document.createElement('div');
-        card.className = 'card-panel';
-        card.style.cursor = 'pointer';
-        card.onclick = () => loginOperatorMachine(idx);
-        card.innerHTML = `
-          <div style="font-size:24px;">🚜</div>
-          <div style="font-size:14px; font-weight:900; color:#f8fafc; margin-top:6px;">${m.name}</div>
-          <div style="font-size:11px; color:#f59e0b;">चालक: ${m.driver}</div>
-          <div style="font-size:10px; color:#22c55e; margin-top:4px;">पार्टी: ${m.activeParty || 'उपलब्ध'}</div>
-        `;
-        container.appendChild(card);
-      });
+    function removeClientAccount(clientId) {
+      if (confirm("Khatri kara: He khate kayamche delete karayche ka?")) {
+        clientsDatabase = clientsDatabase.filter(c => c.id !== clientId);
+        syncDataToCloud();
+        renderSuperAdminDashboard();
+      }
     }
 
-    function loginOperatorMachine(idx) {
-      const m = currentSessionClient.fleet[idx];
-      const pin = prompt(`🔒 ${m.name} चा ऑपरेटर PIN टाका (डिफॉल्ट: ${m.pin}):`);
-      if (pin === m.pin) {
-        currentSessionMachine = m;
-        document.getElementById('opMachineName').innerText = m.name;
-        document.getElementById('opDriverTitle').innerText = `चालक: ${m.driver}`;
-        document.getElementById('opActiveCustomer').innerText = `सध्याची पार्टी: ${m.activeParty || 'नोंद नाही'}`;
+    function sendRenewalWhatsAppPrompt(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      const cleanPhone = client.phone.startsWith('91') ? client.phone : ('91' + client.phone);
+      const msg = `Namaskar *${client.businessName}*,\nTumchya JCB Fleet Pro account chi fee baki ahe. Krupaya payment jama karun account chalu thevave. - Vikram Sir`;
+      window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 
-        const hoursLeft = 250 - ((m.totalHours || 0) - (m.lastServiceHour || 0));
-        document.getElementById('opServiceDueBadge').innerHTML = `सर्व्हिसिंग: <b style="color:${hoursLeft <= 10 ? '#ef4444' : '#22c55e'}">${hoursLeft > 0 ? hoursLeft.toFixed(1) + ' तास बाकी' : 'सर्व्हिसिंग ड्यू!'}</b>`;
+    function updateOperatorConsoleUI() {
+      if (!currentSessionMachine) return;
+      document.getElementById('opMachineName').innerText = currentSessionMachine.name;
+      document.getElementById('opDriverTitle').innerText = currentSessionMachine.driver;
+      
+      const activeP = currentSessionMachine.activeParty || "General Work";
+      document.getElementById('opActiveCustomer').innerText = activeP;
+      if (document.getElementById('eveningPartyDisplayName')) {
+        document.getElementById('eveningPartyDisplayName').innerText = activeP;
+      }
+    }
 
-        navigate('screenOpMenu');
-      } else if (pin !== null) {
-        alert("❌ चुकीचा ऑपरेटर PIN!");
+    function promptSwitchActiveParty() {
+      const existingParties = getClientUniqueParties();
+      let promptText = "Konachyat kaam chalu ahe ti party type kara:\n\nAvailable parties:\n" + existingParties.join(", ") + "\n\nNavin kivha chaloo party che naav lihva:";
+      const chosen = prompt(promptText, currentSessionMachine.activeParty || "General Work");
+      
+      if (chosen && chosen.trim().length > 0) {
+        currentSessionMachine.activeParty = chosen.trim();
+        syncDataToCloud();
+        updateOperatorConsoleUI();
+        alert(`✓ Chaloo party badalli: ${currentSessionMachine.activeParty}`);
+      }
+    }
+
+    function getClientUniqueParties() {
+      if (!currentSessionClient) return ["General Work"];
+      const history = currentSessionClient.operatorHistory || [];
+      const set = new Set();
+      (currentSessionClient.fleet || []).forEach(m => { if (m.activeParty) set.add(m.activeParty); });
+      history.forEach(h => { if (h.party) set.add(h.party); });
+      if (set.size === 0) set.add("General Work");
+      return Array.from(set);
+    }
+
+    function openMorningScreen() {
+      const select = document.getElementById('morningPartySelect');
+      select.innerHTML = '';
+      
+      const parties = getClientUniqueParties();
+      const currentActive = currentSessionMachine.activeParty || "General Work";
+      if (!parties.includes(currentActive)) parties.unshift(currentActive);
+
+      parties.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.innerText = p;
+        if (p === currentActive) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      document.getElementById('startReadingInput').value = currentSessionMachine.totalHours || '';
+      navigate('screenMorning');
+    }
+
+    function handleMorningPartySelectChange() {
+      const selected = document.getElementById('morningPartySelect').value;
+      currentSessionMachine.activeParty = selected;
+      syncDataToCloud();
+      updateOperatorConsoleUI();
+    }
+
+    function promptAddNewPartyOperator() {
+      const newP = prompt("➕ Navin Party che naav taaka (Jambhulkar / Site 1):");
+      if (newP && newP.trim().length > 0) {
+        const pName = newP.trim();
+        currentSessionMachine.activeParty = pName;
+        syncDataToCloud();
+        updateOperatorConsoleUI();
+        openMorningScreen();
+        alert(`✓ Navin party locked: ${pName}`);
       }
     }
 
     function saveMorningShift() {
-      const cust = document.getElementById('morningCustNameInput').value.trim();
-      const start = document.getElementById('startReadingInput').value;
+      const r = document.getElementById('startReadingInput').value;
       const work = document.getElementById('morningWorkTypeInput').value.trim();
-      if (!cust || !start) { alert("कृपया माहिती भरा!"); return; }
+      const party = document.getElementById('morningPartySelect').value;
 
-      currentSessionMachine.activeParty = cust;
-      currentSessionMachine.workType = work;
-      document.getElementById('shiftStartReading').value = start;
+      if (!r) { alert("Reading taaka!"); return; }
+
+      currentSessionMachine.startReading = r;
+      currentSessionMachine.workType = work || "Mati Kaam";
+      currentSessionMachine.activeParty = party;
+      
+      document.getElementById('shiftStartReading').value = r;
       syncDataToCloud();
-      alert(`✓ ${cust} च्या कामाची सकाळची नोंद झाली!`);
+      updateOperatorConsoleUI();
+      alert(`✓ Sakal reading save zhale!\nParty: ${party}`);
       navigate('screenOpMenu');
     }
 
     function calculateShiftHours() {
-      const start = parseFloat(document.getElementById('shiftStartReading').value) || 0;
-      const end = parseFloat(document.getElementById('shiftEndReading').value) || 0;
-      const run = (end > start) ? (end - start) : 0;
-      document.getElementById('shiftCalculatedHours').innerText = `${run.toFixed(1)} तास`;
+      const s = parseFloat(document.getElementById('shiftStartReading').value) || 0;
+      const e = parseFloat(document.getElementById('shiftEndReading').value) || 0;
+      const run = e > s ? (e - s) : 0;
+      document.getElementById('shiftCalculatedHours').innerText = `${run.toFixed(1)} Taas`;
       return run;
-    }
-
-    // डिझेल चोरी नियंत्रण पडताळणी
-    function submitDieselEntry() {
-      const liters = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
-      const cost = document.getElementById('dieselCostInput').value;
-      if (liters <= 0) { alert("कृपया लिटर टाका!"); return; }
-
-      currentSessionMachine.lastFilledDiesel = liters;
-      currentSessionMachine.lastFilledDieselCost = cost;
-      syncDataToCloud();
-      alert(`✓ ${liters} लिटर डिझेलची नोंद झाली!`);
-      navigate('screenOpMenu');
     }
 
     function submitEveningShiftWhatsApp() {
       const run = calculateShiftHours();
-      if (run <= 0) { alert("संध्याकाळचे रीडिंग सकाळपेक्षा जास्त हवे!"); return; }
+      if (run <= 0) { alert("Sandhyakalche reading jast have!"); return; }
 
-      const liters = currentSessionMachine.lastFilledDiesel || 0;
-      if (liters > 0 && run > 0) {
-        const avgMileage = liters / run;
-        if (avgMileage > 6.5) {
-          alert(`🚨 डिझेल संशयास्पद वापर अलर्ट!\nसरासरी: ${avgMileage.toFixed(1)} Ltr/तास (सामान्य सरासरीपेक्षा खूप जास्त डिझेल दाखवले आहे!).`);
-        }
-      }
-
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('mr-IN');
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const batta = parseFloat(document.getElementById('shiftBattaInput').value) || 300;
+      const s = parseFloat(document.getElementById('shiftStartReading').value) || 0;
+      const e = parseFloat(document.getElementById('shiftEndReading').value) || 0;
+      const trips = document.getElementById('shiftTripsInput').value || 0;
+      const party = currentSessionMachine.activeParty || "General Work";
 
       if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
-      
       currentSessionClient.operatorHistory.unshift({
-        date: dateStr,
-        time: timeStr,
+        date: new Date().toLocaleDateString('mr-IN'),
         machine: currentSessionMachine.name,
         driver: currentSessionMachine.driver,
-        party: currentSessionMachine.activeParty || "सामान्य काम",
-        work: currentSessionMachine.workType || "माती काम",
-        startMeter: parseFloat(document.getElementById('shiftStartReading').value) || 0,
-        endMeter: parseFloat(document.getElementById('shiftEndReading').value) || 0,
+        party: party,
+        work: currentSessionMachine.workType || "Mati Kaam",
+        trips: trips,
         hours: run,
-        trips: document.getElementById('shiftTripsInput').value || 0,
-        diesel: liters > 0 ? (liters + " Ltr") : "नोंद नाही",
-        batta: batta
+        hourlyRate: currentSessionMachine.defaultHourlyRate || 2000,
+        startMeter: s,
+        endMeter: e
       });
 
       currentSessionMachine.hoursToday = run;
-      currentSessionMachine.totalHours = parseFloat(document.getElementById('shiftEndReading').value) || (currentSessionMachine.totalHours + run);
-      currentSessionMachine.lastFilledDiesel = 0; // reset for next shift
-
+      currentSessionMachine.totalHours = e;
       syncDataToCloud();
-      alert("✓ ऑपरेटरच्या कामाची नोंद सेव्ह झाली!");
+      alert(`✓ Shift close zhali!\nParty: ${party}\nTaas: ${run.toFixed(1)}`);
+      updateOperatorConsoleUI();
       navigate('screenOpMenu');
     }
 
-    function openCustomerJobScreen() {
-      document.getElementById('custNameInput').value = currentSessionMachine.activeParty || '';
-      document.getElementById('custPhoneInput').value = document.getElementById('morningCustPhoneInput').value || '';
+    function toggleCustomPumpInput() {
+      const val = document.getElementById('dieselPumpSelect').value;
+      const customWrapper = document.getElementById('customPumpInputWrapper');
+      if (val === 'OTHER') {
+        customWrapper.style.display = 'block';
+      } else {
+        customWrapper.style.display = 'none';
+      }
+    }
+
+    function submitDieselEntry() {
+      const selectVal = document.getElementById('dieselPumpSelect').value;
+      let finalPump = selectVal;
+      if (selectVal === 'OTHER') {
+        finalPump = document.getElementById('dieselCustomPumpNameInput').value.trim() || 'Itar Pump';
+      }
+
+      const l = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
+      const c = parseFloat(document.getElementById('dieselCostInput').value) || 0;
+      const p = parseFloat(document.getElementById('dieselPaidInput').value) || 0;
+
+      if (!l || !c) { alert("Liters kivha bill taaka!"); return; }
+
+      if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
+      currentSessionClient.dieselHistory.unshift({
+        date: new Date().toLocaleDateString('mr-IN'),
+        pump: finalPump,
+        machine: currentSessionMachine.name,
+        driver: currentSessionMachine.driver,
+        liters: l,
+        cost: c,
+        paid: p
+      });
+
+      syncDataToCloud();
+      alert(`Diesel nond save zhali! (Pump: ${finalPump})`);
+      document.getElementById('dieselCostInput').value = '';
+      document.getElementById('dieselLitersInput').value = '';
+      document.getElementById('dieselCustomPumpNameInput').value = '';
+      document.getElementById('dieselPumpSelect').value = 'Indian Oil';
+      toggleCustomPumpInput();
+      navigate('screenOpMenu');
+    }
+
+    function calculateDieselFromCostOrLiters(src) {
+      const r = parseFloat(document.getElementById('dieselRateInput').value) || 98.80;
+      if (src === 'cost') {
+        const c = parseFloat(document.getElementById('dieselCostInput').value) || 0;
+        document.getElementById('dieselLitersInput').value = (c / r).toFixed(2);
+      } else {
+        const l = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
+        document.getElementById('dieselCostInput').value = (l * r).toFixed(2);
+      }
+    }
+
+    function renderClientOwnerView() {
+      if (!currentSessionClient) return;
+      const fleet = currentSessionClient.fleet || [];
+      document.getElementById('menuMachinesCountBadge').innerText = `${fleet.length} Machines`;
+
+      const backButtons = ['btnBackDiesel', 'btnBackPnl', 'btnBackSalary', 'btnBackBilling', 'btnBackNight'];
+      backButtons.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.onclick = function() { navigate('screenClientOwner'); };
+          btn.innerText = "⬅ Mukhya Menu Var Ja";
+        }
+      });
+
+      renderClientOwnerMachines();
+      renderDieselSummaryBox();
+      renderProfitAndLossOverview();
+      renderOperatorSalarySummary();
+      renderNightClosingMachineWise();
+      renderDayByDayWorking();
+      renderClientMachinesSelection();
+    }
+
+    function renderClientOwnerMachines() {
+      const container = document.getElementById('clientOwnerMachinesList');
+      if (!container) return;
+      container.innerHTML = '';
+      (currentSessionClient.fleet || []).forEach(m => {
+        container.innerHTML += `
+          <div class="feature-card">
+            <div class="card-top"><div class="icon-badge" style="background:#e0f2fe;">🚜</div><span class="arrow-icon">›</span></div>
+            <div class="card-body">
+              <div class="card-main-title">${m.name}</div>
+              <div class="card-sub-title">Chalak: ${m.driver}</div>
+              <div style="font-size:11px; color:#059669; font-weight:bold; margin-top:1px;">Party: ${m.activeParty || 'General Work'}</div>
+              <div style="font-size:11px; color:var(--primary-blue); margin-top:2px;">Aaj: ${m.hoursToday || 0} Hrs</div>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('fleetTotalMachinesCount').innerText = (currentSessionClient.fleet || []).length;
+    }
+
+    function renderDieselSummaryBox() {
+      const dHistory = currentSessionClient.dieselHistory || [];
+      let totalL = 0, totalC = 0, totalP = 0;
+
+      dHistory.forEach(d => {
+        totalL += parseFloat(d.liters) || 0;
+        totalC += parseFloat(d.cost) || 0;
+        totalP += parseFloat(d.paid) || 0;
+      });
+
+      document.getElementById('menuDieselLtrBadge').innerText = `${totalL.toFixed(1)} Ltr`;
+      document.getElementById('detailDieselLiters').innerText = `${totalL.toFixed(1)} Ltr`;
+      document.getElementById('detailDieselTotalBill').innerText = `₹ ${totalC.toFixed(0)}`;
+      document.getElementById('detailDieselPaid').innerText = `₹ ${totalP.toFixed(0)}`;
+      document.getElementById('detailDieselPending').innerText = `₹ ${(totalC - totalP).toFixed(0)}`;
+
+      renderFullDieselEntriesList();
+    }
+
+    function renderFullDieselEntriesList() {
+      const container = document.getElementById('fullDieselEntriesListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      const dHistory = currentSessionClient.dieselHistory || [];
+
+      const q = (document.getElementById('dieselSearchInput') ? document.getElementById('dieselSearchInput').value.trim().toLowerCase() : '');
+      const fromDate = (document.getElementById('dieselFromDate') && document.getElementById('dieselFromDate').value) ? new Date(document.getElementById('dieselFromDate').value) : null;
+      const toDate = (document.getElementById('dieselToDate') && document.getElementById('dieselToDate').value) ? new Date(document.getElementById('dieselToDate').value + 'T23:59:59') : null;
+
+      dHistory.forEach(d => {
+        const itemDate = parseDateDMY(d.date);
+        if (fromDate && itemDate < fromDate) return;
+        if (toDate && itemDate > toDate) return;
+        if (q && !d.machine.toLowerCase().includes(q) && !d.driver.toLowerCase().includes(q) && !d.pump.toLowerCase().includes(q)) return;
+
+        container.innerHTML += `
+          <div class="data-item-card">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:12px; font-weight:bold; color:var(--primary-blue);">📅 ${d.date}</span>
+              <span style="font-size:12px; font-weight:bold;">${d.pump || 'Pump'}</span>
+            </div>
+            <div style="font-size:11px; margin:2px 0;">Machine: <b>${d.machine}</b> | Chalak: ${d.driver}</div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; background:#f8fafc; padding:4px; border-radius:4px;">
+              <span>Ltr: <b>${d.liters}</b></span>
+              <span>Bill: <b>₹${d.cost}</b></span>
+              <span>Paid: <b style="color:var(--accent-green);">₹${d.paid || 0}</b></span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addPumpPayment() {
+      const amt = parseFloat(document.getElementById('pumpPaymentAmountInput').value) || 0;
+      const remark = document.getElementById('pumpPaymentRemarkInput').value.trim() || 'Payment';
+      if (amt <= 0) { alert("Rakkam taaka!"); return; }
+
+      if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
+      currentSessionClient.dieselHistory.unshift({
+        date: new Date().toLocaleDateString('mr-IN'),
+        pump: `Pump Payment (${remark})`,
+        machine: "Sarv",
+        driver: "Malak",
+        liters: 0,
+        cost: 0,
+        paid: amt
+      });
+
+      syncDataToCloud();
+      document.getElementById('pumpPaymentAmountInput').value = '';
+      document.getElementById('pumpPaymentRemarkInput').value = '';
+      renderDieselSummaryBox();
+      renderProfitAndLossOverview();
+      alert("Payment save zhale!");
+    }
+
+    function renderProfitAndLossOverview() {
+      const history = currentSessionClient.operatorHistory || [];
+      const dHistory = currentSessionClient.dieselHistory || [];
+      const otherExp = currentSessionClient.otherExpenses || [];
+
+      const fromDate = (document.getElementById('pnlFromDate') && document.getElementById('pnlFromDate').value) ? new Date(document.getElementById('pnlFromDate').value) : null;
+      const toDate = (document.getElementById('pnlToDate') && document.getElementById('pnlToDate').value) ? new Date(document.getElementById('pnlToDate').value + 'T23:59:59') : null;
+
+      let totalGross = 0, totalHours = 0;
+      history.forEach(h => {
+        const d = parseDateDMY(h.date);
+        if (fromDate && d < fromDate) return;
+        if (toDate && d > toDate) return;
+        const run = parseFloat(h.hours) || 0;
+        totalHours += run;
+        totalGross += (run * (parseFloat(h.hourlyRate) || 2000));
+      });
+
+      let totalFuel = 0;
+      dHistory.forEach(d => {
+        const itemD = parseDateDMY(d.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        totalFuel += parseFloat(d.cost) || 0;
+      });
+
+      let totalAdv = 0;
+      (currentSessionClient.fleet || []).forEach(m => {
+        (m.advanceHistory || []).forEach(a => {
+          const itemD = parseDateDMY(a.date);
+          if (fromDate && itemD < fromDate) return;
+          if (toDate && itemD > toDate) return;
+          totalAdv += parseFloat(a.amount) || 0;
+        });
+      });
+
+      let totalOther = 0;
+      otherExp.forEach(o => {
+        const itemD = parseDateDMY(o.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        totalOther += parseFloat(o.amount) || 0;
+      });
+
+      const totalExp = totalFuel + totalAdv + totalOther;
+      const net = totalGross - totalExp;
+
+      document.getElementById('pnlTotalIncomeDisplay').innerText = `₹ ${totalGross.toFixed(0)}`;
+      document.getElementById('pnlTotalExpenseDisplay').innerText = `₹ ${totalExp.toFixed(0)}`;
+      document.getElementById('pnlNetProfitDisplay').innerText = `₹ ${net.toFixed(0)}`;
+      document.getElementById('menuNetProfitBadge').innerText = `₹ ${net.toFixed(0)} Net`;
+
+      document.getElementById('pnlBreakdownTotalHours').innerText = `${totalHours.toFixed(1)} Taas`;
+      document.getElementById('pnlBreakdownGrossBilling').innerText = `₹ ${totalGross.toFixed(0)}`;
+      document.getElementById('pnlBreakdownDieselCost').innerText = `₹ ${totalFuel.toFixed(0)}`;
+      document.getElementById('pnlBreakdownDriverAdvances').innerText = `₹ ${totalAdv.toFixed(0)}`;
+      document.getElementById('pnlBreakdownOtherExpenses').innerText = `₹ ${totalOther.toFixed(0)}`;
+    }
+
+    function addNewPnlExpenseEntry() {
+      const t = document.getElementById('newExpenseTitleInput').value.trim();
+      const a = parseFloat(document.getElementById('newExpenseAmountInput').value) || 0;
+      if (!t || a <= 0) { alert("Kharchachi mahiti bhara!"); return; }
+
+      if (!currentSessionClient.otherExpenses) currentSessionClient.otherExpenses = [];
+      currentSessionClient.otherExpenses.unshift({ date: new Date().toLocaleDateString('mr-IN'), title: t, amount: a });
+      syncDataToCloud();
+      document.getElementById('newExpenseTitleInput').value = '';
+      document.getElementById('newExpenseAmountInput').value = '';
+      renderProfitAndLossOverview();
+      alert("Kharch save zhala!");
+    }
+
+    function renderOperatorSalarySummary() {
+      const container = document.getElementById('operatorSalarySummaryList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
+        const sal = parseFloat(m.monthlySalary) || 20000;
+        const bal = sal - totalUchhal;
+
+        container.innerHTML += `
+          <div class="data-item-card" onclick="openDriverLedgerScreen(${idx})" style="cursor:pointer;">
+            <div style="display:flex; justify-content:space-between;">
+              <b>👷 ${m.driver} (${m.name})</b>
+              <span style="font-size:11px; color:var(--primary-blue);">Khate Ughada ➔</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
+              <span>Pagar: ₹${sal}</span>
+              <span>Uchhal: <b style="color:var(--accent-red);">₹${totalUchhal}</b></span>
+              <span>Shillak: <b style="color:var(--accent-green);">₹${bal > 0 ? bal : 0}</b></span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openDriverLedgerScreen(idx) {
+      selectedLedgerDriverIdx = idx;
+      renderDriverLedgerPage(idx);
+      navigate('screenDriverLedgerPage');
+    }
+
+    function renderDriverLedgerPage(idx) {
+      const m = currentSessionClient.fleet[idx];
+      const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
+      const sal = parseFloat(m.monthlySalary) || 20000;
+
+      document.getElementById('ledgerDriverNameTitle').innerText = `👷 ${m.driver} (${m.name})`;
+      document.getElementById('ledgerDriverBasicSalary').innerText = `₹ ${sal}`;
+      document.getElementById('ledgerDriverTotalUchhal').innerText = `₹ ${totalUchhal}`;
+      document.getElementById('ledgerDriverNetBalance').innerText = `₹ ${sal - totalUchhal > 0 ? sal - totalUchhal : 0}`;
+
+      const container = document.getElementById('driverUchhalHistoryList');
+      container.innerHTML = '';
+      (m.advanceHistory || []).forEach(a => {
+        container.innerHTML += `
+          <div class="data-item-card">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <span>📅 ${a.date}</span>
+              <b style="color:var(--accent-red);">₹${a.amount}</b>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Shera: ${a.remark || 'Advance'}</div>
+          </div>
+        `;
+      });
+    }
+
+    function addDriverUchhalEntry() {
+      const amt = parseFloat(document.getElementById('newUchhalAmountInput').value) || 0;
+      const remark = document.getElementById('newUchhalRemarkInput').value.trim() || 'Uchhal';
+      if (amt <= 0) { alert("Rakkam taaka!"); return; }
+
+      const m = currentSessionClient.fleet[selectedLedgerDriverIdx];
+      if (!m.advanceHistory) m.advanceHistory = [];
+      m.advanceHistory.unshift({ date: new Date().toLocaleDateString('mr-IN'), amount: amt, remark: remark });
+
+      syncDataToCloud();
+      document.getElementById('newUchhalAmountInput').value = '';
+      document.getElementById('newUchhalRemarkInput').value = '';
+      renderDriverLedgerPage(selectedLedgerDriverIdx);
+      renderProfitAndLossOverview();
+      alert("Uchhal nond jhali!");
+    }
+
+    function renderDayByDayWorking() {
+      const container = document.getElementById('dayByDayWorkingContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      const history = currentSessionClient.operatorHistory || [];
+
+      const q = (document.getElementById('dailyWorkSearchInput') ? document.getElementById('dailyWorkSearchInput').value.trim().toLowerCase() : '');
+      const fromDate = (document.getElementById('dailyFromDate') && document.getElementById('dailyFromDate').value) ? new Date(document.getElementById('dailyFromDate').value) : null;
+      const toDate = (document.getElementById('dailyToDate') && document.getElementById('dailyToDate').value) ? new Date(document.getElementById('dailyToDate').value + 'T23:59:59') : null;
+
+      history.forEach(h => {
+        const itemD = parseDateDMY(h.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        if (q && !h.machine.toLowerCase().includes(q) && !h.party.toLowerCase().includes(q)) return;
+
+        container.innerHTML += `
+          <div class="data-item-card">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <b>📅 ${h.date} - ${h.machine}</b>
+              <b style="color:var(--primary-blue);">${h.hours} Taas</b>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">Party: <b style="color:#059669;">${h.party}</b> | Chalak: ${h.driver}</div>
+          </div>
+        `;
+      });
+    }
+
+    function renderNightClosingMachineWise() {
+      const container = document.getElementById('nightClosingMachineWiseList');
+      if (!container) return;
+      container.innerHTML = '';
+      const history = currentSessionClient.operatorHistory || [];
+
+      const q = (document.getElementById('nightSearchInput') ? document.getElementById('nightSearchInput').value.trim().toLowerCase() : '');
+      const fromDate = (document.getElementById('nightFromDate') && document.getElementById('nightFromDate').value) ? new Date(document.getElementById('nightFromDate').value) : null;
+      const toDate = (document.getElementById('nightToDate') && document.getElementById('nightToDate').value) ? new Date(document.getElementById('nightToDate').value + 'T23:59:59') : null;
+
+      history.forEach(h => {
+        const itemD = parseDateDMY(h.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        if (q && !h.machine.toLowerCase().includes(q) && !h.driver.toLowerCase().includes(q)) return;
+
+        container.innerHTML += `
+          <div class="data-item-card" style="border-left:4px solid var(--accent-purple);">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <b>🚜 ${h.machine} - ${h.date}</b>
+              <b style="color:var(--accent-green);">${h.hours} Taas</b>
+            </div>
+            <div style="font-size:11px; margin-top:3px;">Sakal: <b>${h.startMeter || 0}</b> | Band: <b>${h.endMeter || 0}</b></div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Chalak: ${h.driver} | Party: <b>${h.party}</b></div>
+          </div>
+        `;
+      });
+    }
+
+    function openOwnerBillingPage() {
+      const select = document.getElementById('billMachineSelect');
+      if (!select) return;
+      select.innerHTML = '';
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        select.innerHTML += `<option value="${idx}">${m.name}</option>`;
+      });
+      autoLoadPartiesForSelectedMachine();
+    }
+
+    function autoLoadPartiesForSelectedMachine() {
+      const mIdx = document.getElementById('billMachineSelect').value;
+      const m = currentSessionClient.fleet[mIdx];
+      const partySelect = document.getElementById('billPartySelect');
+      partySelect.innerHTML = '';
+
+      const history = currentSessionClient.operatorHistory || [];
+      const machineLogs = history.filter(h => h.machine === m.name);
+      const uniqueParties = [...new Set(machineLogs.map(h => h.party))];
+      if (uniqueParties.length === 0) uniqueParties.push(m.activeParty || "General Work");
+
+      uniqueParties.forEach(p => { partySelect.innerHTML += `<option value="${p}">${p}</option>`; });
+      document.getElementById('custHourlyRate').value = m.defaultHourlyRate || 2000;
+      calculateAutoAccumulatedHours();
+    }
+
+    function filterBillingPartiesList() {
+      const query = document.getElementById('billingPartySearchBox').value.trim().toLowerCase();
+      const partySelect = document.getElementById('billPartySelect');
+      for (let i = 0; i < partySelect.options.length; i++) {
+        const txt = partySelect.options[i].text.toLowerCase();
+        partySelect.options[i].style.display = txt.includes(query) ? '' : 'none';
+        if (txt.includes(query) && partySelect.selectedIndex === -1) partySelect.selectedIndex = i;
+      }
+      calculateAutoAccumulatedHours();
+    }
+
+    function calculateAutoAccumulatedHours() {
+      const mIdx = document.getElementById('billMachineSelect').value;
+      const m = currentSessionClient.fleet[mIdx];
+      const selectedParty = document.getElementById('billPartySelect').value;
+
+      const history = currentSessionClient.operatorHistory || [];
+      const logs = history.filter(h => h.machine === m.name && h.party === selectedParty);
+
+      let total = 0;
+      logs.forEach(l => { total += parseFloat(l.hours) || 0; });
+      if (total === 0) total = m.hoursToday || 8.0;
+
+      document.getElementById('billAutoDaysCount').innerText = `${logs.length > 0 ? logs.length : 1} Divas`;
+      document.getElementById('billAutoHoursTotal').innerText = `${total.toFixed(1)} Taas`;
+      document.getElementById('custTodayHours').value = total.toFixed(1);
       calculateOngoingRent();
-      navigate('screenCustomerLedger');
     }
 
     function calculateOngoingRent() {
-      const hours = parseFloat(document.getElementById('custTodayHours').value) || 0;
-      const rate = parseFloat(document.getElementById('custHourlyRate').value) || 0;
-      const adv = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
-      
-      const totalRent = hours * rate;
-      const pending = totalRent - adv;
+      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
+      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
+      const total = h * r;
 
-      document.getElementById('liveTotalAccumulatedRent').innerText = `₹ ${totalRent.toFixed(0)}`;
-      document.getElementById('liveAdvanceDeducted').innerText = `₹ ${adv.toFixed(0)}`;
-      document.getElementById('livePartyPendingAmt').innerText = `₹ ${pending > 0 ? pending.toFixed(0) : 0}`;
-      return { totalRent, adv, pending };
+      document.getElementById('liveTotalAccumulatedRent').innerText = `₹ ${total.toFixed(0)}`;
+      document.getElementById('liveAdvanceDeducted').innerText = `₹ ${a.toFixed(0)}`;
+      document.getElementById('livePartyPendingAmt').innerText = `₹ ${(total - a).toFixed(0)}`;
+      return { total, a, pending: total - a };
     }
 
     function sendInvoiceToCustomerWhatsApp() {
       const phone = document.getElementById('custPhoneInput').value.trim();
-      if (!phone) { alert("पार्टीचा १० अंकी WhatsApp नंबर टाका!"); return; }
+      if (!phone) { alert("WhatsApp number taaka!"); return; }
       const cleanPhone = phone.startsWith('91') ? phone : ('91' + phone);
-      const { totalRent, adv, pending } = calculateOngoingRent();
+      const { total, a, pending } = calculateOngoingRent();
+      const mIdx = document.getElementById('billMachineSelect').value;
+      const m = currentSessionClient.fleet[mIdx];
+      const party = document.getElementById('billPartySelect').value;
 
-      const msg = `🚜 *${currentSessionClient.businessName}*\n` +
-                  `━━━━━━━━━━━━━━━━━━━\n` +
-                  `पार्टीचे नाव: ${document.getElementById('custNameInput').value}\n` +
-                  `मशीन: ${currentSessionMachine.name}\n` +
-                  `कामाचे तास: ${document.getElementById('custTodayHours').value} तास\n` +
-                  `भाडे दर: ₹${document.getElementById('custHourlyRate').value}/तास\n` +
-                  `एकूण भाडे बिल: ₹${totalRent}\n` +
-                  `जमा ॲडव्हान्स: ₹${adv}\n` +
-                  `*बाकी येणे रक्कम: ₹${pending}*\n` +
-                  `━━━━━━━━━━━━━━━━━━━\n` +
-                  `धन्यवाद! संपर्क: ${currentSessionClient.phone}`;
-
-      window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      const msg = `🚜 *${currentSessionClient.businessName}*\nParty: ${party}\nMachine: ${m.name}\nEkun Taas: ${document.getElementById('custTodayHours').value}\nBill: ₹${total}\nAdvance: ₹${a}\n*Shillak: ₹${pending}*`;
+      window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // PDF / प्रिंट बिल जनरेटर
     function generatePrintableInvoiceModal() {
-      const { totalRent, adv, pending } = calculateOngoingRent();
-      const party = document.getElementById('custNameInput').value;
-      const hours = document.getElementById('custTodayHours').value;
-      const rate = document.getElementById('custHourlyRate').value;
+      const { total, a, pending } = calculateOngoingRent();
+      const mIdx = document.getElementById('billMachineSelect').value;
+      const m = currentSessionClient.fleet[mIdx];
+      const party = document.getElementById('billPartySelect').value;
 
       document.getElementById('invBizName').innerText = currentSessionClient.businessName;
-      document.getElementById('invBizPhone').innerText = currentSessionClient.phone;
-      document.getElementById('invPartyName').innerText = party || "मा. ग्राहक";
+      document.getElementById('invPartyName').innerText = party;
       document.getElementById('invDate').innerText = new Date().toLocaleDateString('mr-IN');
-      document.getElementById('invMachineName').innerText = currentSessionMachine.name;
-      document.getElementById('invDriverName').innerText = currentSessionMachine.driver;
-
-      document.getElementById('invTableHours').innerText = `${hours} तास`;
-      document.getElementById('invTableRate').innerText = `₹ ${rate}`;
-      document.getElementById('invTableTotalRent').innerText = `₹ ${totalRent}`;
-      document.getElementById('invTableAdvance').innerText = `₹ ${adv}`;
+      document.getElementById('invMachineName').innerText = m.name;
+      document.getElementById('invDaysCount').innerText = document.getElementById('billAutoDaysCount').innerText;
+      document.getElementById('invTableHours').innerText = document.getElementById('custTodayHours').value;
+      document.getElementById('invTableRate').innerText = `₹ ${document.getElementById('custHourlyRate').value}`;
+      document.getElementById('invTableTotalRent').innerText = `₹ ${total}`;
+      document.getElementById('invTableAdvance').innerText = `₹ ${a}`;
       document.getElementById('invTableBalance').innerText = `₹ ${pending}`;
 
       document.getElementById('printableInvoiceModal').style.display = 'block';
       document.getElementById('printableInvoiceModal').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function reportBreakdownAlert() {
-      const issue = document.getElementById('issueTypeInput').value;
-      const desc = document.getElementById('issueDetailsInput').value;
-      alert(`🚨 मालकाला अलर्ट पाठवला:\nमशीन: ${currentSessionMachine.name}\nअडचण: ${issue}\nतपशील: ${desc}`);
-      navigate('screenOpMenu');
+    function renderClientMachinesSelection() {
+      const container = document.getElementById('clientFleetContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        container.innerHTML += `
+          <div class="feature-card" onclick="loginOperatorMachine(${idx})">
+            <div class="card-top"><div class="icon-badge" style="background:#e0f2fe;">🚜</div><span class="arrow-icon">›</span></div>
+            <div class="card-body">
+              <div class="card-main-title">${m.name}</div>
+              <div class="card-sub-title">Chalak: ${m.driver}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function loginOperatorMachine(idx) {
+      const m = currentSessionClient.fleet[idx];
+      const pin = prompt(`PIN taaka (${m.pin}):`);
+      if (pin === m.pin) {
+        localStorage.setItem('jcb_active_session_v45', JSON.stringify({
+          type: 'OPERATOR',
+          ownerId: currentSessionClient.user,
+          machineId: m.id
+        }));
+
+        currentSessionMachine = m;
+        isOwnerLoggedIn = false;
+        updateOperatorConsoleUI();
+        navigate('screenOpMenu');
+      } else {
+        alert("Chukicha PIN!");
+      }
     }
 
     function logoutSession() {
+      localStorage.removeItem('jcb_active_session_v45');
       currentSessionClient = null;
       currentSessionMachine = null;
-      document.getElementById('lockOverlay').style.display = "none";
-      navigate('screenUniversalLogin');
-    }
-
-    function navigate(screenId) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-      window.scrollTo(0, 0);
+      isOwnerLoggedIn = false;
+      isSuperAdminImpersonating = false;
+      document.getElementById('lockOverlayScreen').style.display = 'none';
+      navigate('screenLoginSelect');
     }
   </script>
 </body>

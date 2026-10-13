@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JCB Fleet Pro ERP | Production Master Edition</title>
 
+  <!-- Firebase SDK Libraries (Cloud Sync) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
   <style>
     :root {
       --primary-blue: #1a73e8;
@@ -80,6 +84,22 @@
     .screen.active { display: block; animation: fadeIn 0.15s ease-in; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* FRONT PAGE PENDING ALERT CARD */
+    .front-pending-alert-banner {
+      display: none;
+      background: #fffbeb;
+      border: 2px solid var(--accent-gold);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
+      animation: pulseAlert 2s infinite alternate;
+    }
+    @keyframes pulseAlert {
+      from { border-color: var(--accent-gold); }
+      to { border-color: var(--accent-red); }
+    }
+
     .modal-overlay {
       display: none;
       position: fixed;
@@ -153,8 +173,8 @@
       padding: 12px 14px;
       margin-bottom: 14px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .section-title-row {
@@ -404,27 +424,27 @@
 </head>
 <body>
 
-  <!-- Lock Screen Overlay -->
+  <!-- Lock Screen Overlay (Approval Pending for Payment Status) -->
   <div id="lockOverlayScreen">
-    <div style="font-size: 54px; margin-bottom: 10px;">🔒</div>
-    <h2 style="font-size: 20px; font-weight: 900;">ACCOUNT LOCKED</h2>
-    <p style="font-size: 13px; color: #cbd5e1; margin: 10px 0 20px 0; max-width: 340px; line-height: 1.5;">
-      Tumchya ya account chi membership fee baki ahe kivha Super Admin kadun approval baki ahe.
+    <div style="font-size: 58px; margin-bottom: 10px;">⏳</div>
+    <h2 style="font-size: 20px; font-weight: 900; color:#fde047; letter-spacing:0.5px;">APPROVAL PENDING FOR PAYMENT</h2>
+    <p style="font-size: 13.5px; color: #cbd5e1; margin: 12px 0 20px 0; max-width: 350px; line-height: 1.6;">
+      Tumchya ya account/machine che payment Super Admin kade pending ahe. विक्रम सरांकडून <b>Payment Approve</b> zalyanantar tumche app thet chalu hoil!
     </p>
-    <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20maze%20account%20activate%20karun%20dya." 
-       style="background:var(--accent-gold); color:#000; padding:12px 20px; font-weight:900; border-radius:8px; text-decoration:none;">
-      💳 Pay & Activate (WhatsApp)
+    <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20maze%20payment%20approve%20karun%20app%20start%20kara." 
+       style="background:var(--accent-gold); color:#000; padding:12px 22px; font-weight:900; border-radius:8px; text-decoration:none;">
+      💳 Pay / Contact Vikram Sir (WhatsApp)
     </a>
     <button onclick="logoutSession()" style="margin-top: 20px; background:transparent; border:1px solid #fff; color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer;">
       Logout Kara
     </button>
   </div>
 
-  <!-- Notification Modal Box (Admin Only) -->
+  <!-- Notification Modal Box (Super Admin Only) -->
   <div id="notificationModal" class="modal-overlay">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
-        <b style="font-size:16px; color:var(--text-dark);">🔔 Pending Approvals & Alerts</b>
+        <b style="font-size:16px; color:var(--text-dark);">🔔 Approval Pending for Payment</b>
         <button onclick="toggleNotificationModal(false)" style="background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
       </div>
       <div id="notificationListContainer"></div>
@@ -435,19 +455,38 @@
   <div class="app-header">
     <div class="brand-title">🚜 JCB Fleet Pro</div>
     <div class="header-actions">
+      <!-- 🔔 Bell Icon: Only displayed for Super Admin -->
       <button class="notif-bell-btn" id="adminNotifBellBtn" onclick="openNotificationModal()" title="Alerts & Notifications">
         🔔
         <div class="notif-badge-dot" id="notifBadgeDot"></div>
       </button>
-      <span class="pill-btn" id="headerRoleBadge">Live ERP</span>
+      <span class="pill-btn" id="headerRoleBadge">Live Cloud</span>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- SCREEN 0: LOGIN CHOICE -->
+    <!-- ========================================================
+         SCREEN 0: FIRST PAGE (LOGIN CHOICE & DIRECT PENDING ALERT)
+         ======================================================== -->
     <div id="screenLoginSelect" class="screen active">
-      <div class="panel-card" style="text-align: center; margin-top: 20px;">
+
+      <!-- 🚨 FIRST PAGE DIRECT ALERT FOR PENDING PAYMENT -->
+      <div id="frontPagePendingAlertBanner" class="front-pending-alert-banner">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <b style="color:#b45309; font-size:14px;">⚠️ Approval Pending for Payment!</b>
+            <div style="font-size:12px; color:#475569; margin-top:2px;" id="frontPendingSummaryText">
+              Navin Payment Approvals Baki Ahet.
+            </div>
+          </div>
+          <button onclick="navigate('screenOwnerLogin')" style="background:var(--accent-gold); color:#000; border:none; padding:7px 12px; border-radius:6px; font-weight:900; font-size:11px; cursor:pointer;">
+            तपासा ➔
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-card" style="text-align: center; margin-top: 10px;">
         <div style="font-size: 42px; margin-bottom: 6px;">🚜</div>
         <h2 style="font-size: 18px; font-weight: 800; color: var(--text-dark);">JCB FLEET PRO LOGIN</h2>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px;">
@@ -512,7 +551,9 @@
       </div>
     </div>
 
-    <!-- SCREEN 1: SUPER ADMIN DASHBOARD -->
+    <!-- ========================================================
+         SCREEN 1: SUPER ADMIN DASHBOARD
+         ======================================================== -->
     <div id="screenSuperAdmin" class="screen">
       <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
         <button class="btn-nav" style="margin:0;" onclick="logoutSession()">🔒 Super Admin Logout</button>
@@ -527,9 +568,10 @@
         </div>
       </div>
 
+      <!-- LIVE APPROVALS CARD -->
       <div class="panel-card" style="border: 2px solid var(--accent-gold); background: #fffdf5; margin-bottom:14px;">
         <div class="panel-header" style="color: #b45309;">
-          <span>💳 Navin Payment Approvals (Live Requests)</span>
+          <span>💳 Approval Pending for Payment (Live Requests)</span>
           <span style="font-size:11px; background:#fef3c7; color:#b45309; padding:2px 6px; border-radius:4px; font-weight:bold;" id="approvalBadgeCount">0 Pending</span>
         </div>
         <div id="pendingApprovalsListContainer"></div>
@@ -565,11 +607,13 @@
         </div>
       </div>
 
+      <!-- NET PROFIT BOX -->
       <div class="panel-card" style="border: 1.5px solid var(--accent-green); background:#f0fdf4; margin-bottom:12px;">
         <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">TUMCHA NIVAL APP NAFA (NET PROFIT):</div>
         <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="saasNetProfit">₹ 0</div>
       </div>
 
+      <!-- 4 BOXES TILES -->
       <div class="section-title-row">
         <div style="font-size:16px;">⊞</div>
         <div class="section-title">App Membership Overview</div>
@@ -595,6 +639,7 @@
         </div>
       </div>
 
+      <!-- DIRECT LOCK BOX -->
       <div class="panel-card" style="border: 2px solid var(--accent-red); background: #fef2f2; margin-top:14px; margin-bottom:14px;">
         <div class="panel-header" style="color: var(--accent-red);">
           <span>🚨 Direct Account Lock (Emergency / Freeze)</span>
@@ -611,6 +656,7 @@
         </div>
       </div>
 
+      <!-- NAVIN GRAHAK JODA FORM -->
       <div class="panel-card" style="margin-top:14px;">
         <div class="panel-header">➕ Navin Grahak Joda (₹250/Machine Plan)</div>
         <form onsubmit="event.preventDefault(); createNewClientAccount();">
@@ -647,6 +693,7 @@
         </form>
       </div>
 
+      <!-- GRAHAK YADI & MANAGEMENT HUB -->
       <div class="panel-card" style="margin-top:14px;">
         <div class="panel-header">📋 Grahak Yadi & Management Hub</div>
         <div id="superAdminClientsList"></div>
@@ -841,22 +888,19 @@
       </div>
     </div>
 
-    <!-- ========================================================
-         PAGE 3: PROFIT & LOSS (MONTHLY SELECTOR ADDED)
-         ======================================================== -->
+    <!-- PAGE 3: PROFIT & LOSS -->
     <div id="screenProfitLossPage" class="screen">
       <button class="btn-nav" id="btnBackPnl" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       
-      <!-- 📅 MONTHLY FILTER & QUICK CHIPS -->
       <div class="filter-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <b style="font-size:12px; color:#334155;">🗓️ महिना निवडा (Monthly View):</b>
+          <b style="font-size:12px; color:#334155;">🗓️ Mahina Nivada (Monthly View):</b>
           <input type="month" id="pnlMonthPicker" onchange="handlePnlMonthPickerChange()" style="width:auto; padding:6px 10px; font-weight:bold;">
         </div>
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
-          <button class="quick-chip active" id="chipThisMonth" onclick="setPnlMonthQuick('current')">चालू महिना</button>
-          <button class="quick-chip" id="chipLastMonth" onclick="setPnlMonthQuick('prev')">मागील महिना</button>
-          <button class="quick-chip" id="chipAllData" onclick="setPnlMonthQuick('all')">सर्व डेटा</button>
+          <button class="quick-chip active" id="chipThisMonth" onclick="setPnlMonthQuick('current')">Chaloo Mahina</button>
+          <button class="quick-chip" id="chipLastMonth" onclick="setPnlMonthQuick('prev')">Magil Mahina</button>
+          <button class="quick-chip" id="chipAllData" onclick="setPnlMonthQuick('all')">Sarv Data</button>
         </div>
         <div class="grid-2" style="margin-top:8px; margin-bottom:0;">
           <input type="date" id="pnlFromDate" onchange="renderProfitAndLossOverview()">
@@ -873,9 +917,9 @@
           <div style="font-size:11px; color:var(--text-muted); font-weight:bold;">NIVAL NAFA (NET PROFIT):</div>
           <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="pnlNetProfitDisplay">₹ 0.00</div>
         </div>
-        <div class="pnl-row"><span>मशीन एकूण कमाई (Billing):</span><b id="pnlBreakdownGrossBilling" style="color:var(--primary-blue);">₹ 0.00</b></div>
-        <div class="pnl-row"><span>डिझेल खर्च (Diesel):</span><b id="pnlBreakdownDieselCost" style="color:var(--accent-red);">₹ 0.00</b></div>
-        <div class="pnl-row"><span>ऑपरेटर उचल / ॲडव्हान्स:</span><b id="pnlBreakdownDriverAdvances" style="color:var(--accent-red);">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Machine Ekun Kamai (Billing):</span><b id="pnlBreakdownGrossBilling" style="color:var(--primary-blue);">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Diesel Kharch (Diesel):</span><b id="pnlBreakdownDieselCost" style="color:var(--accent-red);">₹ 0.00</b></div>
+        <div class="pnl-row"><span>Operator Uchhal / Advance:</span><b id="pnlBreakdownDriverAdvances" style="color:var(--accent-red);">₹ 0.00</b></div>
       </div>
     </div>
 
@@ -928,6 +972,9 @@
       <div id="clientFleetContainer" class="grid-tiles-2x2"></div>
     </div>
 
+    <!-- ========================================================
+         SCREEN 4: OPERATOR ACTIONS CONSOLE (DIRECT PARTY INPUT)
+         ======================================================== -->
     <div id="screenOpMenu" class="screen">
       <button class="btn-nav" onclick="logoutSession()">⬅ Logout</button>
       <div class="profile-welcome-card">
@@ -938,13 +985,18 @@
           <div class="client-sub" id="opDriverTitle">Rahul Shinde</div>
         </div>
       </div>
+
       <div class="party-banner-card">
-        <div>
-          <div style="font-size:10.5px; color:#047857; font-weight:700; text-transform:uppercase;">Chaloo Party:</div>
-          <div id="opActiveCustomer" style="font-size:15px; font-weight:900; color:#065f46; margin-top:2px;">Amol Patil</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:11px; color:#047857; font-weight:800; text-transform:uppercase;">Konachyat Kaam Chalu Ahe (Chaloo Party):</span>
+          <b id="opActiveCustomer" style="font-size:14px; color:#065f46;">Amol Patil</b>
         </div>
-        <button onclick="promptSwitchActiveParty()" style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">🔄 Party Badla</button>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <input type="text" id="opPartyDirectInput" placeholder="Navin Party che naav lihva..." style="flex:1; padding:8px 10px; font-weight:bold; font-size:13px;">
+          <button onclick="saveActivePartyDirect()" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;">💾 Save</button>
+        </div>
       </div>
+
       <div class="grid-tiles-2x2">
         <div class="feature-card" onclick="openMorningScreen()">
           <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">📸</div><span class="arrow-icon">›</span></div>
@@ -961,16 +1013,23 @@
       </div>
     </div>
 
+    <!-- SCREEN 5: MORNING READING (DIRECT PARTY OPTION) -->
     <div id="screenMorning" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header"><span>१. Sakalche Reading (Shift Start)</span></div>
+        
+        <label>Kaam Konachyat Ahe (Party Naav):</label>
+        <input type="text" id="morningPartyDirectInput" placeholder="uda. Amol Patil / Site A" style="font-weight:bold; margin-bottom:6px;">
+
         <label>Hour Meter Reading:</label>
         <input type="number" step="0.1" id="startReadingInput" placeholder="4520.0">
+
         <button class="btn-submit btn-green" onclick="saveMorningShift()">Sakalchi Nond Save Kara</button>
       </div>
     </div>
 
+    <!-- SCREEN 6: DIESEL ENTRY -->
     <div id="screenDiesel" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -993,6 +1052,7 @@
       </div>
     </div>
 
+    <!-- SCREEN 7: EVENING CLOSING -->
     <div id="screenEvening" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -1009,6 +1069,30 @@
 
   <!-- JAVASCRIPT MASTER CRASH-PROOF ENGINE -->
   <script>
+    // -------------------------------------------------------------
+    // 🔥 FIREBASE REALTIME CLOUD INTEGRATION SETUP (ACTIVE LIVE KEYS)
+    // -------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9upkHBBr659Ob3K7TudoC9i-H1PwfOFo",
+      authDomain: "jcb-fleet-system.firebaseapp.com",
+      databaseURL: "https://jcb-fleet-system-default-rtdb.firebaseio.com",
+      projectId: "jcb-fleet-system",
+      storageBucket: "jcb-fleet-system.firebasestorage.app",
+      messagingSenderId: "942638146769",
+      appId: "1:942638146769:web:b7560511514127124911f0",
+      measurementId: "G-VFTPSV8HEP"
+    };
+
+    let db;
+    try {
+      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+      }
+    } catch (e) {
+      console.warn("Firebase initialization error:", e);
+    }
+
     function setSafeText(id, text) {
       const el = document.getElementById(id);
       if (el) el.innerText = text;
@@ -1066,9 +1150,19 @@
     function syncDataToCloud() {
       localStorage.setItem('jcb_fleet_stable_core', JSON.stringify(clientsDatabase));
       localStorage.setItem('jcb_saas_exp_stable_core', JSON.stringify(saasExpensesDatabase));
+
+      if (db) {
+        db.ref('jcb_fleet_master').set({
+          clients: clientsDatabase,
+          expenses: saasExpensesDatabase,
+          lastUpdated: new Date().toISOString()
+        }).catch((err) => console.log("Firebase sync error:", err));
+      }
+
       updateNotificationBellDot();
       populateDirectLockClientDropdown();
       renderPendingApprovalsBox();
+      updateFrontPagePendingAlert();
     }
 
     function runAutoSubscriptionEngine() {
@@ -1084,7 +1178,7 @@
         c.daysRemaining = diffDays;
 
         if (c.status === "MANUAL_LOCK" || c.status === "PENDING_APPROVAL") {
-          // Manual freeze state
+          // Keep lock status
         } else if (diffDays <= 0) {
           c.status = "LOCKED";
         } else {
@@ -1104,6 +1198,36 @@
         if (parts.length === 3) return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
       }
       return new Date(dStr);
+    }
+
+    // ========================================================
+    // 🚨 FRONT PAGE ALERT LOGIC (FIRST PAGE INTERFACE)
+    // ========================================================
+    function updateFrontPagePendingAlert() {
+      const banner = document.getElementById('frontPagePendingAlertBanner');
+      const text = document.getElementById('frontPendingSummaryText');
+      if (!banner || !text) return;
+
+      let pendingCount = 0;
+      let pendingAmount = 0;
+
+      clientsDatabase.forEach(c => {
+        const totalFleet = (c.fleet || []).length;
+        const paidCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
+        const unpaid = Math.max(0, totalFleet - paidCount);
+
+        if (c.status === "PENDING_APPROVAL" || unpaid > 0) {
+          pendingCount++;
+          pendingAmount += (unpaid * 250);
+        }
+      });
+
+      if (pendingCount > 0) {
+        banner.style.display = 'block';
+        text.innerHTML = `सध्या <b>${pendingCount} ग्राहक / मशीन</b> चे एकूण <b>₹${pendingAmount}</b> पेमेंट ॲप्रुव्हल बाकी आहे.`;
+      } else {
+        banner.style.display = 'none';
+      }
     }
 
     // =====================================
@@ -1142,7 +1266,7 @@
     function openNotificationModal() {
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (!saved || !saved.isSuperAdmin) {
-        alert("फक्त सुपर ॲडमिनला या सूचना पाहण्याचा अधिकार आहे!");
+        alert("Phakta Super Admin la ya soochna pahnyacha adhikar ahe!");
         return;
       }
 
@@ -1161,8 +1285,8 @@
           listContainer.innerHTML += `
             <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
               <b>${c.businessName}</b>
-              <div style="font-size:12px; margin:3px 0;">Baki Rakkam: <b style="color:red;">₹ ${unpaid * 250}</b></div>
-              <button onclick="approveClientPayment('${c.id}'); toggleNotificationModal(false);" style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">✓ Approve</button>
+              <div style="font-size:12px; margin:3px 0;">Baki Rakkam: <b style="color:red;">₹ ${unpaid * 250}</b> (${unpaid} Machines Pending)</div>
+              <button onclick="approveClientPayment('${c.id}'); toggleNotificationModal(false);" style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">✓ Approve Payment</button>
             </div>
           `;
         }
@@ -1181,7 +1305,7 @@
       container.innerHTML = '';
 
       if (!clientsDatabase || clientsDatabase.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:13px;">सध्या कोणताही ग्राहक नाही. वरील फॉर्म भरून ग्राहक जोडा!</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:13px;">Sadhya kontahi grahak nahi. Varil form bharun grahak joda!</div>`;
         return;
       }
 
@@ -1195,7 +1319,7 @@
         container.innerHTML += `
           <div class="data-item-card" style="border-left: 4px solid ${isActive ? 'var(--accent-green)' : 'var(--accent-red)'}; margin-bottom:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <b style="font-size:14.5px; color:var(--text-dark);">${c.businessName || 'अनामिक ग्राहक'}</b>
+              <b style="font-size:14.5px; color:var(--text-dark);">${c.businessName || 'Grahak'}</b>
               <span class="sub-badge ${isActive ? 'sub-active' : 'sub-expired'}">${c.status || 'PENDING'}</span>
             </div>
             <div style="font-size:11.5px; color:var(--text-muted); margin:4px 0;">
@@ -1221,7 +1345,7 @@
       const client = clientsDatabase.find(c => c.id === clientId);
       if (!client) return;
 
-      setSafeText('saClientDetailTitle', client.businessName || 'ग्राहक');
+      setSafeText('saClientDetailTitle', client.businessName || 'Grahak');
       setSafeText('saClientDetailMeta', `User ID: ${client.user} | Phone: ${client.phone}`);
       navigate('screenSuperAdminClientDetail');
     }
@@ -1513,7 +1637,7 @@
     function setPnlMonthQuick(mode) {
       const today = new Date();
       let year = today.getFullYear();
-      let month = today.getMonth(); // 0-based
+      let month = today.getMonth();
 
       document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
 
@@ -1564,7 +1688,7 @@
       setSafeValue('pnlFromDate', fStr);
       setSafeValue('pnlToDate', lStr);
 
-      const monthNames = ["जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"];
+      const monthNames = ["Janevari", "Phebruvari", "March", "April", "May", "June", "Julai", "August", "September", "October", "November", "December"];
       setSafeText('pnlSelectedMonthLabel', `${monthNames[month]} ${year}`);
 
       renderProfitAndLossOverview();
@@ -1658,30 +1782,44 @@
       setSafeText('opMachineName', currentSessionMachine.name);
       setSafeText('opDriverTitle', currentSessionMachine.driver);
       setSafeText('opActiveCustomer', currentSessionMachine.activeParty || "General Work");
+      setSafeValue('opPartyDirectInput', currentSessionMachine.activeParty || "General Work");
+      setSafeValue('morningPartyDirectInput', currentSessionMachine.activeParty || "General Work");
       setSafeValue('shiftStartReading', currentSessionMachine.totalHours || 0);
     }
 
-    function promptSwitchActiveParty() {
-      const p = prompt("Konachyat kaam chalu ahe ti party lihva:", currentSessionMachine.activeParty || "General Work");
-      if (p && p.trim()) {
-        currentSessionMachine.activeParty = p.trim();
-        syncDataToCloud();
-        updateOperatorConsoleUI();
+    function saveActivePartyDirect() {
+      const pName = document.getElementById('opPartyDirectInput').value.trim();
+      if (!pName) {
+        alert("Krupaya party che naav taaka!");
+        return;
       }
+      currentSessionMachine.activeParty = pName;
+      setSafeText('opActiveCustomer', pName);
+      setSafeValue('morningPartyDirectInput', pName);
+      syncDataToCloud();
+      alert("✓ Chaloo party save zhali: " + pName);
     }
 
     function openMorningScreen() {
       setSafeValue('startReadingInput', currentSessionMachine.totalHours || 0);
+      setSafeValue('morningPartyDirectInput', currentSessionMachine.activeParty || "General Work");
       navigate('screenMorning');
     }
 
     function saveMorningShift() {
       const r = parseFloat(document.getElementById('startReadingInput').value) || 0;
+      const party = document.getElementById('morningPartyDirectInput').value.trim() || currentSessionMachine.activeParty || "General Work";
+
       if (r <= 0) { alert("Reading taaka!"); return; }
+      
       currentSessionMachine.totalHours = r;
+      currentSessionMachine.activeParty = party;
       setSafeValue('shiftStartReading', r);
+      setSafeText('opActiveCustomer', party);
+      setSafeValue('opPartyDirectInput', party);
+
       syncDataToCloud();
-      alert("Sakal reading save zhale!");
+      alert("Sakal reading aani party save zhale!");
       navigate('screenOpMenu');
     }
 
@@ -1839,6 +1977,11 @@
 
       if (!name || !user || !pass) { alert("Krupaya sarv mahiti bhara!"); return; }
 
+      if (clientsDatabase.some(c => c.user.toLowerCase() === user)) {
+        alert("Ha User ID adhi pasun vaprat ahe! Dusra User ID taaka.");
+        return;
+      }
+
       let generatedFleet = [];
       for (let i = 1; i <= count; i++) {
         generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
@@ -1991,8 +2134,8 @@
         contentEl.innerHTML = `
           <div class="turnover-unique-card" style="cursor:default;">
             <div style="font-size:12px; color:#94a3b8; font-weight:bold;">SaaS Recurring Revenue Calculator</div>
-            <div style="font-size:24px; font-weight:900; color:#38bdf8; margin:6px 0;">₹ ${monthly.toLocaleString('en-IN')} / महिना</div>
-            <div style="font-size:13px; color:#a7f3d0;">वार्षिक उत्पन्न (Annual Forecast): <b>₹ ${annual.toLocaleString('en-IN')}</b></div>
+            <div style="font-size:24px; font-weight:900; color:#38bdf8; margin:6px 0;">₹ ${monthly.toLocaleString('en-IN')} / mahina</div>
+            <div style="font-size:13px; color:#a7f3d0;">Varshik Utpanna (Annual Forecast): <b>₹ ${annual.toLocaleString('en-IN')}</b></div>
           </div>`;
       }
       navigate('screenSaasBoxDetailPage');
@@ -2045,7 +2188,7 @@
     function approveClientPayment(clientId) {
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (!saved || !saved.isSuperAdmin) {
-        alert("फक्त सुपर ॲडमिनला पेमेंट अप्रुव्ह करण्याचा अधिकार आहे!");
+        alert("Phakta Super Admin la payment approve karnyacha adhikar ahe!");
         return;
       }
 
@@ -2066,7 +2209,7 @@
     function rejectClientPayment(clientId) {
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (!saved || !saved.isSuperAdmin) {
-        alert("फक्त सुपर ॲडमिनला रिक्वेस्ट रिजेक्ट करण्याचा अधिकार आहे!");
+        alert("Phakta Super Admin la request reject karnyacha adhikar ahe!");
         return;
       }
 
@@ -2114,14 +2257,41 @@
       const lockScreen = document.getElementById('lockOverlayScreen');
       if (lockScreen) lockScreen.classList.remove('active-lock');
       updateNotificationBellDot();
+      updateFrontPagePendingAlert();
       navigate('screenLoginSelect');
     }
 
+    // =====================================
+    // 🚀 INITIALIZATION
+    // =====================================
     window.addEventListener('DOMContentLoaded', () => {
       runAutoSubscriptionEngine();
       renderSuperAdminDashboard();
       renderSaasBusinessPnl();
       updateNotificationBellDot();
+      updateFrontPagePendingAlert();
+
+      // Realtime Cloud Listener
+      if (db) {
+        db.ref('jcb_fleet_master').on('value', (snapshot) => {
+          const cloudData = snapshot.val();
+          if (cloudData && cloudData.clients) {
+            clientsDatabase = cloudData.clients;
+            if (cloudData.expenses) saasExpensesDatabase = cloudData.expenses;
+            renderSuperAdminDashboard();
+            renderSaasBusinessPnl();
+            renderPendingApprovalsBox();
+            updateFrontPagePendingAlert();
+            if (currentSessionClient) {
+              const updated = clientsDatabase.find(c => c.id === currentSessionClient.id);
+              if (updated) {
+                currentSessionClient = updated;
+                renderClientOwnerView();
+              }
+            }
+          }
+        });
+      }
 
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (saved) {

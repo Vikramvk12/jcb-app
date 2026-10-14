@@ -65,6 +65,7 @@
       border-radius: 16px;
       font-size: 11px;
       font-weight: 700;
+      cursor: pointer;
     }
 
     .notif-bell-btn {
@@ -117,7 +118,8 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(3px);
       z-index: 9999;
       justify-content: center;
       align-items: center;
@@ -125,13 +127,14 @@
     }
     .modal-box {
       background: #fff;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px;
       width: 100%;
       max-width: 450px;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      animation: fadeIn 0.15s ease-out;
     }
 
     #lockOverlayScreen {
@@ -243,6 +246,142 @@
     .card-main-title { font-size: 13.5px; font-weight: 800; color: var(--text-dark); }
     .card-sub-title { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
+    /* Unique Gross Turnover & Fuel Command Design */
+    .turnover-unique-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+      border: 1px solid #334155;
+      margin-top: 10px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .turnover-unique-card::before {
+      content: "";
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 110px;
+      height: 110px;
+      background: rgba(59, 130, 246, 0.15);
+      border-radius: 50%;
+    }
+    .turnover-top-row { display: flex; justify-content: space-between; align-items: center; }
+    .turnover-badge {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .turnover-amount-large {
+      font-size: 28px;
+      font-weight: 900;
+      color: #38bdf8;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+    .turnover-progress-wrap {
+      margin-top: 12px;
+      background: #334155;
+      border-radius: 8px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .turnover-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+      border-radius: 8px;
+      transition: width 0.3s;
+    }
+    .turnover-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+    .turnover-stat-lbl { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+    .turnover-stat-val { font-size: 13px; color: #f8fafc; font-weight: 800; margin-top: 2px; }
+
+    /* UNIQUE DIESEL KHATA-BOOK STYLES */
+    .pump-khata-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1.5px solid #e2e8f0;
+      margin-bottom: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .pump-khata-header {
+      background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 12px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pump-khata-body {
+      padding: 12px 14px;
+    }
+    .pump-mini-progress {
+      height: 6px;
+      background: #fee2e2;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .pump-mini-progress-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 6px;
+    }
+    .passbook-timeline {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #cbd5e1;
+    }
+    .passbook-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 11.5px;
+    }
+    .passbook-jama {
+      background: #f0fdf4;
+      border-left: 3.5px solid #10b981;
+    }
+    .mode-chip {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-block;
+      margin: 3px;
+    }
+    .mode-chip.selected {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+
     .panel-card {
       background: var(--card-white);
       border-radius: 14px;
@@ -344,7 +483,6 @@
     .btn-approve { background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; }
     .btn-reject { background: #fee2e2; color: #b91c1c; border: 1.5px solid #dc2626; }
 
-    /* TRIP COUNTER STYLING */
     .trip-counter-box {
       display: flex;
       align-items: center;
@@ -406,6 +544,48 @@
     </div>
   </div>
 
+  <!-- ⭐ SMART PUMP PAYMENT MODAL (FOR DIESEL UDHARI) -->
+  <div id="pumpPaymentModal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
+        <div>
+          <span style="font-size:10px; color:#64748b; font-weight:800; text-transform:uppercase;">Pump Udhari Jama Kara</span>
+          <h3 style="font-size:16px; font-weight:900; color:var(--text-dark);" id="modalPumpTitle">⛽ Bharat Petroleum</h3>
+        </div>
+        <button onclick="closePumpPayModal()" style="background:#f1f5f9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
+      </div>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:10px 12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:#991b1b; font-weight:700;">सध्याची एकूण बाकी उधारी:</span>
+        <b style="font-size:16px; color:#dc2626;" id="modalPumpCurrentPending">₹ 0</b>
+      </div>
+
+      <label>जमा केल्याची तारीख (Payment Date):</label>
+      <input type="date" id="modalPayDateInput" style="font-weight:bold;">
+
+      <label>जमा केलेली रक्कम (Amount ₹):</label>
+      <input type="number" id="modalPayAmountInput" placeholder="उदा. 2000" oninput="updateModalRemainingPreview()" style="font-size:16px; font-weight:900; color:var(--accent-green);">
+
+      <div style="font-size:11.5px; color:#475569; margin:6px 0 10px 0; background:#f8fafc; padding:8px; border-radius:6px; border:1px dashed #cbd5e1;" id="modalBalancePreviewText">
+        पैसे दिल्यानंतर उरणारी बाकी: <b>₹ 0</b>
+      </div>
+
+      <label>पेमेंट कसे दिले? (Payment Mode):</label>
+      <div style="margin-bottom:8px;">
+        <span class="mode-chip selected" onclick="selectPayModeChip(this, 'PhonePe')">📱 PhonePe</span>
+        <span class="mode-chip" onclick="selectPayModeChip(this, 'Google Pay')">💳 GPay</span>
+        <span class="mode-chip" onclick="selectPayModeChip(this, 'रोख (Cash)')">💵 रोख (Cash)</span>
+        <span class="mode-chip" onclick="selectPayModeChip(this, 'Bank / NEFT')">🏦 Bank</span>
+        <span class="mode-chip" onclick="selectPayModeChip(this, 'Cheque')">🎫 Cheque</span>
+      </div>
+      <input type="text" id="modalPayRemarkInput" value="PhonePe" placeholder="इतर टीप किंवा ट्रान्झॅक्शन नंबर...">
+
+      <button class="btn-submit btn-green" onclick="confirmPumpPaymentSubmit()" style="margin-top:14px; font-size:14px;">
+        ✓ पेमेंट जमा करा (Save Entry)
+      </button>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="app-header">
     <div class="brand-title">🚜 JCB Fleet Pro</div>
@@ -420,7 +600,9 @@
 
   <div class="container">
 
-    <!-- SCREEN 0: FRONT LOGIN CHOICE -->
+    <!-- ========================================================
+         SCREEN 0: FRONT LOGIN CHOICE
+         ======================================================== -->
     <div id="screenLoginSelect" class="screen active">
       <div id="frontPagePendingAlertBanner" class="front-pending-alert-banner">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -467,7 +649,7 @@
       </div>
     </div>
 
-    <!-- SCREEN 0.1: OWNER LOGIN -->
+    <!-- SCREEN 0.1: OWNER & SUPER ADMIN LOGIN -->
     <div id="screenOwnerLogin" class="screen">
       <button class="btn-nav" onclick="navigate('screenLoginSelect')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -501,7 +683,9 @@
       </div>
     </div>
 
-    <!-- SCREEN 1: SUPER ADMIN DASHBOARD -->
+    <!-- ========================================================
+         SCREEN 1: SUPER ADMIN DASHBOARD
+         ======================================================== -->
     <div id="screenSuperAdmin" class="screen">
       <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
         <button class="btn-nav" style="margin:0;" onclick="logoutSession()">🔒 Super Admin Logout</button>
@@ -525,7 +709,47 @@
         <div id="pendingApprovalsListContainer"></div>
       </div>
 
+      <!-- UNIQUE GROSS TURNOVER CARD -->
+      <div class="turnover-unique-card" onclick="openSaasBoxDetailScreen('gross')">
+        <div class="turnover-top-row">
+          <div>
+            <div style="font-size:11px; color:#94a3b8; font-weight:800; text-transform:uppercase;">Gross Monthly Potential</div>
+            <div class="turnover-amount-large" id="saasGrossBilling">₹ 0</div>
+          </div>
+          <span class="turnover-badge">✨ SaaS Model</span>
+        </div>
+        <div class="turnover-progress-wrap">
+          <div class="turnover-progress-bar" id="turnoverProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="turnover-stats-grid">
+          <div>
+            <div class="turnover-stat-lbl">Active Fleet</div>
+            <div class="turnover-stat-val" id="saasTotalMachinesCount">0 JCB</div>
+          </div>
+          <div>
+            <div class="turnover-stat-lbl">Received</div>
+            <div class="turnover-stat-val" style="color:#10b981;" id="saasFeeReceived">₹ 0</div>
+          </div>
+          <div>
+            <div class="turnover-stat-lbl">Pending</div>
+            <div class="turnover-stat-val" style="color:#ef4444;" id="saasFeePending">₹ 0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NET PROFIT BOX -->
+      <div class="panel-card" style="border: 1.5px solid var(--accent-green); background:#f0fdf4; margin-bottom:12px;">
+        <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">TUMCHA NIVAL APP NAFA (NET PROFIT):</div>
+        <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="saasNetProfit">₹ 0</div>
+      </div>
+
       <!-- 4 BOXES TILES -->
+      <div class="section-title-row">
+        <div style="font-size:16px;">⊞</div>
+        <div class="section-title">App Membership Overview</div>
+        <div class="section-divider"></div>
+      </div>
+
       <div class="grid-tiles-2x2">
         <div class="feature-card" onclick="openSaasBoxDetailScreen('clients')">
           <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">👥</div><span class="arrow-icon">›</span></div>
@@ -609,6 +833,13 @@
     <!-- SCREEN 1.4.1: DETAIL SCREEN -->
     <div id="screenSaasBoxDetailPage" class="screen">
       <button class="btn-nav" onclick="navigate('screenSuperAdmin')">⬅ Mage Ja (Super Admin Main)</button>
+      <div class="profile-welcome-card" style="border-left: 4px solid var(--primary-blue);">
+        <div class="profile-avatar" id="saasBoxDetailAvatar">📋</div>
+        <div class="profile-info">
+          <div class="client-name" id="saasBoxDetailTitle">Breakdown</div>
+          <div class="client-sub" id="saasBoxDetailSub">Savistar Data</div>
+        </div>
+      </div>
       <div class="panel-card">
         <div class="panel-header" id="saasBoxDetailHeader">📋 Records List</div>
         <div id="saasBoxDetailContent"></div>
@@ -651,7 +882,7 @@
         </div>
         <div class="feature-card" onclick="openSaSection('diesel')">
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">२. Diesel Ledger</div><div class="card-sub-title">Pump & Liters Data</div></div>
+          <div class="card-body"><div class="card-main-title">२. Diesel Ledger</div><div class="card-sub-title">Pump & Udhari Data</div></div>
         </div>
         <div class="feature-card" onclick="openSaSection('pnl')">
           <div class="card-top"><div class="icon-badge" style="background:#ede9fe; color:#6d28d9;">📊</div><span class="arrow-icon">›</span></div>
@@ -695,11 +926,11 @@
         <div class="profile-info">
           <div class="welcome-lbl">Welcome</div>
           <div class="client-name" id="ownerClientTitle">SK Palashi (Patil)</div>
-          <div class="client-sub">Active Session</div>
+          <div class="client-sub" id="ownerSubDaysLeft">Active Session</div>
         </div>
       </div>
 
-      <!-- ⭐ MACHINE-WISE LIVE WORK (FAKT AAJCHA HISHOB) -->
+      <!-- MACHINE-WISE LIVE WORK (FAKT AAJCHA HISHOB) -->
       <div class="panel-card" style="border: 2px solid var(--primary-blue); background:#f8fafc; margin-bottom:14px;">
         <div class="panel-header" style="color:var(--primary-blue);">
           <span>📌 Aajche Chalu Kaam (Machine-wise Live Work)</span>
@@ -710,7 +941,7 @@
 
       <div class="section-title-row">
         <div style="font-size:16px;">⊞</div>
-        <div class="section-title">Entries</div>
+        <div class="section-title">Entries & Management</div>
         <div class="section-divider"></div>
       </div>
 
@@ -719,27 +950,34 @@
           <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">🚜</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">Machines Console</div><div class="card-sub-title" id="menuMachinesCountBadge">0 Machines</div></div>
         </div>
-        <div class="feature-card" onclick="openOwnerSection('diesel')">
-          <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Diesel & Pump</div><div class="card-sub-title" id="menuDieselLtrBadge">0 Ltr</div></div>
+
+        <div class="feature-card" style="border-left: 3.5px solid var(--accent-red);" onclick="openOwnerSection('diesel')">
+          <div class="card-top"><div class="icon-badge" style="background:#fee2e2; color:#ef4444;">⛽</div><span class="arrow-icon">›</span></div>
+          <div class="card-body">
+            <div class="card-main-title">Diesel & Udhari Khate</div>
+            <div class="card-sub-title" style="color:var(--accent-red); font-weight:bold;" id="menuDieselPendingBadge">0 Ltr | Baki: ₹ 0</div>
+          </div>
         </div>
-        <div class="feature-card" style="border-left: 3.5px solid var(--accent-red);" onclick="openOwnerSection('dumper')">
-          <div class="card-top"><div class="icon-badge" style="background:#fee2e2; color:#ef4444;">🚛</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Dumper Ferya</div><div class="card-sub-title">Trips Ledger</div></div>
+
+        <div class="feature-card" onclick="openOwnerSection('dumper')">
+          <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">🚛</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">Dumper Ferya</div><div class="card-sub-title">Malak & Trips Ledger</div></div>
         </div>
+
         <div class="feature-card" onclick="openOwnerSection('salary')">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">₹</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Advance / Pagar</div><div class="card-sub-title">Advance entries</div></div>
+          <div class="card-body"><div class="card-main-title">Advance / Pagar</div><div class="card-sub-title">Uchhal & Salary</div></div>
         </div>
+
         <div class="feature-card" onclick="openOwnerSection('night')" style="grid-column: span 2;">
           <div class="card-top"><div class="icon-badge" style="background:#f3e8ff; color:#7c3aed;">🌙</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Night Closing</div><div class="card-sub-title">Reading & Taas</div></div>
+          <div class="card-body"><div class="card-main-title">Night Closing</div><div class="card-sub-title">Reading & Kamache Taas</div></div>
         </div>
       </div>
 
       <div class="section-title-row" style="margin-top: 20px;">
         <div style="font-size:16px;">📄</div>
-        <div class="section-title">Reports</div>
+        <div class="section-title">Reports & Billing</div>
         <div class="section-divider"></div>
       </div>
 
@@ -755,7 +993,7 @@
       </div>
     </div>
 
-    <!-- OWNER PAGES -->
+    <!-- OWNER PAGES: MACHINE CONSOLE -->
     <div id="screenOwnerMachinesPage" class="screen">
       <button class="btn-nav" id="btnBackMachinesConsole" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -776,25 +1014,80 @@
       </div>
     </div>
 
+    <!-- ========================================================
+         ⭐ UNIQUE DIGITAL KHATA-BOOK DIESEL & PUMP LEDGER
+         ======================================================== -->
     <div id="screenDieselLedger" class="screen">
       <button class="btn-nav" id="btnBackDiesel" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
-      <div class="panel-card">
-        <div class="panel-header">⛽ Diesel & Pump Ledger</div>
-        <div class="grid-2">
-          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
-            <div style="font-size:11px; color:var(--text-muted);">Ekun Diesel</div>
-            <div style="font-size:16px; font-weight:800; color:var(--primary-blue);" id="detailDieselLiters">0 Ltr</div>
+
+      <!-- 1. PREMIUM DARK FUEL COMMAND CENTER -->
+      <div class="turnover-unique-card" style="cursor:default;">
+        <div class="turnover-top-row">
+          <div>
+            <div style="font-size:10.5px; color:#94a3b8; font-weight:800; text-transform:uppercase;">एकूण पंप उधारी बाकी (Total Pending)</div>
+            <div class="turnover-amount-large" style="color:#f87171;" id="detailDieselPending">₹ 0</div>
           </div>
-          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
-            <div style="font-size:11px; color:var(--text-muted);">Ekun Bill</div>
-            <div style="font-size:16px; font-weight:800;" id="detailDieselTotalBill">₹ 0</div>
+          <span class="turnover-badge" id="dieselAvgRateBadge">⛽ Avg: ₹0/Ltr</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:#cbd5e1; margin-top:10px;">
+          <span>पेमेंट क्लिअरन्स प्रोग्रेस:</span>
+          <b id="dieselPaidPercentText" style="color:#34d399;">0% Paid</b>
+        </div>
+        <div class="turnover-progress-wrap" style="margin-top:4px;">
+          <div class="turnover-progress-bar" id="dieselPaymentProgressBar" style="width: 0%;"></div>
+        </div>
+
+        <div class="turnover-stats-grid">
+          <div>
+            <div class="turnover-stat-lbl">एकूण डिझेल</div>
+            <div class="turnover-stat-val" style="color:#38bdf8;" id="detailDieselLiters">0 Ltr</div>
+          </div>
+          <div>
+            <div class="turnover-stat-lbl">एकूण बिल</div>
+            <div class="turnover-stat-val" id="detailDieselTotalBill">₹ 0</div>
+          </div>
+          <div>
+            <div class="turnover-stat-lbl">एकूण जमा (Paid)</div>
+            <div class="turnover-stat-val" style="color:#10b981;" id="detailDieselPaid">₹ 0</div>
           </div>
         </div>
-        <div id="fullDieselEntriesListContainer" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- 2. MACHINE-WISE DIESEL CONSUMPTION BREAKDOWN -->
+      <div class="panel-card" style="background:#f8fafc;">
+        <div class="panel-header" style="margin-bottom:8px;">
+          <span>🚜 मशीननुसार डिझेल वापर (Machine Fuel Meter)</span>
+        </div>
+        <div id="machineWiseFuelStripContainer" class="grid-2" style="margin-bottom:0;"></div>
+      </div>
+
+      <!-- 3. DIGITAL KHATA-BOOK PUMP CARDS + PASSBOOK TIMELINE -->
+      <div class="section-title-row">
+        <div style="font-size:16px;">⛽</div>
+        <div class="section-title">पंप डिजिटल खाते-बुक (Pump Passbook)</div>
+        <div class="section-divider"></div>
+      </div>
+      <div id="pumpWiseLedgerCardsContainer"></div>
+
+      <!-- 4. ALL DIESEL FILLING LOGS WITH FILTER -->
+      <div class="panel-card" style="margin-top:14px;">
+        <div class="panel-header">
+          <span>📋 सर्व डिझेल फिलिंग नोंदी (Filling Logs)</span>
+          <select id="dieselLogPumpFilter" onchange="renderDieselSummaryBox()" style="width:auto; padding:4px 8px; font-size:11px; font-weight:bold;">
+            <option value="ALL">सर्व पंप (All)</option>
+            <option value="Indian Oil">Indian Oil</option>
+            <option value="Bharat Petroleum">Bharat Petroleum</option>
+            <option value="HP Petroleum">HP Petroleum</option>
+            <option value="Reliance Pump">Reliance Pump</option>
+            <option value="Other">इतर पंप</option>
+          </select>
+        </div>
+        <div id="fullDieselEntriesListContainer"></div>
       </div>
     </div>
 
-    <!-- ⭐ DUMPER TRIPS OWNER VIEW -->
+    <!-- OWNER PAGES: DUMPER TRIPS -->
     <div id="screenOwnerDumperPage" class="screen">
       <button class="btn-nav" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -803,9 +1096,10 @@
       </div>
     </div>
 
-    <!-- PROFIT & LOSS -->
+    <!-- OWNER PAGES: PROFIT & LOSS (P&L) -->
     <div id="screenProfitLossPage" class="screen">
       <button class="btn-nav" id="btnBackPnl" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      
       <div class="filter-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <b style="font-size:12px; color:#334155;">🗓️ Mahina Nivada (Monthly View):</b>
@@ -816,13 +1110,20 @@
           <button class="quick-chip" id="chipLastMonth" onclick="setPnlMonthQuick('prev')">Magil Mahina</button>
           <button class="quick-chip" id="chipAllData" onclick="setPnlMonthQuick('all')">Sarv Data</button>
         </div>
+        <div class="grid-2" style="margin-top:8px; margin-bottom:0;">
+          <input type="date" id="pnlFromDate" onchange="renderProfitAndLossOverview()">
+          <input type="date" id="pnlToDate" onchange="renderProfitAndLossOverview()">
+        </div>
       </div>
 
       <div class="panel-card">
-        <div class="panel-header"><span>📊 Nafa-Tota Taleband (P&L)</span></div>
+        <div class="panel-header">
+          <span>📊 Nafa-Tota Taleband (P&L)</span>
+          <span style="font-size:11px; color:var(--primary-blue);" id="pnlSelectedMonthLabel">All Time</span>
+        </div>
         <div style="background:#e6fcf5; border:1px solid #10b981; border-radius:10px; padding:12px; margin-bottom:12px;">
           <div style="font-size:11px; color:var(--text-muted); font-weight:bold;">NIVAL NAFA (NET PROFIT):</div>
-          <div style="font-size:26px; font-weight:900; color:var(--accent-green);" id="pnlNetProfitDisplay">₹ 0.00</div>
+          <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="pnlNetProfitDisplay">₹ 0.00</div>
         </div>
         <div class="pnl-row"><span>Machine Ekun Kamai (Billing):</span><b id="pnlBreakdownGrossBilling" style="color:var(--primary-blue);">₹ 0.00</b></div>
         <div class="pnl-row"><span>Diesel Kharch (Diesel):</span><b id="pnlBreakdownDieselCost" style="color:var(--accent-red);">₹ 0.00</b></div>
@@ -830,14 +1131,34 @@
       </div>
     </div>
 
+    <!-- OWNER PAGES: OPERATOR SALARY & ADVANCE -->
     <div id="screenDayByDayPage" class="screen">
       <button class="btn-nav" id="btnBackSalary" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      
+      <div class="panel-card" style="border: 1.5px solid var(--accent-gold); background:#fffbeb;">
+        <div class="panel-header" style="color:#b45309;">➕ Operator Uchhal / Advance Nond Kara</div>
+        <div class="grid-2">
+          <div>
+            <label>Machine / Chalak Nivada:</label>
+            <select id="advMachineSelect"></select>
+          </div>
+          <div>
+            <label>Rakkam (₹):</label>
+            <input type="number" id="advAmountInput" placeholder="uda. 2000">
+          </div>
+        </div>
+        <label>Karan / Remark:</label>
+        <input type="text" id="advRemarkInput" placeholder="uda. Gharkharch / Rokh">
+        <button class="btn-submit btn-amber" onclick="saveOperatorAdvanceEntry()">💾 Uchhal Save Kara</button>
+      </div>
+
       <div class="panel-card">
         <div class="panel-header">👷 Operator Pagar & Advance Khate</div>
         <div id="operatorSalarySummaryList"></div>
       </div>
     </div>
 
+    <!-- OWNER PAGES: NIGHT CLOSING -->
     <div id="screenNightClosingPage" class="screen">
       <button class="btn-nav" id="btnBackNight" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -846,14 +1167,14 @@
       </div>
     </div>
 
-    <!-- ⭐ PARTY BHADE & PDF BILL SCREEN -->
+    <!-- OWNER PAGES: PARTY BHADE & PDF BILL -->
     <div id="screenOwnerBillingPage" class="screen">
       <button class="btn-nav no-print" id="btnBackBilling" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header">📝 Party Bhade Hishob & PDF Bill</div>
         <div class="grid-2 no-print">
           <div><label>Machine:</label><select id="billMachineSelect" onchange="autoLoadPartiesForSelectedMachine()"></select></div>
-          <div><label>Party:</label><select id="billPartySelect" onchange="calculateOngoingRent()"></select></div>
+          <div><label>Party:</label><select id="billPartySelect" onchange="autoSumPartyHours()"></select></div>
         </div>
         <div style="background:#e8f0fe; padding:10px; border-radius:8px; margin:10px 0;">
           <div style="display:flex; justify-content:space-between; font-size:13px;">
@@ -864,7 +1185,7 @@
           <div><label>Dar (₹/Taas):</label><input type="number" id="custHourlyRate" value="2000" oninput="calculateOngoingRent()"></div>
           <div><label>Ekun Taas:</label><input type="number" step="0.1" id="custTodayHours" oninput="calculateOngoingRent()"></div>
         </div>
-        <label>Advance (₹):</label><input type="number" id="custAdvancePaid" value="0" oninput="calculateOngoingRent()">
+        <label>Advance Jama (₹):</label><input type="number" id="custAdvancePaid" value="0" oninput="calculateOngoingRent()">
         <div style="background:#f8fafc; padding:12px; border-radius:8px; margin:12px 0;">
           <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:var(--accent-red);">
             <span>Baki Shillak:</span><b id="livePartyPendingAmt">₹ 0</b>
@@ -874,13 +1195,15 @@
       </div>
     </div>
 
-    <!-- OPERATOR VIEWS -->
+    <!-- OPERATOR SELECTION -->
     <div id="screenClientMachines" class="screen">
       <button class="btn-nav" onclick="navigate('screenClientOwner')">⬅ Malak Dashboard</button>
       <div id="clientFleetContainer" class="grid-tiles-2x2"></div>
     </div>
 
-    <!-- SCREEN 4: OPERATOR ACTIONS CONSOLE -->
+    <!-- ========================================================
+         SCREEN 4: OPERATOR ACTIONS CONSOLE
+         ======================================================== -->
     <div id="screenOpMenu" class="screen">
       <button class="btn-nav" onclick="logoutSession()">⬅ Logout</button>
       <div class="profile-welcome-card">
@@ -892,7 +1215,6 @@
         </div>
       </div>
 
-      <!-- ACTIVE PARTY INPUT -->
       <div class="party-banner-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:11px; color:#047857; font-weight:800; text-transform:uppercase;">Konachyat Kaam Chalu Ahe (Chaloo Party):</span>
@@ -913,10 +1235,9 @@
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5;">⛽</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">२. Diesel Nond</div><div class="card-sub-title">Pump, Liters & Bill</div></div>
         </div>
-        <!-- ⭐ DUMPER TRIPS BUTTON -->
         <div class="feature-card" style="border-left:4px solid var(--accent-red);" onclick="navigate('screenOpDumper')">
           <div class="card-top"><div class="icon-badge" style="background:#fee2e2;">🚛</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">३. Dumper Ferya</div><div class="card-sub-title">Trips nond</div></div>
+          <div class="card-body"><div class="card-main-title">३. Dumper Ferya</div><div class="card-sub-title">Malak & Trips nond</div></div>
         </div>
         <div class="feature-card" onclick="navigate('screenEvening')">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7;">🛑</div><span class="arrow-icon">›</span></div>
@@ -955,15 +1276,15 @@
         </select>
         <div class="grid-2">
           <div><label>Liters:</label><input type="number" step="0.01" id="dieselLitersInput" placeholder="100.0"></div>
-          <div><label>Bill (₹):</label><input type="number" step="0.01" id="dieselCostInput" placeholder="9880.0"></div>
+          <div><label>Bill (₹):</label><input type="number" step="0.01" id="dieselCostInput" placeholder="4000.0"></div>
         </div>
-        <label>Dilele Cash / Paid (₹):</label>
+        <label>Dilele Cash / Paid (₹) [Udhari asel tr 0 theva]:</label>
         <input type="number" step="0.01" id="dieselPaidInput" placeholder="0" value="0">
         <button class="btn-submit btn-blue" onclick="submitDieselEntry()">💾 Diesel Nond Save Kara</button>
       </div>
     </div>
 
-    <!-- ⭐ SCREEN: DUMPER TRIPS OPERATOR ENTRY (MALAKACHE NAAV SAH) -->
+    <!-- SCREEN: DUMPER TRIPS (MALAKACHE NAAV SAH) -->
     <div id="screenOpDumper" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -1012,7 +1333,7 @@
 
   </div>
 
-  <!-- JAVASCRIPT MASTER ENGINE -->
+  <!-- JAVASCRIPT MASTER COMPLETE ENGINE -->
   <script>
     // -------------------------------------------------------------
     // 🔥 FIREBASE REALTIME CLOUD INTEGRATION (ACTIVE LIVE KEYS)
@@ -1046,12 +1367,29 @@
       return `${dd}/${mm}/${yyyy}`;
     }
 
+    function getTodayISOFormat() {
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function convertISOToDMY(isoStr) {
+      if (!isoStr) return getTodayStandardDate();
+      if (isoStr.includes('-')) {
+        const p = isoStr.split('-');
+        return `${p[2]}/${p[1]}/${p[0]}`;
+      }
+      return isoStr;
+    }
+
     function toEnglishDigits(str) {
       if (!str) return '';
       return String(str).replace(/[०-९]/g, d => "०१२३४५६७८९".indexOf(d));
     }
 
-    function parseStandardDate(str) {
+    function parseDateDMY(str) {
       if (!str) return new Date();
       str = toEnglishDigits(str);
       if (str.includes('/')) {
@@ -1092,14 +1430,21 @@
         pass: "patil123",
         phone: "9822011111",
         status: "ACTIVE",
+        subscriptionExpiry: "2026-12-31",
         paidMachinesCount: 2,
         fleet: [
-          { id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE", totalHours: 4528.0, activeParty: "General Work", defaultHourlyRate: 2000, monthlySalary: 22000, advanceHistory: [] },
-          { id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE", totalHours: 2890.0, activeParty: "General Work", defaultHourlyRate: 1800, monthlySalary: 18000, advanceHistory: [] }
+          { id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE", totalHours: 4528.0, activeParty: "Amol Patil", defaultHourlyRate: 2000, monthlySalary: 22000, advanceHistory: [{ date: "02/10/2026", amount: 2000, remark: "Gharkharch" }] },
+          { id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE", totalHours: 2890.0, activeParty: "Highway Site", defaultHourlyRate: 1800, monthlySalary: 18000, advanceHistory: [{ date: "05/10/2026", amount: 1500, remark: "Rokh" }] }
         ],
-        dieselHistory: [],
-        operatorHistory: [],
-        dumperHistory: []
+        dieselHistory: [
+          { date: "08/10/2026", pump: "Bharat Petroleum", machine: "1. Vikram", driver: "Rahul Shinde", liters: 40.0, cost: 4000.0, paid: 0.0 }
+        ],
+        operatorHistory: [
+          { date: "09/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.5, startMeter: 4519.5, endMeter: 4528.0, hourlyRate: 2000 },
+          { date: "09/10/2026", machine: "2. Gold man", driver: "Sachin Kadam", party: "Highway Site", hours: 8.0, startMeter: 2882.0, endMeter: 2890.0, hourlyRate: 1800 }
+        ],
+        dumperHistory: [],
+        pumpPaymentsHistory: []
       }
     ];
 
@@ -1111,6 +1456,10 @@
     let selectedSaClientId = null;
     let isSuperAdminImpersonating = false;
     let currentDumperCount = 1;
+
+    // Modal state variables for Pump Payment
+    let activeModalPumpName = "";
+    let activeModalPumpPending = 0;
 
     function syncDataToCloud() {
       localStorage.setItem('jcb_fleet_stable_core', JSON.stringify(clientsDatabase));
@@ -1128,11 +1477,15 @@
       renderPendingApprovalsBox();
       updateFrontPagePendingAlert();
       populateDirectLockClientDropdown();
-      if (currentSessionClient) renderOwnerTodayLiveSummary();
+      if (currentSessionClient) {
+        renderOwnerTodayLiveSummary();
+        renderDieselSummaryBox();
+        renderProfitAndLossOverview();
+      }
     }
 
     // =====================================
-    // 👑 LOGIN ENGINE & PERSISTENCE
+    // 👑 LOGIN ENGINE (SUPER ADMIN + OWNER)
     // =====================================
     function handleOwnerLogin() {
       const u = document.getElementById('ownerLoginUserId').value.trim();
@@ -1140,7 +1493,7 @@
       if (!u || !p) { alert("User ID va Password bhara!"); return; }
 
       if (u.toLowerCase() === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
-        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'SUPER_ADMIN', userId: u }));
+        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'SUPER_ADMIN', isSuperAdmin: true, userId: u }));
         navigate('screenSuperAdmin');
         renderSuperAdminDashboard();
         renderSaasBusinessPnl();
@@ -1150,12 +1503,13 @@
 
       const client = clientsDatabase.find(c => c.user.toLowerCase() === u.toLowerCase() && c.pass === p);
       if (client) {
-        if (client.status === "LOCKED" || client.status === "PENDING_APPROVAL") {
+        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL") {
           const lockScreen = document.getElementById('lockOverlayScreen');
           if (lockScreen) lockScreen.classList.add('active-lock');
           return;
         }
-        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OWNER', userId: client.user }));
+        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OWNER', isSuperAdmin: false, userId: client.user }));
+        updateNotificationBellDot();
         proceedOwnerLogin(client);
       } else {
         alert("Chukicha User ID kivha Password!");
@@ -1206,6 +1560,11 @@
       const client = clientsDatabase.find(c => c.user.toLowerCase() === ownerId);
 
       if (client) {
+        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL") {
+          const lockScreen = document.getElementById('lockOverlayScreen');
+          if (lockScreen) lockScreen.classList.add('active-lock');
+          return;
+        }
         const matched = (client.fleet || []).find(m => String(m.pin).trim() === opPin);
         if (matched) {
           if (matched.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe! Malakashi sampark kara."); return; }
@@ -1258,14 +1617,13 @@
       navigate('screenMorning');
     }
 
-    // ⭐ AUTOMATIC NIGHT CLOSING LOGIC (OPERATOR VISARLYAVAR)
+    // AUTOMATIC NIGHT CLOSING LOGIC
     function saveMorningShift() {
       const r = parseFloat(document.getElementById('startReadingInput').value) || 0;
       const party = document.getElementById('morningPartyDirectInput').value.trim() || "General Work";
 
       if (r <= 0) { alert("Krupaya achuk reading taaka!"); return; }
 
-      // Jar aadhichi shift chalu rahili asel:
       if (currentSessionMachine.activeShift && currentSessionMachine.activeShift.isLive) {
         const prevStart = currentSessionMachine.activeShift.startMeter;
         const prevDate = currentSessionMachine.activeShift.date || getTodayStandardDate();
@@ -1278,7 +1636,6 @@
 
         const runHours = parseFloat((r - prevStart).toFixed(1));
 
-        // 1. Kalchya tarikhivar Night Closing save kara
         if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
         currentSessionClient.operatorHistory.unshift({
           date: prevDate,
@@ -1291,7 +1648,6 @@
           hourlyRate: currentSessionMachine.defaultHourlyRate || 2000
         });
 
-        // 2. Aajchi navin shift suru kara
         currentSessionMachine.totalHours = r;
         currentSessionMachine.activeParty = party;
         currentSessionMachine.activeShift = {
@@ -1307,7 +1663,6 @@
         return;
       }
 
-      // Normal Start
       currentSessionMachine.totalHours = r;
       currentSessionMachine.activeParty = party;
       currentSessionMachine.activeShift = {
@@ -1334,7 +1689,7 @@
 
       const runHours = parseFloat((e - s).toFixed(1));
       currentSessionMachine.totalHours = e;
-      currentSessionMachine.activeShift = null; // Close shift
+      currentSessionMachine.activeShift = null;
 
       if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
       currentSessionClient.operatorHistory.unshift({
@@ -1365,6 +1720,7 @@
       if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
 
       currentSessionClient.dieselHistory.unshift({
+        id: "D_" + Date.now(),
         date: getTodayStandardDate(),
         pump: p,
         machine: currentSessionMachine.name,
@@ -1379,7 +1735,7 @@
       setSafeValue('dieselCostInput', '');
       setSafeValue('dieselPaidInput', '0');
 
-      alert(`✓ डिझेल नोंद सेव्ह झाली!\nपंप: ${p} | लिटर: ${l} Ltr | बिल: ₹${c}`);
+      alert(`✓ डिझेल नोंद सेव्ह झाली!\nपंप: ${p} | लिटर: ${l} Ltr | बिल: ₹${c}\nजमा रक्कम: ₹${paid} | बाकी उधारी: ₹${c - paid}`);
       navigate('screenOpMenu');
     }
 
@@ -1388,7 +1744,6 @@
       setSafeText('dumperCountDisplay', currentDumperCount);
     }
 
-    // ⭐ DUMPER ENTRY WITH OWNER NAME
     function submitDumperTripEntry() {
       const o = document.getElementById('dumperOwnerInput').value.trim();
       const v = document.getElementById('dumperVehicleInput').value.trim();
@@ -1419,7 +1774,7 @@
     }
 
     // ========================================================
-    // ⭐ MACHINE-WISE LIVE WORK FOR TODAY (MALAK VIEW)
+    // MACHINE-WISE LIVE WORK FOR TODAY
     // ========================================================
     function renderOwnerTodayLiveSummary() {
       const box = document.getElementById('ownerTodayLiveSummary');
@@ -1479,7 +1834,6 @@
               Chaloo Party: <b style="color:var(--text-dark);">${currentParty}</b>
             </div>
 
-            <!-- Stats Bar -->
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; text-align:center; margin-top:8px;">
               <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
                 <div style="font-size:9.5px; color:#64748b;">Aajche Taas</div>
@@ -1545,11 +1899,11 @@
       renderOwnerMachines();
       renderDieselSummaryBox();
       renderProfitAndLossOverview();
+      renderOperatorSalarySummary();
       renderNightClosingMachineWise();
       renderOwnerDumperTrips();
     }
 
-    // ⭐ MACHINE CONSOLE LIST RENDER
     function renderOwnerMachines() {
       const container = document.getElementById('clientOwnerMachinesList');
       if (container && currentSessionClient) {
@@ -1596,6 +1950,7 @@
         status: "ACTIVE", 
         totalHours: 0.0, 
         defaultHourlyRate: mRate,
+        monthlySalary: 20000,
         advanceHistory: [] 
       });
 
@@ -1608,41 +1963,549 @@
       alert(`✓ Navin machine '${mName}' safalpane save zhali!`);
     }
 
+    // ========================================================
+    // ⭐ UNIQUE DIGITAL KHATA-BOOK DIESEL LEDGER ENGINE
+    // ========================================================
     function renderDieselSummaryBox() {
       if (!currentSessionClient) return;
       const dHistory = currentSessionClient.dieselHistory || [];
-      let totalL = 0, totalC = 0;
+      const pHistory = currentSessionClient.pumpPaymentsHistory || [];
+
+      let totalL = 0, totalC = 0, totalDirectPaid = 0;
       dHistory.forEach(d => {
         totalL += parseFloat(d.liters) || 0;
         totalC += parseFloat(d.cost) || 0;
+        totalDirectPaid += parseFloat(d.paid) || 0;
       });
 
-      setSafeText('menuDieselLtrBadge', `${totalL.toFixed(1)} Ltr`);
-      setSafeText('detailDieselLiters', `${totalL.toFixed(1)} Ltr`);
-      setSafeText('detailDieselTotalBill', `₹ ${totalC.toFixed(0)}`);
+      let totalExtraPaid = 0;
+      pHistory.forEach(p => totalExtraPaid += parseFloat(p.amount) || 0);
 
-      const container = document.getElementById('fullDieselEntriesListContainer');
+      const netPaid = totalDirectPaid + totalExtraPaid;
+      const netPending = Math.max(0, totalC - netPaid);
+      const avgRate = totalL > 0 ? (totalC / totalL).toFixed(1) : 0;
+      const paidPercent = totalC > 0 ? Math.min(100, Math.round((netPaid / totalC) * 100)) : 100;
+
+      setSafeText('detailDieselLiters', `${totalL.toFixed(1)} Ltr`);
+      setSafeText('detailDieselTotalBill', `₹ ${totalC.toLocaleString('en-IN')}`);
+      setSafeText('detailDieselPaid', `₹ ${netPaid.toLocaleString('en-IN')}`);
+      setSafeText('detailDieselPending', `₹ ${netPending.toLocaleString('en-IN')}`);
+      setSafeText('menuDieselPendingBadge', `${totalL.toFixed(0)} Ltr | Baki: ₹ ${netPending.toFixed(0)}`);
+      setSafeText('dieselAvgRateBadge', `⛽ Avg: ₹${avgRate}/Ltr`);
+      setSafeText('dieselPaidPercentText', `${paidPercent}% Paid`);
+
+      const pBar = document.getElementById('dieselPaymentProgressBar');
+      if (pBar) pBar.style.width = `${paidPercent}%`;
+
+      renderMachineWiseFuelConsumption(dHistory);
+      renderPumpWiseLedger(dHistory, pHistory);
+      renderFullDieselEntriesList(dHistory);
+    }
+
+    function renderMachineWiseFuelConsumption(dHistory) {
+      const strip = document.getElementById('machineWiseFuelStripContainer');
+      if (!strip || !currentSessionClient) return;
+      strip.innerHTML = '';
+
+      (currentSessionClient.fleet || []).forEach(m => {
+        let mLtr = 0, mCost = 0;
+        dHistory.forEach(d => {
+          if (d.machine === m.name) {
+            mLtr += parseFloat(d.liters) || 0;
+            mCost += parseFloat(d.cost) || 0;
+          }
+        });
+
+        strip.innerHTML += `
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:10px;">
+            <div style="font-size:11.5px; font-weight:800; color:var(--text-dark);">🚜 ${m.name}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <span style="font-size:13px; font-weight:900; color:var(--primary-blue);">${mLtr.toFixed(1)} Ltr</span>
+              <span style="font-size:11px; color:#64748b; font-weight:bold;">₹${mCost.toFixed(0)}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // ⭐ KHATA-BOOK PUMP CARDS WITH WHATSAPP SHARE & PASSBOOK TIMELINE
+    function renderPumpWiseLedger(dHistory, pHistory) {
+      const container = document.getElementById('pumpWiseLedgerCardsContainer');
       if (!container) return;
       container.innerHTML = '';
 
-      if (dHistory.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">Kontihi diesel nond nahi.</div>`;
+      const pumpMap = {};
+      dHistory.forEach(d => {
+        const p = d.pump || 'Other';
+        if (!pumpMap[p]) pumpMap[p] = { totalLiters: 0, totalBill: 0, totalPaid: 0 };
+        pumpMap[p].totalLiters += parseFloat(d.liters) || 0;
+        pumpMap[p].totalBill += parseFloat(d.cost) || 0;
+        pumpMap[p].totalPaid += parseFloat(d.paid) || 0;
+      });
+
+      pHistory.forEach(p => {
+        const pName = p.pump || 'Other';
+        if (!pumpMap[pName]) pumpMap[pName] = { totalLiters: 0, totalBill: 0, totalPaid: 0 };
+        pumpMap[pName].totalPaid += parseFloat(p.amount) || 0;
+      });
+
+      const pumpNames = Object.keys(pumpMap);
+      if (pumpNames.length === 0) {
+        container.innerHTML = `<div class="panel-card" style="text-align:center; padding:16px; color:#64748b;">अद्याप कोणत्याही पेट्रोल पंपाची नोंद नाही.</div>`;
         return;
       }
 
-      dHistory.forEach(d => {
+      pumpNames.forEach(pName => {
+        const item = pumpMap[pName];
+        const pending = Math.max(0, item.totalBill - item.totalPaid);
+        const pct = item.totalBill > 0 ? Math.min(100, Math.round((item.totalPaid / item.totalBill) * 100)) : 100;
+
+        // Filter Date-wise Payments for this specific pump
+        const pumpPayLogs = pHistory.filter(p => (p.pump || 'Other') === pName);
+        let payLogsHtml = '';
+
+        if (pumpPayLogs.length > 0) {
+          payLogsHtml = `
+            <div class="passbook-timeline">
+              <div style="font-size:11px; font-weight:800; color:#047857; margin-bottom:6px; display:flex; justify-content:space-between;">
+                <span>📜 तारीखवार जमा पासबुक (Payment History):</span>
+                <span>${pumpPayLogs.length} नोंदी</span>
+              </div>`;
+          
+          pumpPayLogs.forEach(log => {
+            const balanceInfo = (log.prevBalance !== undefined && log.newBalance !== undefined)
+              ? `<div style="font-size:10px; color:#475569; margin-top:2px;">आधी बाकी: ₹${log.prevBalance} ➔ पेमेंटनंतर उरली बाकी: <b style="color:#b91c1c;">₹${log.newBalance}</b></div>`
+              : '';
+
+            payLogsHtml += `
+              <div class="passbook-row passbook-jama">
+                <div>
+                  <div>🗓️ <b>${log.date}</b> <span style="background:#dcfce7; color:#166534; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${log.remark || 'Jama'}</span></div>
+                  ${balanceInfo}
+                </div>
+                <div style="text-align:right;">
+                  <b style="color:#15803d; font-size:13px;">+ ₹${parseFloat(log.amount).toFixed(0)}</b>
+                  <div style="font-size:9.5px; color:#16a34a; font-weight:bold;">JAMA / PAID</div>
+                </div>
+              </div>
+            `;
+          });
+          payLogsHtml += `</div>`;
+        }
+
         container.innerHTML += `
-          <div class="data-item-card">
-            <div style="display:flex; justify-content:space-between; font-weight:bold;">
-              <span>📅 ${d.date} - ${d.machine}</span>
-              <span style="color:var(--primary-blue);">${d.liters} Ltr</span>
+          <div class="pump-khata-card">
+            <div class="pump-khata-header">
+              <div>
+                <b style="font-size:15px; color:var(--text-dark);">⛽ ${pName}</b>
+                <span style="font-size:11px; color:#64748b; margin-left:6px; font-weight:bold;">(${item.totalLiters.toFixed(1)} Ltr)</span>
+              </div>
+              <span class="sub-badge ${pending > 0 ? 'sub-expired' : 'sub-active'}">
+                ${pending > 0 ? 'UDHARI CHALU' : '✓ ALL CLEAR'}
+              </span>
             </div>
-            <div style="font-size:11px; color:#64748b; margin-top:3px;">Pump: ${d.pump} | Chalak: ${d.driver} | Bill: <b>₹${d.cost}</b></div>
+
+            <div class="pump-khata-body">
+              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; text-align:center;">
+                <div style="background:#f8fafc; padding:8px; border-radius:8px;">
+                  <div style="font-size:10px; color:#64748b; font-weight:bold;">एकूण बिल</div>
+                  <div style="font-size:14px; font-weight:800; color:var(--text-dark);">₹${item.totalBill.toFixed(0)}</div>
+                </div>
+                <div style="background:#f0fdf4; padding:8px; border-radius:8px;">
+                  <div style="font-size:10px; color:#166534; font-weight:bold;">एकूण जमा</div>
+                  <div style="font-size:14px; font-weight:800; color:#15803d;">₹${item.totalPaid.toFixed(0)}</div>
+                </div>
+                <div style="background:#fef2f2; padding:8px; border-radius:8px;">
+                  <div style="font-size:10px; color:#991b1b; font-weight:bold;">बाकी उधारी</div>
+                  <div style="font-size:15px; font-weight:900; color:#dc2626;">₹${pending.toFixed(0)}</div>
+                </div>
+              </div>
+
+              <div class="pump-mini-progress">
+                <div class="pump-mini-progress-fill" style="width:${pct}%;"></div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px;">
+                <button onclick="openPumpPayModal('${pName}', ${pending})" style="background:var(--accent-green); color:#fff; border:none; padding:9px 12px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;">
+                  💳 Pay / जमा करा
+                </button>
+                <button onclick="sharePumpStatementWhatsApp('${pName}', ${item.totalLiters}, ${item.totalBill}, ${item.totalPaid}, ${pending})" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; padding:9px 12px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;">
+                  📲 WhatsApp हिशोब
+                </button>
+              </div>
+
+              ${payLogsHtml}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // ⭐ SMART MODAL FUNCTIONS FOR PUMP PAYMENT
+    function openPumpPayModal(pumpName, currentPending) {
+      activeModalPumpName = pumpName;
+      activeModalPumpPending = currentPending;
+
+      setSafeText('modalPumpTitle', `⛽ ${pumpName}`);
+      setSafeText('modalPumpCurrentPending', `₹ ${currentPending.toFixed(0)}`);
+      setSafeValue('modalPayDateInput', getTodayISOFormat());
+      setSafeValue('modalPayAmountInput', '');
+      setSafeValue('modalPayRemarkInput', 'PhonePe');
+
+      document.querySelectorAll('#pumpPaymentModal .mode-chip').forEach((c, idx) => {
+        if (idx === 0) c.classList.add('selected');
+        else c.classList.remove('selected');
+      });
+
+      setSafeText('modalBalancePreviewText', `पैसे दिल्यानंतर उरणारी बाकी: ₹ ${currentPending.toFixed(0)}`);
+      const modal = document.getElementById('pumpPaymentModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closePumpPayModal() {
+      const modal = document.getElementById('pumpPaymentModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function selectPayModeChip(el, modeText) {
+      document.querySelectorAll('#pumpPaymentModal .mode-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      setSafeValue('modalPayRemarkInput', modeText);
+    }
+
+    function updateModalRemainingPreview() {
+      const amt = parseFloat(document.getElementById('modalPayAmountInput').value) || 0;
+      const rem = Math.max(0, activeModalPumpPending - amt);
+      const previewEl = document.getElementById('modalBalancePreviewText');
+      if (previewEl) {
+        previewEl.innerHTML = `पैसे दिल्यानंतर उरणारी बाकी: ₹${activeModalPumpPending.toFixed(0)} - ₹${amt.toFixed(0)} = <b style="color:#dc2626;">₹ ${rem.toFixed(0)}</b>`;
+      }
+    }
+
+    function confirmPumpPaymentSubmit() {
+      const amt = parseFloat(document.getElementById('modalPayAmountInput').value) || 0;
+      if (amt <= 0) {
+        alert("कृपया जमा केलेली अचूक रक्कम टाका!");
+        return;
+      }
+
+      const rawDate = document.getElementById('modalPayDateInput').value;
+      const formattedDate = convertISOToDMY(rawDate);
+      const rem = document.getElementById('modalPayRemarkInput').value.trim() || "PhonePe";
+      const newBal = Math.max(0, activeModalPumpPending - amt);
+
+      if (!currentSessionClient.pumpPaymentsHistory) currentSessionClient.pumpPaymentsHistory = [];
+      currentSessionClient.pumpPaymentsHistory.unshift({
+        id: "PAY_" + Date.now(),
+        date: formattedDate,
+        pump: activeModalPumpName,
+        amount: amt,
+        remark: rem,
+        prevBalance: activeModalPumpPending,
+        newBalance: newBal
+      });
+
+      closePumpPayModal();
+      syncDataToCloud();
+      alert(`✓ तारीख ${formattedDate} रोजी ₹${amt} (${rem}) यशस्वीरित्या जमा झाले!\nआधी बाकी: ₹${activeModalPumpPending} ➔ आता शिल्लक बाकी: ₹${newBal}`);
+    }
+
+    function sharePumpStatementWhatsApp(pumpName, totalLtr, totalBill, totalPaid, pending) {
+      const pHistory = (currentSessionClient.pumpPaymentsHistory || []).filter(p => (p.pump || 'Other') === pumpName);
+      let payLines = "";
+      pHistory.slice(0, 5).forEach(p => {
+        payLines += `%0A• ${p.date}: ₹${p.amount} (${p.remark || 'Jama'})`;
+      });
+
+      const msg = `*⛽ पेट्रोल पंप डिझेल खाते हिशोब*%0A` +
+                  `*व्यवसाय:* ${currentSessionClient.businessName}%0A` +
+                  `*पंप:* ${pumpName}%0A` +
+                  `--------------------------%0A` +
+                  `*एकूण डिझेल:* ${totalLtr.toFixed(1)} Ltr%0A` +
+                  `*एकूण बिल:* ₹${totalBill.toFixed(0)}%0A` +
+                  `*एकूण जमा (Paid):* ₹${totalPaid.toFixed(0)}%0A` +
+                  `*शिल्लक बाकी उधारी:* *₹${pending.toFixed(0)}*%0A` +
+                  (payLines ? `--------------------------%0A*अलीकडील जमा नोंदी:*${payLines}` : '');
+
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+
+    function renderFullDieselEntriesList(dHistory) {
+      const container = document.getElementById('fullDieselEntriesListContainer');
+      const filterEl = document.getElementById('dieselLogPumpFilter');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const selectedPump = filterEl ? filterEl.value : 'ALL';
+      const filteredList = selectedPump === 'ALL' ? dHistory : dHistory.filter(d => d.pump === selectedPump);
+
+      if (filteredList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">कोणतीही डिझेल फिलिंग नोंद नाही.</div>`;
+        return;
+      }
+
+      filteredList.forEach(d => {
+        const liters = parseFloat(d.liters) || 0;
+        const cost = parseFloat(d.cost) || 0;
+        const paid = parseFloat(d.paid) || 0;
+        const pend = Math.max(0, cost - paid);
+        const ratePerLtr = liters > 0 ? (cost / liters).toFixed(1) : 0;
+
+        container.innerHTML += `
+          <div class="data-item-card" style="border-left: 3.5px solid var(--primary-blue);">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>📅 ${d.date} — 🚜 ${d.machine}</span>
+              <span style="color:var(--primary-blue); font-size:13.5px;">${liters} Ltr <small style="color:#64748b;">(@₹${ratePerLtr})</small></span>
+            </div>
+            <div style="font-size:11.5px; color:#475569; margin-top:4px;">
+              ⛽ पंप: <b>${d.pump}</b> | 👷 चालक: ${d.driver}
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-top:6px; padding-top:5px; border-top:1px dashed #e2e8f0;">
+              <span>एकूण बिल: <b>₹${cost}</b></span>
+              <span style="color:green;">जागेवर दिले: <b>₹${paid}</b></span>
+              <span style="color:red; font-weight:800;">उधारीत जमा: ₹${pend}</span>
+            </div>
           </div>`;
       });
     }
 
-    // ⭐ DUMPER LEDGER RENDER (MALAKACHYA NAAV SAH)
+    // ========================================================
+    // 📊 MONTHLY P&L & SALARY & BILLING
+    // ========================================================
+    function setPnlMonthQuick(mode) {
+      const today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth();
+
+      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
+
+      if (mode === 'current') {
+        const chip = document.getElementById('chipThisMonth');
+        if (chip) chip.classList.add('active');
+        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        setSafeValue('pnlMonthPicker', monthStr);
+        applyMonthDates(year, month);
+      } else if (mode === 'prev') {
+        const chip = document.getElementById('chipLastMonth');
+        if (chip) chip.classList.add('active');
+        let prevM = month - 1;
+        let prevY = year;
+        if (prevM < 0) { prevM = 11; prevY--; }
+        const monthStr = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
+        setSafeValue('pnlMonthPicker', monthStr);
+        applyMonthDates(prevY, prevM);
+      } else if (mode === 'all') {
+        const chip = document.getElementById('chipAllData');
+        if (chip) chip.classList.add('active');
+        setSafeValue('pnlMonthPicker', '');
+        setSafeValue('pnlFromDate', '');
+        setSafeValue('pnlToDate', '');
+        setSafeText('pnlSelectedMonthLabel', 'All Time Data');
+        renderProfitAndLossOverview();
+      }
+    }
+
+    function handlePnlMonthPickerChange() {
+      const val = document.getElementById('pnlMonthPicker').value;
+      if (!val) return;
+      const parts = val.split('-');
+      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
+      applyMonthDates(parseInt(parts[0]), parseInt(parts[1]) - 1);
+    }
+
+    function applyMonthDates(year, month) {
+      const lastDay = new Date(year, month + 1, 0);
+      const fStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+      const lStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
+
+      setSafeValue('pnlFromDate', fStr);
+      setSafeValue('pnlToDate', lStr);
+
+      const monthNames = ["Janevari", "Phebruvari", "March", "April", "May", "June", "Julai", "August", "September", "October", "November", "December"];
+      setSafeText('pnlSelectedMonthLabel', `${monthNames[month]} ${year}`);
+
+      renderProfitAndLossOverview();
+    }
+
+    function renderProfitAndLossOverview() {
+      if (!currentSessionClient) return;
+
+      const fDateVal = document.getElementById('pnlFromDate') ? document.getElementById('pnlFromDate').value : '';
+      const tDateVal = document.getElementById('pnlToDate') ? document.getElementById('pnlToDate').value : '';
+
+      const fromDate = fDateVal ? new Date(fDateVal + 'T00:00:00') : null;
+      const toDate = tDateVal ? new Date(tDateVal + 'T23:59:59') : null;
+
+      const history = currentSessionClient.operatorHistory || [];
+      const dHistory = currentSessionClient.dieselHistory || [];
+
+      let totalGross = 0;
+      history.forEach(h => {
+        const itemD = parseDateDMY(h.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        totalGross += (parseFloat(h.hours) || 0) * (parseFloat(h.hourlyRate) || 2000);
+      });
+
+      let totalFuel = 0;
+      dHistory.forEach(d => {
+        const itemD = parseDateDMY(d.date);
+        if (fromDate && itemD < fromDate) return;
+        if (toDate && itemD > toDate) return;
+        totalFuel += parseFloat(d.cost) || 0;
+      });
+
+      let totalAdv = 0;
+      (currentSessionClient.fleet || []).forEach(m => {
+        (m.advanceHistory || []).forEach(a => {
+          const itemD = parseDateDMY(a.date);
+          if (fromDate && itemD < fromDate) return;
+          if (toDate && itemD > toDate) return;
+          totalAdv += parseFloat(a.amount) || 0;
+        });
+      });
+
+      const net = totalGross - (totalFuel + totalAdv);
+
+      setSafeText('pnlNetProfitDisplay', `₹ ${net.toFixed(0)}`);
+      setSafeText('menuNetProfitBadge', `₹ ${net.toFixed(0)} Net`);
+      setSafeText('pnlBreakdownGrossBilling', `₹ ${totalGross.toFixed(0)}`);
+      setSafeText('pnlBreakdownDieselCost', `₹ ${totalFuel.toFixed(0)}`);
+      setSafeText('pnlBreakdownDriverAdvances', `₹ ${totalAdv.toFixed(0)}`);
+    }
+
+    function renderOperatorSalarySummary() {
+      const container = document.getElementById('operatorSalarySummaryList');
+      const select = document.getElementById('advMachineSelect');
+      if (!container || !currentSessionClient) return;
+      container.innerHTML = '';
+      if (select) select.innerHTML = '';
+
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        if (select) select.innerHTML += `<option value="${idx}">${m.driver} (${m.name})</option>`;
+        const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
+        const sal = parseFloat(m.monthlySalary) || 20000;
+        const bal = sal - totalUchhal;
+
+        let advLogsHtml = '';
+        (m.advanceHistory || []).forEach(a => {
+          advLogsHtml += `<div style="font-size:10.5px; color:#64748b; margin-top:2px;">• ${a.date}: <b style="color:var(--accent-red);">₹${a.amount}</b> (${a.remark || 'Uchhal'})</div>`;
+        });
+
+        container.innerHTML += `
+          <div class="data-item-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <b>👷 ${m.driver} (${m.name})</b>
+              <button onclick="editDriverSalaryPrompt(${idx})" style="background:#e0f2fe; color:#0284c7; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">✏️ Pagar Badla</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-top:6px; padding-bottom:6px; border-bottom:1px dashed #e2e8f0;">
+              <span>Pagar: <b>₹${sal}</b></span>
+              <span>Uchhal: <b style="color:var(--accent-red);">₹${totalUchhal}</b></span>
+              <span>Shillak: <b style="color:var(--accent-green);">₹${bal > 0 ? bal : 0}</b></span>
+            </div>
+            ${advLogsHtml}
+          </div>
+        `;
+      });
+    }
+
+    function saveOperatorAdvanceEntry() {
+      const select = document.getElementById('advMachineSelect');
+      const amt = parseFloat(document.getElementById('advAmountInput').value) || 0;
+      const rem = document.getElementById('advRemarkInput').value.trim() || 'Rokh Uchhal';
+
+      if (!select || amt <= 0) { alert("Krupaya rakkam taka!"); return; }
+      const m = currentSessionClient.fleet[parseInt(select.value)];
+      if (!m) return;
+
+      if (!m.advanceHistory) m.advanceHistory = [];
+      m.advanceHistory.unshift({
+        date: getTodayStandardDate(),
+        amount: amt,
+        remark: rem
+      });
+
+      syncDataToCloud();
+      setSafeValue('advAmountInput', '');
+      setSafeValue('advRemarkInput', '');
+      renderOperatorSalarySummary();
+      alert(`✓ ₹${amt} uchhal ${m.driver} chya khatyat save zhali!`);
+    }
+
+    function editDriverSalaryPrompt(mIdx) {
+      const m = currentSessionClient.fleet[mIdx];
+      if (!m) return;
+      const salInput = prompt(`👷 ${m.driver} cha mahina pagar kiti thevaycha ahe?`, m.monthlySalary || 20000);
+      if (salInput !== null && !isNaN(salInput)) {
+        m.monthlySalary = parseFloat(salInput);
+        syncDataToCloud();
+        renderOperatorSalarySummary();
+      }
+    }
+
+    function openOwnerBillingPage() {
+      const select = document.getElementById('billMachineSelect');
+      if (!select || !currentSessionClient) return;
+      select.innerHTML = '';
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        select.innerHTML += `<option value="${idx}">${m.name}</option>`;
+      });
+      autoLoadPartiesForSelectedMachine();
+    }
+
+    function autoLoadPartiesForSelectedMachine() {
+      const select = document.getElementById('billMachineSelect');
+      const partySelect = document.getElementById('billPartySelect');
+      if (!select || !partySelect || !currentSessionClient) return;
+
+      const m = currentSessionClient.fleet[parseInt(select.value)];
+      if (!m) return;
+
+      setSafeValue('custHourlyRate', m.defaultHourlyRate || 2000);
+
+      const partiesSet = new Set();
+      if (m.activeParty) partiesSet.add(m.activeParty);
+      (currentSessionClient.operatorHistory || []).forEach(h => {
+        if (h.machine === m.name && h.party) partiesSet.add(h.party);
+      });
+      partiesSet.add("General Work");
+
+      partySelect.innerHTML = '';
+      partiesSet.forEach(p => {
+        partySelect.innerHTML += `<option value="${p}">${p}</option>`;
+      });
+
+      autoSumPartyHours();
+    }
+
+    function autoSumPartyHours() {
+      const mSelect = document.getElementById('billMachineSelect');
+      const pSelect = document.getElementById('billPartySelect');
+      if (!mSelect || !pSelect || !currentSessionClient) return;
+
+      const m = currentSessionClient.fleet[parseInt(mSelect.value)];
+      const party = pSelect.value;
+      if (!m) return;
+
+      let sumH = 0;
+      (currentSessionClient.operatorHistory || []).forEach(h => {
+        if (h.machine === m.name && h.party === party) {
+          sumH += parseFloat(h.hours) || 0;
+        }
+      });
+
+      setSafeValue('custTodayHours', sumH.toFixed(1));
+      calculateOngoingRent();
+    }
+
+    function calculateOngoingRent() {
+      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
+      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
+      setSafeText('livePartyPendingAmt', `₹ ${((h * r) - a).toFixed(0)}`);
+      setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
+    }
+
     function renderOwnerDumperTrips() {
       const container = document.getElementById('ownerDumperTripsListContainer');
       if (!container || !currentSessionClient) return;
@@ -1695,119 +2558,19 @@
       });
     }
 
-    function setPnlMonthQuick(mode) {
-      const today = new Date();
-      let year = today.getFullYear();
-      let month = today.getMonth();
-
-      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
-
-      if (mode === 'current') {
-        const chip = document.getElementById('chipThisMonth');
-        if (chip) chip.classList.add('active');
-        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-        setSafeValue('pnlMonthPicker', monthStr);
-        applyMonthDates(year, month);
-      } else if (mode === 'prev') {
-        const chip = document.getElementById('chipLastMonth');
-        if (chip) chip.classList.add('active');
-        let prevM = month - 1;
-        let prevY = year;
-        if (prevM < 0) { prevM = 11; prevY--; }
-        const monthStr = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
-        setSafeValue('pnlMonthPicker', monthStr);
-        applyMonthDates(prevY, prevM);
-      } else if (mode === 'all') {
-        const chip = document.getElementById('chipAllData');
-        if (chip) chip.classList.add('active');
-        setSafeValue('pnlMonthPicker', '');
-        renderProfitAndLossOverview();
-      }
-    }
-
-    function handlePnlMonthPickerChange() {
-      const val = document.getElementById('pnlMonthPicker').value;
-      if (!val) return;
-      const parts = val.split('-');
-      applyMonthDates(parseInt(parts[0]), parseInt(parts[1]) - 1);
-    }
-
-    function applyMonthDates(year, month) {
-      renderProfitAndLossOverview(year, month);
-    }
-
-    function renderProfitAndLossOverview(filterYear = null, filterMonth = null) {
-      if (!currentSessionClient) return;
-
-      const history = currentSessionClient.operatorHistory || [];
-      const dHistory = currentSessionClient.dieselHistory || [];
-
-      let totalGross = 0;
-      history.forEach(h => {
-        if (filterYear !== null && filterMonth !== null) {
-          const d = parseStandardDate(h.date);
-          if (d.getFullYear() !== filterYear || d.getMonth() !== filterMonth) return;
-        }
-        totalGross += (parseFloat(h.hours) || 0) * (parseFloat(h.hourlyRate) || 2000);
-      });
-
-      let totalFuel = 0;
-      dHistory.forEach(d => {
-        if (filterYear !== null && filterMonth !== null) {
-          const dt = parseStandardDate(d.date);
-          if (dt.getFullYear() !== filterYear || dt.getMonth() !== filterMonth) return;
-        }
-        totalFuel += parseFloat(d.cost) || 0;
-      });
-
-      const net = totalGross - totalFuel;
-
-      setSafeText('pnlNetProfitDisplay', `₹ ${net.toFixed(0)}`);
-      setSafeText('menuNetProfitBadge', `₹ ${net.toFixed(0)} Net`);
-      setSafeText('pnlBreakdownGrossBilling', `₹ ${totalGross.toFixed(0)}`);
-      setSafeText('pnlBreakdownDieselCost', `₹ ${totalFuel.toFixed(0)}`);
-      setSafeText('pnlBreakdownDriverAdvances', `₹ 0`);
-    }
-
-    function openOwnerBillingPage() {
-      const select = document.getElementById('billMachineSelect');
-      if (!select || !currentSessionClient) return;
-      select.innerHTML = '';
-      (currentSessionClient.fleet || []).forEach((m, idx) => {
-        select.innerHTML += `<option value="${idx}">${m.name}</option>`;
-      });
-      autoLoadPartiesForSelectedMachine();
-    }
-    function autoLoadPartiesForSelectedMachine() {
-      const partySelect = document.getElementById('billPartySelect');
-      if (partySelect) partySelect.innerHTML = '<option value="General Work">General Work</option>';
-      calculateOngoingRent();
-    }
-    function calculateOngoingRent() {
-      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
-      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
-      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
-      setSafeText('livePartyPendingAmt', `₹ ${(h * r) - a}`);
-      setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
-    }
-
-    // ⭐ MACHINE CONSOLE CLICK REDIRECTION FIXED
     function openOwnerSection(sec) {
       if (!currentSessionClient) return;
-      if (sec === 'machines') { 
-        renderOwnerMachines(); 
-        navigate('screenOwnerMachinesPage'); 
-      }
+      if (sec === 'machines') { renderOwnerMachines(); navigate('screenOwnerMachinesPage'); }
       else if (sec === 'diesel') { renderDieselSummaryBox(); navigate('screenDieselLedger'); }
       else if (sec === 'dumper') { renderOwnerDumperTrips(); navigate('screenOwnerDumperPage'); }
-      else if (sec === 'salary') { navigate('screenDayByDayPage'); }
+      else if (sec === 'salary') { renderOperatorSalarySummary(); navigate('screenDayByDayPage'); }
       else if (sec === 'night') { renderNightClosingMachineWise(); navigate('screenNightClosingPage'); }
       else if (sec === 'billing') { openOwnerBillingPage(); navigate('screenOwnerBillingPage'); }
       else if (sec === 'pnl') { setPnlMonthQuick('current'); navigate('screenProfitLossPage'); }
     }
 
     // =====================================
-    // 📋 SUPER ADMIN FUNCTIONS
+    // 📋 SUPER ADMIN FUNCTIONS (ALL 6 SECTIONS)
     // =====================================
     function renderSuperAdminDashboard() {
       const container = document.getElementById('superAdminClientsList');
@@ -1882,6 +2645,7 @@
         setPnlMonthQuick('current');
         navigate('screenProfitLossPage');
       } else if (section === 'salary') {
+        renderOperatorSalarySummary();
         navigate('screenDayByDayPage');
       } else if (section === 'billing') {
         openOwnerBillingPage();
@@ -1968,7 +2732,7 @@
 
       let generatedFleet = [];
       for (let i = 1; i <= count; i++) {
-        generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
+        generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, monthlySalary: 20000, advanceHistory: [] });
       }
 
       clientsDatabase.unshift({
@@ -1980,7 +2744,7 @@
         status: "PENDING_APPROVAL",
         paidMachinesCount: 0,
         fleet: generatedFleet,
-        dieselHistory: [], operatorHistory: [], dumperHistory: []
+        dieselHistory: [], operatorHistory: [], dumperHistory: [], pumpPaymentsHistory: []
       });
 
       syncDataToCloud();
@@ -1999,13 +2763,16 @@
       if (!client) return;
 
       const mName = document.getElementById('saAddMachineNameInput').value.trim();
+      const mDriver = document.getElementById('saAddMachineDriverInput').value.trim() || 'Chalak';
       const mPin = document.getElementById('saAddMachinePinInput').value.trim();
+      const mRate = parseFloat(document.getElementById('saAddMachineRateInput').value) || 2000;
 
       if (!mName || !mPin) { alert("Machine che naav aani 4-anki PIN bhara!"); return; }
 
-      client.fleet.push({ id: "M_" + Date.now(), name: mName, driver: 'Chalak', pin: mPin, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
+      client.fleet.push({ id: "M_" + Date.now(), name: mName, driver: mDriver, pin: mPin, status: "DEACTIVE", totalHours: 0.0, defaultHourlyRate: mRate, monthlySalary: 20000, advanceHistory: [] });
       syncDataToCloud();
       setSafeValue('saAddMachineNameInput', '');
+      setSafeValue('saAddMachineDriverInput', '');
       setSafeValue('saAddMachinePinInput', '');
 
       openSuperAdminClientDetailPage(selectedSaClientId);
@@ -2026,6 +2793,7 @@
       const grossPotential = totalMachines * 250;
       const progressPercent = grossPotential > 0 ? ((totalReceived / grossPotential) * 100).toFixed(0) : 0;
 
+      setSafeText('saasNetProfit', "₹ " + totalReceived.toLocaleString('en-IN'));
       setSafeText('saasTotalClientsCount', clientsDatabase.length + " Grahak");
       setSafeText('saasTotalMachinesCount', totalMachines + " JCB");
       setSafeText('saasFeeReceived', "₹ " + totalReceived.toLocaleString('en-IN'));
@@ -2038,11 +2806,13 @@
 
     function openSaasBoxDetailScreen(boxType) {
       const headerEl = document.getElementById('saasBoxDetailHeader');
+      const titleEl = document.getElementById('saasBoxDetailTitle');
       const contentEl = document.getElementById('saasBoxDetailContent');
       if (!contentEl) return;
       contentEl.innerHTML = '';
 
       if (boxType === 'clients') {
+        if (titleEl) titleEl.innerText = "Ekun App Clients";
         if (headerEl) headerEl.innerText = "📋 Registered Clients List";
         clientsDatabase.forEach(c => {
           contentEl.innerHTML += `
@@ -2052,6 +2822,7 @@
             </div>`;
         });
       } else if (boxType === 'machines') {
+        if (titleEl) titleEl.innerText = "All Machines & Owners";
         if (headerEl) headerEl.innerText = "🚜 Fleet Machine Management";
         clientsDatabase.forEach(c => {
           let html = '';
@@ -2068,6 +2839,7 @@
           contentEl.innerHTML += `<div class="panel-card"><b style="color:var(--primary-blue);">👑 ${c.businessName}</b>${html}</div>`;
         });
       } else if (boxType === 'received') {
+        if (titleEl) titleEl.innerText = "Received Payment";
         if (headerEl) headerEl.innerText = "💳 Received Ledger";
         clientsDatabase.forEach(c => {
           const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
@@ -2080,6 +2852,7 @@
           }
         });
       } else if (boxType === 'pending') {
+        if (titleEl) titleEl.innerText = "Pending Fee";
         if (headerEl) headerEl.innerText = "⚠️ Pending Requests";
         clientsDatabase.forEach(c => {
           const fCount = (c.fleet || []).length;
@@ -2095,6 +2868,19 @@
               </div>`;
           }
         });
+      } else if (boxType === 'gross') {
+        if (titleEl) titleEl.innerText = "Gross Monthly Turnover";
+        if (headerEl) headerEl.innerText = "📑 Financial Breakdown & Forecasting";
+        let totalM = 0;
+        clientsDatabase.forEach(c => totalM += (c.fleet || []).length);
+        const monthly = totalM * 250;
+        const annual = monthly * 12;
+        contentEl.innerHTML = `
+          <div class="turnover-unique-card" style="cursor:default;">
+            <div style="font-size:12px; color:#94a3b8; font-weight:bold;">SaaS Recurring Revenue Calculator</div>
+            <div style="font-size:24px; font-weight:900; color:#38bdf8; margin:6px 0;">₹ ${monthly.toLocaleString('en-IN')} / mahina</div>
+            <div style="font-size:13px; color:#a7f3d0;">Varshik Utpanna (Annual Forecast): <b>₹ ${annual.toLocaleString('en-IN')}</b></div>
+          </div>`;
       }
       navigate('screenSaasBoxDetailPage');
     }
@@ -2223,7 +3009,7 @@
       const bellBtn = document.getElementById('adminNotifBellBtn');
       const dot = document.getElementById('notifBadgeDot');
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      const isSuper = saved && saved.type === 'SUPER_ADMIN';
+      const isSuper = saved && (saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin);
 
       if (!isSuper) {
         if (bellBtn) bellBtn.style.display = 'none';
@@ -2246,7 +3032,7 @@
 
     function openNotificationModal() {
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      if (!saved || saved.type !== 'SUPER_ADMIN') {
+      if (!saved || !(saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin)) {
         alert("Phakta Super Admin la ya soochna pahnyacha adhikar ahe!");
         return;
       }
@@ -2298,7 +3084,6 @@
       updateFrontPagePendingAlert();
       populateDirectLockClientDropdown();
 
-      // REALTIME LISTENER
       if (db) {
         db.ref('jcb_fleet_master').on('value', (snapshot) => {
           const cloudData = snapshot.val();
@@ -2320,11 +3105,12 @@
         });
       }
 
-      // RESTORE SAVED STATE (SWIPE / REFRESH FIX)
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (saved) {
-        if (saved.type === 'SUPER_ADMIN') {
+        if (saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin) {
           navigate('screenSuperAdmin');
+          renderSuperAdminDashboard();
+          renderSaasBusinessPnl();
         } else if (saved.type === 'OWNER') {
           const client = clientsDatabase.find(c => c.user.toLowerCase() === saved.userId.toLowerCase());
           if (client && client.status === "ACTIVE") proceedOwnerLogin(client);

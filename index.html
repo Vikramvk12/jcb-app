@@ -25,8 +25,23 @@
       --accent-teal: #14b8a6;
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
-    body { background-color: var(--bg-gray); color: var(--text-dark); min-height: 100vh; padding-bottom: 30px; }
+    /* PULL TO REFRESH / SWIPE GLITCH BLOCK */
+    html, body {
+      overscroll-behavior: none !important;
+      overscroll-behavior-y: none !important;
+      touch-action: pan-x pan-y;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-gray);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    * { box-sizing: border-box; }
+    body { padding-bottom: 35px; }
 
     .app-header {
       background: var(--primary-blue);
@@ -50,7 +65,6 @@
       border-radius: 16px;
       font-size: 11px;
       font-weight: 700;
-      cursor: pointer;
     }
 
     .notif-bell-btn {
@@ -84,7 +98,6 @@
     .screen.active { display: block; animation: fadeIn 0.15s ease-in; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* FRONT PAGE PENDING ALERT CARD */
     .front-pending-alert-banner {
       display: none;
       background: #fffbeb;
@@ -147,7 +160,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.03);
       border: 1px solid var(--border-light);
     }
@@ -209,18 +222,13 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 105px;
+      min-height: 102px;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      transition: transform 0.1s, box-shadow 0.1s;
-      position: relative;
+      transition: transform 0.1s;
     }
     .feature-card:active { transform: scale(0.98); }
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
     .icon-badge {
       width: 38px;
       height: 38px;
@@ -234,78 +242,6 @@
     .card-body { margin-top: 8px; }
     .card-main-title { font-size: 13.5px; font-weight: 800; color: var(--text-dark); }
     .card-sub-title { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-    /* Unique Gross Turnover Design */
-    .turnover-unique-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
-      border: 1px solid #334155;
-      margin-top: 14px;
-      margin-bottom: 14px;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-    .turnover-unique-card::before {
-      content: "";
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 100px;
-      height: 100px;
-      background: rgba(59, 130, 246, 0.15);
-      border-radius: 50%;
-    }
-    .turnover-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .turnover-badge {
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .turnover-amount-large {
-      font-size: 28px;
-      font-weight: 900;
-      color: #38bdf8;
-      margin-top: 8px;
-      letter-spacing: 0.5px;
-    }
-    .turnover-progress-wrap {
-      margin-top: 12px;
-      background: #334155;
-      border-radius: 8px;
-      height: 8px;
-      overflow: hidden;
-    }
-    .turnover-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
-      border-radius: 8px;
-      transition: width 0.3s;
-    }
-    .turnover-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-    }
-    .turnover-stat-lbl { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-    .turnover-stat-val { font-size: 13px; color: #f8fafc; font-weight: 800; margin-top: 2px; }
 
     .panel-card {
       background: var(--card-white);
@@ -359,12 +295,7 @@
       padding: 9px 12px; font-weight: 700; font-size: 12px; margin-bottom: 12px; cursor: pointer; display: inline-block;
     }
 
-    .filter-box {
-      background: #f1f5f9;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
+    .filter-box { background: #f1f5f9; border-radius: 10px; padding: 10px; margin-bottom: 12px; }
     .quick-chip {
       background: #e2e8f0; color: #334155; border: none; padding: 6px 12px; border-radius: 6px;
       font-size: 11px; font-weight: bold; cursor: pointer;
@@ -396,7 +327,6 @@
       display: inline-block;
     }
     .sub-active { background: #dcfce7; color: #15803d; }
-    .sub-warning { background: #fef3c7; color: #b45309; }
     .sub-expired { background: #fee2e2; color: #b91c1c; }
 
     .btn-action-circle {
@@ -414,29 +344,54 @@
     .btn-approve { background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; }
     .btn-reject { background: #fee2e2; color: #b91c1c; border: 1.5px solid #dc2626; }
 
+    /* TRIP COUNTER STYLING */
+    .trip-counter-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      margin: 10px 0;
+    }
+    .btn-trip-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     @media print {
       body * { visibility: hidden; }
-      #printableInvoiceModal, #printableInvoiceModal * { visibility: visible; }
-      #printableInvoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
+      #screenOwnerBillingPage, #screenOwnerBillingPage * { visibility: visible; }
+      #screenOwnerBillingPage { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
       .no-print { display: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Lock Screen Overlay (Approval Pending for Payment Status) -->
+  <!-- Lock Screen Overlay -->
   <div id="lockOverlayScreen">
     <div style="font-size: 58px; margin-bottom: 10px;">⏳</div>
     <h2 style="font-size: 20px; font-weight: 900; color:#fde047; letter-spacing:0.5px;">APPROVAL PENDING FOR PAYMENT</h2>
     <p style="font-size: 13.5px; color: #cbd5e1; margin: 12px 0 20px 0; max-width: 350px; line-height: 1.6;">
-      Tumchya ya account/machine che payment Super Admin kade pending ahe. विक्रम सरांकडून <b>Payment Approve</b> zalyanantar tumche app thet chalu hoil!
+      Ya khatyache payment Super Admin kade pending ahe. Vikram Sirankadun <b>Payment Approve</b> zalyanantar app thet chalu hoil!
     </p>
     <a href="https://wa.me/919545628713?text=Namaskar%20Vikram%20Sir,%20maze%20payment%20approve%20karun%20app%20start%20kara." 
        style="background:var(--accent-gold); color:#000; padding:12px 22px; font-weight:900; border-radius:8px; text-decoration:none;">
       💳 Pay / Contact Vikram Sir (WhatsApp)
     </a>
     <button onclick="logoutSession()" style="margin-top: 20px; background:transparent; border:1px solid #fff; color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer;">
-      Logout Kara
+      Logout
     </button>
   </div>
 
@@ -451,11 +406,10 @@
     </div>
   </div>
 
-  <!-- Top Blue Header -->
+  <!-- Header -->
   <div class="app-header">
     <div class="brand-title">🚜 JCB Fleet Pro</div>
     <div class="header-actions">
-      <!-- 🔔 Bell Icon: Only displayed for Super Admin -->
       <button class="notif-bell-btn" id="adminNotifBellBtn" onclick="openNotificationModal()" title="Alerts & Notifications">
         🔔
         <div class="notif-badge-dot" id="notifBadgeDot"></div>
@@ -466,12 +420,8 @@
 
   <div class="container">
 
-    <!-- ========================================================
-         SCREEN 0: FIRST PAGE (LOGIN CHOICE & DIRECT PENDING ALERT)
-         ======================================================== -->
+    <!-- SCREEN 0: FRONT LOGIN CHOICE -->
     <div id="screenLoginSelect" class="screen active">
-
-      <!-- 🚨 FIRST PAGE DIRECT ALERT FOR PENDING PAYMENT -->
       <div id="frontPagePendingAlertBanner" class="front-pending-alert-banner">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
@@ -511,13 +461,13 @@
           </div>
           <div class="card-body">
             <div class="card-main-title">२. Operator Thet Login</div>
-            <div class="card-sub-title">Reading & Diesel Nond</div>
+            <div class="card-sub-title">Reading, Diesel va Dumper Ferya Nond</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SCREEN 0.1: OWNER & SUPER ADMIN LOGIN -->
+    <!-- SCREEN 0.1: OWNER LOGIN -->
     <div id="screenOwnerLogin" class="screen">
       <button class="btn-nav" onclick="navigate('screenLoginSelect')">⬅ Mage Ja</button>
       <div class="panel-card">
@@ -551,9 +501,7 @@
       </div>
     </div>
 
-    <!-- ========================================================
-         SCREEN 1: SUPER ADMIN DASHBOARD
-         ======================================================== -->
+    <!-- SCREEN 1: SUPER ADMIN DASHBOARD -->
     <div id="screenSuperAdmin" class="screen">
       <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
         <button class="btn-nav" style="margin:0;" onclick="logoutSession()">🔒 Super Admin Logout</button>
@@ -577,49 +525,7 @@
         <div id="pendingApprovalsListContainer"></div>
       </div>
 
-      <!-- UNIQUE GROSS TURNOVER CARD -->
-      <div class="turnover-unique-card" onclick="openSaasBoxDetailScreen('gross')">
-        <div class="turnover-top-row">
-          <div>
-            <div style="font-size:11px; color:#94a3b8; font-weight:800; text-transform:uppercase;">Gross Monthly Potential</div>
-            <div class="turnover-amount-large" id="saasGrossBilling">₹ 0</div>
-          </div>
-          <span class="turnover-badge">✨ SaaS Model</span>
-        </div>
-
-        <div class="turnover-progress-wrap">
-          <div class="turnover-progress-bar" id="turnoverProgressBar" style="width: 0%;"></div>
-        </div>
-
-        <div class="turnover-stats-grid">
-          <div>
-            <div class="turnover-stat-lbl">Active Fleet</div>
-            <div class="turnover-stat-val" id="saasTotalMachinesCount">0 JCB</div>
-          </div>
-          <div>
-            <div class="turnover-stat-lbl">Received</div>
-            <div class="turnover-stat-val" style="color:#10b981;" id="saasFeeReceived">₹ 0</div>
-          </div>
-          <div>
-            <div class="turnover-stat-lbl">Pending</div>
-            <div class="turnover-stat-val" style="color:#ef4444;" id="saasFeePending">₹ 0</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- NET PROFIT BOX -->
-      <div class="panel-card" style="border: 1.5px solid var(--accent-green); background:#f0fdf4; margin-bottom:12px;">
-        <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">TUMCHA NIVAL APP NAFA (NET PROFIT):</div>
-        <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="saasNetProfit">₹ 0</div>
-      </div>
-
       <!-- 4 BOXES TILES -->
-      <div class="section-title-row">
-        <div style="font-size:16px;">⊞</div>
-        <div class="section-title">App Membership Overview</div>
-        <div class="section-divider"></div>
-      </div>
-
       <div class="grid-tiles-2x2">
         <div class="feature-card" onclick="openSaasBoxDetailScreen('clients')">
           <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">👥</div><span class="arrow-icon">›</span></div>
@@ -703,13 +609,6 @@
     <!-- SCREEN 1.4.1: DETAIL SCREEN -->
     <div id="screenSaasBoxDetailPage" class="screen">
       <button class="btn-nav" onclick="navigate('screenSuperAdmin')">⬅ Mage Ja (Super Admin Main)</button>
-      <div class="profile-welcome-card" style="border-left: 4px solid var(--primary-blue);">
-        <div class="profile-avatar" id="saasBoxDetailAvatar">📋</div>
-        <div class="profile-info">
-          <div class="client-name" id="saasBoxDetailTitle">Breakdown</div>
-          <div class="client-sub" id="saasBoxDetailSub">Savistar Data</div>
-        </div>
-      </div>
       <div class="panel-card">
         <div class="panel-header" id="saasBoxDetailHeader">📋 Records List</div>
         <div id="saasBoxDetailContent"></div>
@@ -782,7 +681,9 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: MALAK (OWNER) HUB -->
+    <!-- ========================================================
+         SCREEN 2: MALAK (OWNER) HUB
+         ======================================================== -->
     <div id="screenClientOwner" class="screen">
       <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
         <button class="btn-nav" style="margin:0;" id="ownerBackBtn" onclick="handleOwnerBackNavigation()">🔒 Logout</button>
@@ -794,8 +695,17 @@
         <div class="profile-info">
           <div class="welcome-lbl">Welcome</div>
           <div class="client-name" id="ownerClientTitle">SK Palashi (Patil)</div>
-          <div class="client-sub" id="ownerSubDaysLeft">Active Session</div>
+          <div class="client-sub">Active Session</div>
         </div>
+      </div>
+
+      <!-- ⭐ MACHINE-WISE LIVE WORK (FAKT AAJCHA HISHOB) -->
+      <div class="panel-card" style="border: 2px solid var(--primary-blue); background:#f8fafc; margin-bottom:14px;">
+        <div class="panel-header" style="color:var(--primary-blue);">
+          <span>📌 Aajche Chalu Kaam (Machine-wise Live Work)</span>
+          <span style="font-size:11px; background:#e0f2fe; color:#0284c7; padding:3px 8px; border-radius:12px; font-weight:800;" id="liveTodayDateBadge">Today</span>
+        </div>
+        <div id="ownerTodayLiveSummary"></div>
       </div>
 
       <div class="section-title-row">
@@ -813,11 +723,15 @@
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">Diesel & Pump</div><div class="card-sub-title" id="menuDieselLtrBadge">0 Ltr</div></div>
         </div>
+        <div class="feature-card" style="border-left: 3.5px solid var(--accent-red);" onclick="openOwnerSection('dumper')">
+          <div class="card-top"><div class="icon-badge" style="background:#fee2e2; color:#ef4444;">🚛</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">Dumper Ferya</div><div class="card-sub-title">Trips Ledger</div></div>
+        </div>
         <div class="feature-card" onclick="openOwnerSection('salary')">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">₹</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">Advance / Pagar</div><div class="card-sub-title">Advance entries</div></div>
         </div>
-        <div class="feature-card" onclick="openOwnerSection('night')">
+        <div class="feature-card" onclick="openOwnerSection('night')" style="grid-column: span 2;">
           <div class="card-top"><div class="icon-badge" style="background:#f3e8ff; color:#7c3aed;">🌙</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">Night Closing</div><div class="card-sub-title">Reading & Taas</div></div>
         </div>
@@ -875,23 +789,23 @@
             <div style="font-size:11px; color:var(--text-muted);">Ekun Bill</div>
             <div style="font-size:16px; font-weight:800;" id="detailDieselTotalBill">₹ 0</div>
           </div>
-          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
-            <div style="font-size:11px; color:var(--text-muted);">Paid Rakkam</div>
-            <div style="font-size:16px; font-weight:800; color:var(--accent-green);" id="detailDieselPaid">₹ 0</div>
-          </div>
-          <div style="background:#f8fafc; padding:10px; border-radius:8px; text-align:center;">
-            <div style="font-size:11px; color:var(--text-muted);">Pump Baki</div>
-            <div style="font-size:16px; font-weight:800; color:var(--accent-red);" id="detailDieselPending">₹ 0</div>
-          </div>
         </div>
         <div id="fullDieselEntriesListContainer" style="margin-top:10px;"></div>
       </div>
     </div>
 
-    <!-- PAGE 3: PROFIT & LOSS -->
+    <!-- ⭐ DUMPER TRIPS OWNER VIEW -->
+    <div id="screenOwnerDumperPage" class="screen">
+      <button class="btn-nav" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">🚛 Dumper & Tractor Ferya Hishob</div>
+        <div id="ownerDumperTripsListContainer"></div>
+      </div>
+    </div>
+
+    <!-- PROFIT & LOSS -->
     <div id="screenProfitLossPage" class="screen">
       <button class="btn-nav" id="btnBackPnl" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
-      
       <div class="filter-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <b style="font-size:12px; color:#334155;">🗓️ Mahina Nivada (Monthly View):</b>
@@ -902,20 +816,13 @@
           <button class="quick-chip" id="chipLastMonth" onclick="setPnlMonthQuick('prev')">Magil Mahina</button>
           <button class="quick-chip" id="chipAllData" onclick="setPnlMonthQuick('all')">Sarv Data</button>
         </div>
-        <div class="grid-2" style="margin-top:8px; margin-bottom:0;">
-          <input type="date" id="pnlFromDate" onchange="renderProfitAndLossOverview()">
-          <input type="date" id="pnlToDate" onchange="renderProfitAndLossOverview()">
-        </div>
       </div>
 
       <div class="panel-card">
-        <div class="panel-header">
-          <span>📊 Nafa-Tota Taleband (P&L)</span>
-          <span style="font-size:11px; color:var(--primary-blue);" id="pnlSelectedMonthLabel">All Time</span>
-        </div>
+        <div class="panel-header"><span>📊 Nafa-Tota Taleband (P&L)</span></div>
         <div style="background:#e6fcf5; border:1px solid #10b981; border-radius:10px; padding:12px; margin-bottom:12px;">
           <div style="font-size:11px; color:var(--text-muted); font-weight:bold;">NIVAL NAFA (NET PROFIT):</div>
-          <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="pnlNetProfitDisplay">₹ 0.00</div>
+          <div style="font-size:26px; font-weight:900; color:var(--accent-green);" id="pnlNetProfitDisplay">₹ 0.00</div>
         </div>
         <div class="pnl-row"><span>Machine Ekun Kamai (Billing):</span><b id="pnlBreakdownGrossBilling" style="color:var(--primary-blue);">₹ 0.00</b></div>
         <div class="pnl-row"><span>Diesel Kharch (Diesel):</span><b id="pnlBreakdownDieselCost" style="color:var(--accent-red);">₹ 0.00</b></div>
@@ -939,11 +846,12 @@
       </div>
     </div>
 
+    <!-- ⭐ PARTY BHADE & PDF BILL SCREEN -->
     <div id="screenOwnerBillingPage" class="screen">
       <button class="btn-nav no-print" id="btnBackBilling" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header">📝 Party Bhade Hishob & PDF Bill</div>
-        <div class="grid-2">
+        <div class="grid-2 no-print">
           <div><label>Machine:</label><select id="billMachineSelect" onchange="autoLoadPartiesForSelectedMachine()"></select></div>
           <div><label>Party:</label><select id="billPartySelect" onchange="calculateOngoingRent()"></select></div>
         </div>
@@ -962,7 +870,7 @@
             <span>Baki Shillak:</span><b id="livePartyPendingAmt">₹ 0</b>
           </div>
         </div>
-        <button class="btn-submit btn-blue" onclick="window.print()">🖨️ PDF Bill Print Kara</button>
+        <button class="btn-submit btn-blue no-print" onclick="window.print()">🖨️ PDF Bill Print Kara</button>
       </div>
     </div>
 
@@ -972,9 +880,7 @@
       <div id="clientFleetContainer" class="grid-tiles-2x2"></div>
     </div>
 
-    <!-- ========================================================
-         SCREEN 4: OPERATOR ACTIONS CONSOLE (DIRECT PARTY INPUT)
-         ======================================================== -->
+    <!-- SCREEN 4: OPERATOR ACTIONS CONSOLE -->
     <div id="screenOpMenu" class="screen">
       <button class="btn-nav" onclick="logoutSession()">⬅ Logout</button>
       <div class="profile-welcome-card">
@@ -986,44 +892,49 @@
         </div>
       </div>
 
+      <!-- ACTIVE PARTY INPUT -->
       <div class="party-banner-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:11px; color:#047857; font-weight:800; text-transform:uppercase;">Konachyat Kaam Chalu Ahe (Chaloo Party):</span>
-          <b id="opActiveCustomer" style="font-size:14px; color:#065f46;">Amol Patil</b>
+          <b id="opActiveCustomer" style="font-size:14px; color:#065f46;">General Work</b>
         </div>
-        <div style="display:flex; gap:6px; margin-top:4px;">
+        <div style="display:flex; gap:6px;">
           <input type="text" id="opPartyDirectInput" placeholder="Navin Party che naav lihva..." style="flex:1; padding:8px 10px; font-weight:bold; font-size:13px;">
-          <button onclick="saveActivePartyDirect()" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;">💾 Save</button>
+          <button onclick="saveActivePartyDirect()" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Save</button>
         </div>
       </div>
 
       <div class="grid-tiles-2x2">
         <div class="feature-card" onclick="openMorningScreen()">
           <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">📸</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">१. Sakal Reading</div><div class="card-sub-title">Start meter</div></div>
+          <div class="card-body"><div class="card-main-title">१. Sakal Reading</div><div class="card-sub-title">Start meter nond</div></div>
         </div>
         <div class="feature-card" onclick="navigate('screenDiesel')">
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5;">⛽</div><span class="arrow-icon">›</span></div>
           <div class="card-body"><div class="card-main-title">२. Diesel Nond</div><div class="card-sub-title">Pump, Liters & Bill</div></div>
         </div>
+        <!-- ⭐ DUMPER TRIPS BUTTON -->
+        <div class="feature-card" style="border-left:4px solid var(--accent-red);" onclick="navigate('screenOpDumper')">
+          <div class="card-top"><div class="icon-badge" style="background:#fee2e2;">🚛</div><span class="arrow-icon">›</span></div>
+          <div class="card-body"><div class="card-main-title">३. Dumper Ferya</div><div class="card-sub-title">Trips nond</div></div>
+        </div>
         <div class="feature-card" onclick="navigate('screenEvening')">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7;">🛑</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">३. Shift Close</div><div class="card-sub-title">End meter & Taas</div></div>
+          <div class="card-body"><div class="card-main-title">४. Shift Close</div><div class="card-sub-title">End meter & Taas</div></div>
         </div>
       </div>
     </div>
 
-    <!-- SCREEN 5: MORNING READING (DIRECT PARTY OPTION) -->
+    <!-- SCREEN 5: MORNING READING -->
     <div id="screenMorning" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header"><span>१. Sakalche Reading (Shift Start)</span></div>
-        
         <label>Kaam Konachyat Ahe (Party Naav):</label>
-        <input type="text" id="morningPartyDirectInput" placeholder="uda. Amol Patil / Site A" style="font-weight:bold; margin-bottom:6px;">
+        <input type="text" id="morningPartyDirectInput" placeholder="uda. Amol Patil" style="font-weight:bold;">
 
-        <label>Hour Meter Reading:</label>
-        <input type="number" step="0.1" id="startReadingInput" placeholder="4520.0">
+        <label>Hour Meter Reading (Sakal):</label>
+        <input type="number" step="0.1" id="startReadingInput" placeholder="uda. 4520.0">
 
         <button class="btn-submit btn-green" onclick="saveMorningShift()">Sakalchi Nond Save Kara</button>
       </div>
@@ -1047,8 +958,40 @@
           <div><label>Bill (₹):</label><input type="number" step="0.01" id="dieselCostInput" placeholder="9880.0"></div>
         </div>
         <label>Dilele Cash / Paid (₹):</label>
-        <input type="number" step="0.01" id="dieselPaidInput" placeholder="5000.0" value="0">
+        <input type="number" step="0.01" id="dieselPaidInput" placeholder="0" value="0">
         <button class="btn-submit btn-blue" onclick="submitDieselEntry()">💾 Diesel Nond Save Kara</button>
+      </div>
+    </div>
+
+    <!-- ⭐ SCREEN: DUMPER TRIPS OPERATOR ENTRY (MALAKACHE NAAV SAH) -->
+    <div id="screenOpDumper" class="screen">
+      <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
+      <div class="panel-card">
+        <div class="panel-header">🚛 Dumper / Tractor Ferya Nond (Trips)</div>
+        
+        <label>Dumper Malakache Naav (Owner Name):</label>
+        <input type="text" id="dumperOwnerInput" placeholder="uda. Ganesh Patil / SK Trans" style="font-weight:bold;">
+
+        <label>Gadi / Dumper Number kivha Naav:</label>
+        <input type="text" id="dumperVehicleInput" placeholder="uda. MH 12 AB 1234 kivha Dumper 1" style="font-weight:bold;">
+
+        <label>Material:</label>
+        <select id="dumperMaterialSelect">
+          <option value="Mati (Soil)">Mati (Soil)</option>
+          <option value="Murum">Murum</option>
+          <option value="Khadi (Metal)">Khadi (Metal)</option>
+          <option value="Valu (Sand)">Valu (Sand)</option>
+          <option value="Itar">Itar</option>
+        </select>
+
+        <label>Aajchya Ekun Ferya (Trips Count):</label>
+        <div class="trip-counter-box">
+          <button class="btn-trip-circle btn-red" onclick="adjustDumperCount(-1)">−</button>
+          <span style="font-size:32px; font-weight:900; color:var(--primary-blue);" id="dumperCountDisplay">1</span>
+          <button class="btn-trip-circle btn-green" onclick="adjustDumperCount(1)">+</button>
+        </div>
+
+        <button class="btn-submit btn-amber" onclick="submitDumperTripEntry()">💾 Dumper Feri Save Kara</button>
       </div>
     </div>
 
@@ -1056,21 +999,23 @@
     <div id="screenEvening" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
-        <div class="panel-header">३. Sandhyakalche Reading (Shift Close)</div>
-        <label>Sakal Reading (Start):</label>
+        <div class="panel-header">४. Sandhyakalche Reading (Shift Close)</div>
+        <label>Sakalche Reading (Start):</label>
         <input type="number" step="0.1" id="shiftStartReading" readonly>
-        <label>Band Reading (End):</label>
-        <input type="number" step="0.1" id="shiftEndReading" placeholder="4528.0">
-        <button class="btn-submit btn-amber" onclick="submitEveningShift()">Shift Close Kara</button>
+
+        <label>Sandhyakalche Band Reading (End):</label>
+        <input type="number" step="0.1" id="shiftEndReading" placeholder="uda. 4528.0">
+
+        <button class="btn-submit btn-amber" onclick="submitEveningShift()">Shift Close Kara (Save)</button>
       </div>
     </div>
 
   </div>
 
-  <!-- JAVASCRIPT MASTER CRASH-PROOF ENGINE -->
+  <!-- JAVASCRIPT MASTER ENGINE -->
   <script>
     // -------------------------------------------------------------
-    // 🔥 FIREBASE REALTIME CLOUD INTEGRATION SETUP (ACTIVE LIVE KEYS)
+    // 🔥 FIREBASE REALTIME CLOUD INTEGRATION (ACTIVE LIVE KEYS)
     // -------------------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyA9upkHBBr659Ob3K7TudoC9i-H1PwfOFo",
@@ -1090,7 +1035,33 @@
         db = firebase.database();
       }
     } catch (e) {
-      console.warn("Firebase initialization error:", e);
+      console.warn("Firebase Init Error:", e);
+    }
+
+    function getTodayStandardDate() {
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function toEnglishDigits(str) {
+      if (!str) return '';
+      return String(str).replace(/[०-९]/g, d => "०१२३४५६७८९".indexOf(d));
+    }
+
+    function parseStandardDate(str) {
+      if (!str) return new Date();
+      str = toEnglishDigits(str);
+      if (str.includes('/')) {
+        const p = str.split('/');
+        return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+      } else if (str.includes('-')) {
+        const p = str.split('-');
+        return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+      }
+      return new Date(str);
     }
 
     function setSafeText(id, text) {
@@ -1121,31 +1092,25 @@
         pass: "patil123",
         phone: "9822011111",
         status: "ACTIVE",
-        subscriptionExpiry: "2026-12-31",
         paidMachinesCount: 2,
         fleet: [
-          { id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE", totalHours: 4528.0, activeParty: "Amol Patil", defaultHourlyRate: 2000, monthlySalary: 22000, advanceHistory: [{ date: "02/10/2026", amount: 2000, remark: "Gharkharch" }] },
-          { id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE", totalHours: 2890.0, activeParty: "Highway Site", defaultHourlyRate: 1800, monthlySalary: 18000, advanceHistory: [{ date: "05/10/2026", amount: 1500, remark: "Rokh" }] }
+          { id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE", totalHours: 4528.0, activeParty: "General Work", defaultHourlyRate: 2000, monthlySalary: 22000, advanceHistory: [] },
+          { id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE", totalHours: 2890.0, activeParty: "General Work", defaultHourlyRate: 1800, monthlySalary: 18000, advanceHistory: [] }
         ],
-        dieselHistory: [
-          { date: "08/10/2026", pump: "Bharat Petroleum", machine: "1. Vikram", driver: "Rahul Shinde", liters: 100.0, cost: 9880.0, paid: 5000.0 }
-        ],
-        operatorHistory: [
-          { date: "09/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.5, startMeter: 4519.5, endMeter: 4528.0, hourlyRate: 2000 },
-          { date: "09/10/2026", machine: "2. Gold man", driver: "Sachin Kadam", party: "Highway Site", hours: 8.0, startMeter: 2882.0, endMeter: 2890.0, hourlyRate: 1800 }
-        ]
+        dieselHistory: [],
+        operatorHistory: [],
+        dumperHistory: []
       }
     ];
 
     let clientsDatabase = JSON.parse(localStorage.getItem('jcb_fleet_stable_core')) || DEFAULT_CLIENTS;
-    let saasExpensesDatabase = JSON.parse(localStorage.getItem('jcb_saas_exp_stable_core')) || [
-      { title: "Cloud Hosting & Server", amount: 500, date: "01/10/2026" }
-    ];
+    let saasExpensesDatabase = JSON.parse(localStorage.getItem('jcb_saas_exp_stable_core')) || [];
 
     let currentSessionClient = null;
     let currentSessionMachine = null;
     let selectedSaClientId = null;
     let isSuperAdminImpersonating = false;
+    let currentDumperCount = 1;
 
     function syncDataToCloud() {
       localStorage.setItem('jcb_fleet_stable_core', JSON.stringify(clientsDatabase));
@@ -1160,144 +1125,689 @@
       }
 
       updateNotificationBellDot();
-      populateDirectLockClientDropdown();
       renderPendingApprovalsBox();
       updateFrontPagePendingAlert();
+      populateDirectLockClientDropdown();
+      if (currentSessionClient) renderOwnerTodayLiveSummary();
     }
 
-    function runAutoSubscriptionEngine() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    // =====================================
+    // 👑 LOGIN ENGINE & PERSISTENCE
+    // =====================================
+    function handleOwnerLogin() {
+      const u = document.getElementById('ownerLoginUserId').value.trim();
+      const p = document.getElementById('ownerLoginPassword').value.trim();
+      if (!u || !p) { alert("User ID va Password bhara!"); return; }
 
-      clientsDatabase.forEach(c => {
-        if (!c.subscriptionExpiry) c.subscriptionExpiry = "2026-12-31";
-        const expDate = parseDateDMY(c.subscriptionExpiry);
-        expDate.setHours(0, 0, 0, 0);
-
-        const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
-        c.daysRemaining = diffDays;
-
-        if (c.status === "MANUAL_LOCK" || c.status === "PENDING_APPROVAL") {
-          // Keep lock status
-        } else if (diffDays <= 0) {
-          c.status = "LOCKED";
-        } else {
-          c.status = "ACTIVE";
-        }
-      });
-      syncDataToCloud();
-    }
-
-    function parseDateDMY(dStr) {
-      if (!dStr) return new Date();
-      if (dStr.includes('/')) {
-        const parts = dStr.split('/');
-        if (parts.length === 3) return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-      } else if (dStr.includes('-')) {
-        const parts = dStr.split('-');
-        if (parts.length === 3) return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      if (u.toLowerCase() === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
+        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'SUPER_ADMIN', userId: u }));
+        navigate('screenSuperAdmin');
+        renderSuperAdminDashboard();
+        renderSaasBusinessPnl();
+        updateNotificationBellDot();
+        return;
       }
-      return new Date(dStr);
-    }
 
-    // ========================================================
-    // 🚨 FRONT PAGE ALERT LOGIC (FIRST PAGE INTERFACE)
-    // ========================================================
-    function updateFrontPagePendingAlert() {
-      const banner = document.getElementById('frontPagePendingAlertBanner');
-      const text = document.getElementById('frontPendingSummaryText');
-      if (!banner || !text) return;
-
-      let pendingCount = 0;
-      let pendingAmount = 0;
-
-      clientsDatabase.forEach(c => {
-        const totalFleet = (c.fleet || []).length;
-        const paidCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-        const unpaid = Math.max(0, totalFleet - paidCount);
-
-        if (c.status === "PENDING_APPROVAL" || unpaid > 0) {
-          pendingCount++;
-          pendingAmount += (unpaid * 250);
+      const client = clientsDatabase.find(c => c.user.toLowerCase() === u.toLowerCase() && c.pass === p);
+      if (client) {
+        if (client.status === "LOCKED" || client.status === "PENDING_APPROVAL") {
+          const lockScreen = document.getElementById('lockOverlayScreen');
+          if (lockScreen) lockScreen.classList.add('active-lock');
+          return;
         }
-      });
-
-      if (pendingCount > 0) {
-        banner.style.display = 'block';
-        text.innerHTML = `सध्या <b>${pendingCount} ग्राहक / मशीन</b> चे एकूण <b>₹${pendingAmount}</b> पेमेंट ॲप्रुव्हल बाकी आहे.`;
+        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OWNER', userId: client.user }));
+        proceedOwnerLogin(client);
       } else {
-        banner.style.display = 'none';
+        alert("Chukicha User ID kivha Password!");
       }
     }
 
-    // =====================================
-    // 🔔 NOTIFICATION SYSTEM (ADMIN ONLY)
-    // =====================================
-    function updateNotificationBellDot() {
-      const bellBtn = document.getElementById('adminNotifBellBtn');
-      const dot = document.getElementById('notifBadgeDot');
-      
-      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      const isSuperAdmin = saved && saved.type === 'OWNER' && saved.isSuperAdmin;
+    function proceedOwnerLogin(client) {
+      currentSessionClient = client;
+      setSafeText('ownerClientTitle', client.businessName);
+      setSafeText('liveTodayDateBadge', getTodayStandardDate());
 
-      if (!isSuperAdmin) {
-        if (bellBtn) bellBtn.style.display = 'none';
-        if (dot) dot.style.display = 'none';
-        return;
+      const backBtn = document.getElementById('ownerBackBtn');
+      if (backBtn) {
+        backBtn.innerText = isSuperAdminImpersonating ? "⬅ Super Admin" : "🔒 Logout";
       }
 
-      if (bellBtn) bellBtn.style.display = 'flex';
-
-      let count = 0;
-      clientsDatabase.forEach(c => {
-        const fCount = (c.fleet || []).length;
-        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-        if (fCount > pCount || c.status === "PENDING_APPROVAL") count++;
+      ['btnBackDiesel', 'btnBackPnl', 'btnBackSalary', 'btnBackBilling', 'btnBackNight', 'btnBackMachinesConsole'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.onclick = function() { navigate('screenClientOwner'); };
+          btn.innerText = "⬅ Mage Ja";
+        }
       });
 
-      if (dot) dot.style.display = count > 0 ? 'block' : 'none';
+      renderClientOwnerView();
+      navigate('screenClientOwner');
     }
 
-    function toggleNotificationModal(show) {
-      const m = document.getElementById('notificationModal');
-      if (m) m.style.display = show ? 'flex' : 'none';
+    function handleOwnerBackNavigation() {
+      if (isSuperAdminImpersonating) {
+        isSuperAdminImpersonating = false;
+        navigate('screenSuperAdminClientDetail');
+      } else {
+        logoutSession();
+      }
     }
 
-    function openNotificationModal() {
-      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      if (!saved || !saved.isSuperAdmin) {
-        alert("Phakta Super Admin la ya soochna pahnyacha adhikar ahe!");
+    function superAdminDirectLogin(clientId) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client) return;
+      isSuperAdminImpersonating = true;
+      proceedOwnerLogin(client);
+    }
+
+    function handleOperatorPinLogin() {
+      const ownerId = document.getElementById('opOwnerUserIdInput').value.trim().toLowerCase();
+      const opPin = document.getElementById('opPinInput').value.trim();
+      const client = clientsDatabase.find(c => c.user.toLowerCase() === ownerId);
+
+      if (client) {
+        const matched = (client.fleet || []).find(m => String(m.pin).trim() === opPin);
+        if (matched) {
+          if (matched.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe! Malakashi sampark kara."); return; }
+          localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OPERATOR', ownerId: client.user, machineId: matched.id }));
+          currentSessionClient = client;
+          currentSessionMachine = matched;
+          updateOperatorConsoleUI();
+          navigate('screenOpMenu');
+        } else { alert("Chukicha Operator PIN!"); }
+      } else { alert("Chukicha Malakacha User ID!"); }
+    }
+
+    function loginOperatorMachineDirect(idx) {
+      const m = currentSessionClient.fleet[idx];
+      if (m.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe!"); return; }
+      currentSessionMachine = m;
+      updateOperatorConsoleUI();
+      navigate('screenOpMenu');
+    }
+
+    function updateOperatorConsoleUI() {
+      if (!currentSessionMachine) return;
+      setSafeText('opMachineName', currentSessionMachine.name);
+      setSafeText('opDriverTitle', currentSessionMachine.driver);
+      const party = currentSessionMachine.activeParty || "General Work";
+      setSafeText('opActiveCustomer', party);
+      setSafeValue('opPartyDirectInput', party);
+      setSafeValue('morningPartyDirectInput', party);
+
+      if (currentSessionMachine.activeShift && currentSessionMachine.activeShift.startMeter) {
+        setSafeValue('shiftStartReading', currentSessionMachine.activeShift.startMeter);
+      } else {
+        setSafeValue('shiftStartReading', currentSessionMachine.totalHours || 0);
+      }
+    }
+
+    function saveActivePartyDirect() {
+      const pName = document.getElementById('opPartyDirectInput').value.trim();
+      if (!pName) { alert("Krupaya party che naav taaka!"); return; }
+      currentSessionMachine.activeParty = pName;
+      setSafeText('opActiveCustomer', pName);
+      setSafeValue('morningPartyDirectInput', pName);
+      syncDataToCloud();
+      alert("✓ Chaloo party save zhali: " + pName);
+    }
+
+    function openMorningScreen() {
+      setSafeValue('startReadingInput', currentSessionMachine.totalHours || 0);
+      setSafeValue('morningPartyDirectInput', currentSessionMachine.activeParty || "General Work");
+      navigate('screenMorning');
+    }
+
+    // ⭐ AUTOMATIC NIGHT CLOSING LOGIC (OPERATOR VISARLYAVAR)
+    function saveMorningShift() {
+      const r = parseFloat(document.getElementById('startReadingInput').value) || 0;
+      const party = document.getElementById('morningPartyDirectInput').value.trim() || "General Work";
+
+      if (r <= 0) { alert("Krupaya achuk reading taaka!"); return; }
+
+      // Jar aadhichi shift chalu rahili asel:
+      if (currentSessionMachine.activeShift && currentSessionMachine.activeShift.isLive) {
+        const prevStart = currentSessionMachine.activeShift.startMeter;
+        const prevDate = currentSessionMachine.activeShift.date || getTodayStandardDate();
+        const prevParty = currentSessionMachine.activeShift.party || currentSessionMachine.activeParty || "General Work";
+
+        if (r <= prevStart) {
+          alert(`⚠️ Reading chukiche ahe! Kalche start reading ${prevStart} hote, aajche reading tyapeksha jast asave.`);
+          return;
+        }
+
+        const runHours = parseFloat((r - prevStart).toFixed(1));
+
+        // 1. Kalchya tarikhivar Night Closing save kara
+        if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
+        currentSessionClient.operatorHistory.unshift({
+          date: prevDate,
+          machine: currentSessionMachine.name,
+          driver: currentSessionMachine.driver,
+          party: prevParty,
+          hours: runHours,
+          startMeter: prevStart,
+          endMeter: r,
+          hourlyRate: currentSessionMachine.defaultHourlyRate || 2000
+        });
+
+        // 2. Aajchi navin shift suru kara
+        currentSessionMachine.totalHours = r;
+        currentSessionMachine.activeParty = party;
+        currentSessionMachine.activeShift = {
+          date: getTodayStandardDate(),
+          startMeter: r,
+          party: party,
+          isLive: true
+        };
+
+        syncDataToCloud();
+        alert(`✓ Kalchi shift automatic close jhali!\nKalche Taas: ${runHours} Taas (${prevStart} ➔ ${r})\nAajchi navin shift ${r} var suru jhali.`);
+        navigate('screenOpMenu');
         return;
       }
 
-      const listContainer = document.getElementById('notificationListContainer');
-      if (!listContainer) return;
-      listContainer.innerHTML = '';
-      let has = false;
+      // Normal Start
+      currentSessionMachine.totalHours = r;
+      currentSessionMachine.activeParty = party;
+      currentSessionMachine.activeShift = {
+        date: getTodayStandardDate(),
+        startMeter: r,
+        party: party,
+        isLive: true
+      };
 
-      clientsDatabase.forEach(c => {
-        const fCount = (c.fleet || []).length;
-        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-        const unpaid = fCount - pCount;
+      setSafeValue('shiftStartReading', r);
+      setSafeText('opActiveCustomer', party);
+      setSafeValue('opPartyDirectInput', party);
 
-        if (unpaid > 0 || c.status === "PENDING_APPROVAL") {
-          has = true;
-          listContainer.innerHTML += `
-            <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
-              <b>${c.businessName}</b>
-              <div style="font-size:12px; margin:3px 0;">Baki Rakkam: <b style="color:red;">₹ ${unpaid * 250}</b> (${unpaid} Machines Pending)</div>
-              <button onclick="approveClientPayment('${c.id}'); toggleNotificationModal(false);" style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">✓ Approve Payment</button>
+      syncDataToCloud();
+      alert("✓ Sakalche reading va party save zhali! Shift chalu zhali.");
+      navigate('screenOpMenu');
+    }
+
+    function submitEveningShift() {
+      const s = parseFloat(document.getElementById('shiftStartReading').value) || (currentSessionMachine.activeShift ? currentSessionMachine.activeShift.startMeter : currentSessionMachine.totalHours) || 0;
+      const e = parseFloat(document.getElementById('shiftEndReading').value) || 0;
+
+      if (e <= s) { alert("Sandhyakalche reading sakalchya reading peksha jast asave!"); return; }
+
+      const runHours = parseFloat((e - s).toFixed(1));
+      currentSessionMachine.totalHours = e;
+      currentSessionMachine.activeShift = null; // Close shift
+
+      if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
+      currentSessionClient.operatorHistory.unshift({
+        date: getTodayStandardDate(),
+        machine: currentSessionMachine.name,
+        driver: currentSessionMachine.driver,
+        party: currentSessionMachine.activeParty || "General Work",
+        hours: runHours,
+        startMeter: s,
+        endMeter: e,
+        hourlyRate: currentSessionMachine.defaultHourlyRate || 2000
+      });
+
+      syncDataToCloud();
+      setSafeValue('shiftEndReading', '');
+      alert(`✓ शिफ्ट क्लोज झाली! आज चाललेले तास: ${runHours} तास`);
+      navigate('screenOpMenu');
+    }
+
+    function submitDieselEntry() {
+      const p = document.getElementById('dieselPumpSelect').value;
+      const l = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
+      const c = parseFloat(document.getElementById('dieselCostInput').value) || 0;
+      const paid = parseFloat(document.getElementById('dieselPaidInput').value) || 0;
+
+      if (l <= 0 || c <= 0) { alert("Krupaya Liters va Bill bhara!"); return; }
+
+      if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
+
+      currentSessionClient.dieselHistory.unshift({
+        date: getTodayStandardDate(),
+        pump: p,
+        machine: currentSessionMachine.name,
+        driver: currentSessionMachine.driver,
+        liters: l,
+        cost: c,
+        paid: paid
+      });
+
+      syncDataToCloud();
+      setSafeValue('dieselLitersInput', '');
+      setSafeValue('dieselCostInput', '');
+      setSafeValue('dieselPaidInput', '0');
+
+      alert(`✓ डिझेल नोंद सेव्ह झाली!\nपंप: ${p} | लिटर: ${l} Ltr | बिल: ₹${c}`);
+      navigate('screenOpMenu');
+    }
+
+    function adjustDumperCount(delta) {
+      currentDumperCount = Math.max(1, currentDumperCount + delta);
+      setSafeText('dumperCountDisplay', currentDumperCount);
+    }
+
+    // ⭐ DUMPER ENTRY WITH OWNER NAME
+    function submitDumperTripEntry() {
+      const o = document.getElementById('dumperOwnerInput').value.trim();
+      const v = document.getElementById('dumperVehicleInput').value.trim();
+      const m = document.getElementById('dumperMaterialSelect').value;
+
+      if (!v) { alert("Krupaya gadi / dumper number taaka!"); return; }
+
+      if (!currentSessionClient.dumperHistory) currentSessionClient.dumperHistory = [];
+
+      currentSessionClient.dumperHistory.unshift({
+        date: getTodayStandardDate(),
+        machine: currentSessionMachine.name,
+        party: currentSessionMachine.activeParty || "General Work",
+        ownerName: o || 'Self / General',
+        vehicle: v,
+        material: m,
+        trips: currentDumperCount
+      });
+
+      syncDataToCloud();
+      setSafeValue('dumperOwnerInput', '');
+      setSafeValue('dumperVehicleInput', '');
+      currentDumperCount = 1;
+      setSafeText('dumperCountDisplay', '1');
+
+      alert(`✓ डंपर फेऱ्या सेव्ह झाल्या!\nमालक: ${o || 'Self'} | गाडी: ${v} | फेऱ्या: ${currentDumperCount}`);
+      navigate('screenOpMenu');
+    }
+
+    // ========================================================
+    // ⭐ MACHINE-WISE LIVE WORK FOR TODAY (MALAK VIEW)
+    // ========================================================
+    function renderOwnerTodayLiveSummary() {
+      const box = document.getElementById('ownerTodayLiveSummary');
+      if (!box || !currentSessionClient) return;
+
+      const today = getTodayStandardDate();
+      box.innerHTML = '';
+
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        const mShifts = (currentSessionClient.operatorHistory || []).filter(h => toEnglishDigits(h.date) === today && h.machine === m.name);
+        const mDiesel = (currentSessionClient.dieselHistory || []).filter(d => toEnglishDigits(d.date) === today && d.machine === m.name);
+        const mDumper = (currentSessionClient.dumperHistory || []).filter(dp => toEnglishDigits(dp.date) === today && dp.machine === m.name);
+
+        let todayHours = 0;
+        let lastEndMeter = m.totalHours || 0;
+        let lastStartMeter = '-';
+        let currentParty = m.activeParty || 'General Work';
+
+        if (mShifts.length > 0) {
+          mShifts.forEach(s => todayHours += (parseFloat(s.hours) || 0));
+          lastStartMeter = mShifts[0].startMeter;
+          lastEndMeter = mShifts[0].endMeter;
+        }
+
+        let todayDieselLtr = 0;
+        mDiesel.forEach(d => todayDieselLtr += (parseFloat(d.liters) || 0));
+
+        let todayTrips = 0;
+        mDumper.forEach(dp => todayTrips += (parseInt(dp.trips) || 0));
+
+        let shiftStatusHtml = '';
+        if (m.activeShift && m.activeShift.isLive) {
+          shiftStatusHtml = `
+            <div style="background:#fef2f2; border:1px solid #ef4444; border-radius:6px; padding:6px 10px; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <b style="color:#b91c1c; font-size:11px;">⚠️ Shift Chalu Ahe (Sandhyakalche Reading Baki)</b>
+                <div style="font-size:10px; color:#64748b;">Sakal Start: <b>${m.activeShift.startMeter}</b> | Party: <b>${m.activeShift.party}</b></div>
+              </div>
+              <button onclick="adminCloseShiftPrompt(${idx})" style="background:#ef4444; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Close Shift</button>
+            </div>
+          `;
+        } else {
+          shiftStatusHtml = `
+            <div style="font-size:11px; color:#10b981; font-weight:bold; margin-top:6px;">
+              ✓ Shift Status: Closed / Ready (${lastStartMeter} ➔ ${lastEndMeter})
             </div>
           `;
         }
+
+        box.innerHTML += `
+          <div style="background:#fff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <b style="font-size:14px; color:var(--text-dark);">🚜 ${m.name}</b>
+              <span style="font-size:11px; background:#f1f5f9; padding:3px 8px; border-radius:6px; font-weight:bold;">Driver: ${m.driver}</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">
+              Chaloo Party: <b style="color:var(--text-dark);">${currentParty}</b>
+            </div>
+
+            <!-- Stats Bar -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; text-align:center; margin-top:8px;">
+              <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
+                <div style="font-size:9.5px; color:#64748b;">Aajche Taas</div>
+                <div style="font-size:14px; font-weight:900; color:var(--primary-blue);">${todayHours.toFixed(1)} T</div>
+              </div>
+              <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
+                <div style="font-size:9.5px; color:#64748b;">Diesel</div>
+                <div style="font-size:14px; font-weight:900; color:var(--accent-green);">${todayDieselLtr.toFixed(0)} L</div>
+              </div>
+              <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
+                <div style="font-size:9.5px; color:#64748b;">Dumper Ferya</div>
+                <div style="font-size:14px; font-weight:900; color:var(--accent-red);">${todayTrips} Ferya</div>
+              </div>
+            </div>
+
+            ${shiftStatusHtml}
+          </div>
+        `;
+      });
+    }
+
+    function adminCloseShiftPrompt(machineIdx) {
+      const m = currentSessionClient.fleet[machineIdx];
+      if (!m || !m.activeShift) return;
+
+      const endMeterInput = prompt(`🚜 ${m.name} sathi sandhyakalche band reading taka:\n(Sakalche Start Reading: ${m.activeShift.startMeter})`);
+      if (endMeterInput !== null) {
+        const e = parseFloat(endMeterInput);
+        const s = m.activeShift.startMeter;
+
+        if (isNaN(e) || e <= s) {
+          alert("Band reading he sakalchya reading peksha jast asave!");
+          return;
+        }
+
+        const runHours = parseFloat((e - s).toFixed(1));
+        m.totalHours = e;
+        const partyName = m.activeShift.party || m.activeParty || "General Work";
+        m.activeShift = null;
+
+        if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
+        currentSessionClient.operatorHistory.unshift({
+          date: getTodayStandardDate(),
+          machine: m.name,
+          driver: m.driver,
+          party: partyName,
+          hours: runHours,
+          startMeter: s,
+          endMeter: e,
+          hourlyRate: m.defaultHourlyRate || 2000
+        });
+
+        syncDataToCloud();
+        renderClientOwnerView();
+        alert(`✓ Shift close keli! Ekun Taas: ${runHours}`);
+      }
+    }
+
+    function renderClientOwnerView() {
+      if (!currentSessionClient) return;
+      setSafeText('menuMachinesCountBadge', `${(currentSessionClient.fleet || []).length} Machines`);
+      renderOwnerTodayLiveSummary();
+      renderOwnerMachines();
+      renderDieselSummaryBox();
+      renderProfitAndLossOverview();
+      renderNightClosingMachineWise();
+      renderOwnerDumperTrips();
+    }
+
+    // ⭐ MACHINE CONSOLE LIST RENDER
+    function renderOwnerMachines() {
+      const container = document.getElementById('clientOwnerMachinesList');
+      if (container && currentSessionClient) {
+        container.innerHTML = '';
+        (currentSessionClient.fleet || []).forEach(m => {
+          container.innerHTML += `
+            <div class="feature-card">
+              <div class="card-top"><div class="icon-badge" style="background:#e0f2fe;">🚜</div><span class="arrow-icon">›</span></div>
+              <div class="card-body">
+                <div class="card-main-title">${m.name}</div>
+                <div class="card-sub-title">Chalak: ${m.driver} | PIN: <b>${m.pin}</b></div>
+              </div>
+            </div>`;
+        });
+      }
+
+      const opContainer = document.getElementById('clientFleetContainer');
+      if (opContainer && currentSessionClient) {
+        opContainer.innerHTML = '';
+        (currentSessionClient.fleet || []).forEach((m, idx) => {
+          opContainer.innerHTML += `
+            <div class="feature-card" onclick="loginOperatorMachineDirect(${idx})">
+              <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">🚜</div><span class="arrow-icon">›</span></div>
+              <div class="card-body"><div class="card-main-title">${m.name}</div><div class="card-sub-title">Chalak: ${m.driver}</div></div>
+            </div>`;
+        });
+      }
+    }
+
+    function ownerSaveNewMachine() {
+      if (!currentSessionClient) return;
+      const mName = document.getElementById('ownerAddMachineNameInput').value.trim();
+      const mDriver = document.getElementById('ownerAddMachineDriverInput').value.trim() || 'Chalak';
+      const mPin = document.getElementById('ownerAddMachinePinInput').value.trim();
+      const mRate = parseFloat(document.getElementById('ownerAddMachineRateInput').value) || 2000;
+
+      if (!mName || !mPin) { alert("Machine che naav aani 4-Anki PIN bhara!"); return; }
+
+      currentSessionClient.fleet.push({ 
+        id: "M_" + Date.now(), 
+        name: mName, 
+        driver: mDriver, 
+        pin: mPin, 
+        status: "ACTIVE", 
+        totalHours: 0.0, 
+        defaultHourlyRate: mRate,
+        advanceHistory: [] 
       });
 
-      if (!has) listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#10b981;">✅ Kontahi Alert Nahi!</div>`;
-      toggleNotificationModal(true);
+      syncDataToCloud();
+      setSafeValue('ownerAddMachineNameInput', '');
+      setSafeValue('ownerAddMachineDriverInput', '');
+      setSafeValue('ownerAddMachinePinInput', '');
+      renderOwnerMachines();
+      renderClientOwnerView();
+      alert(`✓ Navin machine '${mName}' safalpane save zhali!`);
+    }
+
+    function renderDieselSummaryBox() {
+      if (!currentSessionClient) return;
+      const dHistory = currentSessionClient.dieselHistory || [];
+      let totalL = 0, totalC = 0;
+      dHistory.forEach(d => {
+        totalL += parseFloat(d.liters) || 0;
+        totalC += parseFloat(d.cost) || 0;
+      });
+
+      setSafeText('menuDieselLtrBadge', `${totalL.toFixed(1)} Ltr`);
+      setSafeText('detailDieselLiters', `${totalL.toFixed(1)} Ltr`);
+      setSafeText('detailDieselTotalBill', `₹ ${totalC.toFixed(0)}`);
+
+      const container = document.getElementById('fullDieselEntriesListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (dHistory.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">Kontihi diesel nond nahi.</div>`;
+        return;
+      }
+
+      dHistory.forEach(d => {
+        container.innerHTML += `
+          <div class="data-item-card">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+              <span>📅 ${d.date} - ${d.machine}</span>
+              <span style="color:var(--primary-blue);">${d.liters} Ltr</span>
+            </div>
+            <div style="font-size:11px; color:#64748b; margin-top:3px;">Pump: ${d.pump} | Chalak: ${d.driver} | Bill: <b>₹${d.cost}</b></div>
+          </div>`;
+      });
+    }
+
+    // ⭐ DUMPER LEDGER RENDER (MALAKACHYA NAAV SAH)
+    function renderOwnerDumperTrips() {
+      const container = document.getElementById('ownerDumperTripsListContainer');
+      if (!container || !currentSessionClient) return;
+      container.innerHTML = '';
+      const list = currentSessionClient.dumperHistory || [];
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:16px; color:#64748b;">Kontihi dumper nond nahi.</div>`;
+        return;
+      }
+
+      list.forEach(item => {
+        container.innerHTML += `
+          <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:bold;">
+              <span>🚛 ${item.vehicle} (${item.material})</span>
+              <span style="color:var(--accent-red); font-size:14px;">${item.trips} Ferya</span>
+            </div>
+            <div style="font-size:11.5px; color:#334155; margin-top:3px;">
+              Dumper Malak: <b style="color:var(--primary-blue);">${item.ownerName || 'Self'}</b>
+            </div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Tariqh: <b>${item.date}</b> | Party: ${item.party} | Machine: ${item.machine}</div>
+          </div>
+        `;
+      });
+    }
+
+    function renderNightClosingMachineWise() {
+      const container = document.getElementById('nightClosingMachineWiseList');
+      if (!container || !currentSessionClient) return;
+      container.innerHTML = '';
+      const history = currentSessionClient.operatorHistory || [];
+
+      if (history.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:16px; color:#64748b;">Kontihi reading entry nahi.</div>`;
+        return;
+      }
+
+      history.forEach(h => {
+        container.innerHTML += `
+          <div class="data-item-card" style="border-left:4px solid var(--accent-purple);">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <b>🚜 ${h.machine} - ${h.date}</b>
+              <b style="color:var(--accent-green); font-size:13px;">${h.hours} Taas</b>
+            </div>
+            <div style="font-size:11px; margin-top:3px;">Sakal: <b>${h.startMeter}</b> ➔ Band: <b>${h.endMeter}</b></div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Party: <b>${h.party}</b> | Chalak: ${h.driver}</div>
+          </div>
+        `;
+      });
+    }
+
+    function setPnlMonthQuick(mode) {
+      const today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth();
+
+      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
+
+      if (mode === 'current') {
+        const chip = document.getElementById('chipThisMonth');
+        if (chip) chip.classList.add('active');
+        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        setSafeValue('pnlMonthPicker', monthStr);
+        applyMonthDates(year, month);
+      } else if (mode === 'prev') {
+        const chip = document.getElementById('chipLastMonth');
+        if (chip) chip.classList.add('active');
+        let prevM = month - 1;
+        let prevY = year;
+        if (prevM < 0) { prevM = 11; prevY--; }
+        const monthStr = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
+        setSafeValue('pnlMonthPicker', monthStr);
+        applyMonthDates(prevY, prevM);
+      } else if (mode === 'all') {
+        const chip = document.getElementById('chipAllData');
+        if (chip) chip.classList.add('active');
+        setSafeValue('pnlMonthPicker', '');
+        renderProfitAndLossOverview();
+      }
+    }
+
+    function handlePnlMonthPickerChange() {
+      const val = document.getElementById('pnlMonthPicker').value;
+      if (!val) return;
+      const parts = val.split('-');
+      applyMonthDates(parseInt(parts[0]), parseInt(parts[1]) - 1);
+    }
+
+    function applyMonthDates(year, month) {
+      renderProfitAndLossOverview(year, month);
+    }
+
+    function renderProfitAndLossOverview(filterYear = null, filterMonth = null) {
+      if (!currentSessionClient) return;
+
+      const history = currentSessionClient.operatorHistory || [];
+      const dHistory = currentSessionClient.dieselHistory || [];
+
+      let totalGross = 0;
+      history.forEach(h => {
+        if (filterYear !== null && filterMonth !== null) {
+          const d = parseStandardDate(h.date);
+          if (d.getFullYear() !== filterYear || d.getMonth() !== filterMonth) return;
+        }
+        totalGross += (parseFloat(h.hours) || 0) * (parseFloat(h.hourlyRate) || 2000);
+      });
+
+      let totalFuel = 0;
+      dHistory.forEach(d => {
+        if (filterYear !== null && filterMonth !== null) {
+          const dt = parseStandardDate(d.date);
+          if (dt.getFullYear() !== filterYear || dt.getMonth() !== filterMonth) return;
+        }
+        totalFuel += parseFloat(d.cost) || 0;
+      });
+
+      const net = totalGross - totalFuel;
+
+      setSafeText('pnlNetProfitDisplay', `₹ ${net.toFixed(0)}`);
+      setSafeText('menuNetProfitBadge', `₹ ${net.toFixed(0)} Net`);
+      setSafeText('pnlBreakdownGrossBilling', `₹ ${totalGross.toFixed(0)}`);
+      setSafeText('pnlBreakdownDieselCost', `₹ ${totalFuel.toFixed(0)}`);
+      setSafeText('pnlBreakdownDriverAdvances', `₹ 0`);
+    }
+
+    function openOwnerBillingPage() {
+      const select = document.getElementById('billMachineSelect');
+      if (!select || !currentSessionClient) return;
+      select.innerHTML = '';
+      (currentSessionClient.fleet || []).forEach((m, idx) => {
+        select.innerHTML += `<option value="${idx}">${m.name}</option>`;
+      });
+      autoLoadPartiesForSelectedMachine();
+    }
+    function autoLoadPartiesForSelectedMachine() {
+      const partySelect = document.getElementById('billPartySelect');
+      if (partySelect) partySelect.innerHTML = '<option value="General Work">General Work</option>';
+      calculateOngoingRent();
+    }
+    function calculateOngoingRent() {
+      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
+      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
+      setSafeText('livePartyPendingAmt', `₹ ${(h * r) - a}`);
+      setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
+    }
+
+    // ⭐ MACHINE CONSOLE CLICK REDIRECTION FIXED
+    function openOwnerSection(sec) {
+      if (!currentSessionClient) return;
+      if (sec === 'machines') { 
+        renderOwnerMachines(); 
+        navigate('screenOwnerMachinesPage'); 
+      }
+      else if (sec === 'diesel') { renderDieselSummaryBox(); navigate('screenDieselLedger'); }
+      else if (sec === 'dumper') { renderOwnerDumperTrips(); navigate('screenOwnerDumperPage'); }
+      else if (sec === 'salary') { navigate('screenDayByDayPage'); }
+      else if (sec === 'night') { renderNightClosingMachineWise(); navigate('screenNightClosingPage'); }
+      else if (sec === 'billing') { openOwnerBillingPage(); navigate('screenOwnerBillingPage'); }
+      else if (sec === 'pnl') { setPnlMonthQuick('current'); navigate('screenProfitLossPage'); }
     }
 
     // =====================================
-    // 📋 GRAHAK YADI & SUPER ADMIN
+    // 📋 SUPER ADMIN FUNCTIONS
     // =====================================
     function renderSuperAdminDashboard() {
       const container = document.getElementById('superAdminClientsList');
@@ -1305,7 +1815,7 @@
       container.innerHTML = '';
 
       if (!clientsDatabase || clientsDatabase.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:13px;">Sadhya kontahi grahak nahi. Varil form bharun grahak joda!</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:13px;">Sadhya kontahi grahak nahi.</div>`;
         return;
       }
 
@@ -1372,7 +1882,6 @@
         setPnlMonthQuick('current');
         navigate('screenProfitLossPage');
       } else if (section === 'salary') {
-        renderOperatorSalarySummary();
         navigate('screenDayByDayPage');
       } else if (section === 'billing') {
         openOwnerBillingPage();
@@ -1438,531 +1947,6 @@
       }
     }
 
-    // =====================================
-    // 👑 LOGIN ENGINE
-    // =====================================
-    function handleOwnerLogin() {
-      const u = document.getElementById('ownerLoginUserId').value.trim();
-      const p = document.getElementById('ownerLoginPassword').value.trim();
-      if (!u || !p) { alert("User ID & Password bhara!"); return; }
-
-      if (u.toLowerCase() === SUPER_ADMIN.user.toLowerCase() && p === SUPER_ADMIN.pass) {
-        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OWNER', isSuperAdmin: true, userId: u }));
-        navigate('screenSuperAdmin');
-        renderSuperAdminDashboard();
-        renderSaasBusinessPnl();
-        updateNotificationBellDot();
-        return;
-      }
-
-      runAutoSubscriptionEngine();
-      const client = clientsDatabase.find(c => c.user.toLowerCase() === u.toLowerCase() && c.pass === p);
-      if (client) {
-        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL") {
-          const lockScreen = document.getElementById('lockOverlayScreen');
-          if (lockScreen) lockScreen.classList.add('active-lock');
-          return;
-        }
-        localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OWNER', isSuperAdmin: false, userId: client.user }));
-        updateNotificationBellDot();
-        proceedLogin(client);
-      } else { alert("Chukicha User ID kivha Password!"); }
-    }
-
-    function proceedLogin(client) {
-      currentSessionClient = client;
-      setSafeText('ownerClientTitle', client.businessName);
-      
-      const backBtn = document.getElementById('ownerBackBtn');
-      if (backBtn) {
-        backBtn.innerText = isSuperAdminImpersonating ? "⬅ Super Admin" : "🔒 Logout";
-      }
-
-      ['btnBackDiesel', 'btnBackPnl', 'btnBackSalary', 'btnBackBilling', 'btnBackNight', 'btnBackMachinesConsole'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-          btn.onclick = function() { navigate('screenClientOwner'); };
-          btn.innerText = "⬅ Mage Ja";
-        }
-      });
-
-      renderClientOwnerView();
-      navigate('screenClientOwner');
-    }
-
-    function handleOwnerBackNavigation() {
-      if (isSuperAdminImpersonating) {
-        isSuperAdminImpersonating = false;
-        navigate('screenSuperAdminClientDetail');
-      } else {
-        logoutSession();
-      }
-    }
-
-    function superAdminDirectLogin(clientId) {
-      const client = clientsDatabase.find(c => c.id === clientId);
-      if (!client) return;
-      isSuperAdminImpersonating = true;
-      proceedLogin(client);
-    }
-
-    function openOwnerSection(section) {
-      if (!currentSessionClient) return;
-      if (section === 'machines') {
-        renderOwnerMachines();
-        navigate('screenOwnerMachinesPage');
-      } else if (section === 'diesel') {
-        renderDieselSummaryBox();
-        navigate('screenDieselLedger');
-      } else if (section === 'salary') {
-        renderOperatorSalarySummary();
-        navigate('screenDayByDayPage');
-      } else if (section === 'night') {
-        renderNightClosingMachineWise();
-        navigate('screenNightClosingPage');
-      } else if (section === 'billing') {
-        openOwnerBillingPage();
-        navigate('screenOwnerBillingPage');
-      } else if (section === 'pnl') {
-        setPnlMonthQuick('current');
-        navigate('screenProfitLossPage');
-      }
-    }
-
-    function renderClientOwnerView() {
-      if (!currentSessionClient) return;
-      setSafeText('menuMachinesCountBadge', `${(currentSessionClient.fleet || []).length} Machines`);
-      renderOwnerMachines();
-      renderDieselSummaryBox();
-      renderProfitAndLossOverview();
-      renderOperatorSalarySummary();
-      renderNightClosingMachineWise();
-    }
-
-    function renderOwnerMachines() {
-      const container = document.getElementById('clientOwnerMachinesList');
-      if (container && currentSessionClient) {
-        container.innerHTML = '';
-        (currentSessionClient.fleet || []).forEach(m => {
-          container.innerHTML += `
-            <div class="feature-card">
-              <div class="card-top"><div class="icon-badge" style="background:#e0f2fe;">🚜</div><span class="arrow-icon">›</span></div>
-              <div class="card-body">
-                <div class="card-main-title">${m.name}</div>
-                <div class="card-sub-title">Chalak: ${m.driver} | PIN: ${m.pin}</div>
-              </div>
-            </div>`;
-        });
-      }
-
-      const opContainer = document.getElementById('clientFleetContainer');
-      if (opContainer && currentSessionClient) {
-        opContainer.innerHTML = '';
-        (currentSessionClient.fleet || []).forEach((m, idx) => {
-          opContainer.innerHTML += `
-            <div class="feature-card" onclick="loginOperatorMachineDirect(${idx})">
-              <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">🚜</div><span class="arrow-icon">›</span></div>
-              <div class="card-body"><div class="card-main-title">${m.name}</div><div class="card-sub-title">Chalak: ${m.driver}</div></div>
-            </div>`;
-        });
-      }
-    }
-
-    function ownerSaveNewMachine() {
-      if (!currentSessionClient) return;
-      const mName = document.getElementById('ownerAddMachineNameInput').value.trim();
-      const mPin = document.getElementById('ownerAddMachinePinInput').value.trim();
-      if (!mName || !mPin) { alert("Machine che naav aani PIN bhara!"); return; }
-
-      currentSessionClient.fleet.push({ id: "M_" + Date.now(), name: mName, driver: 'Chalak', pin: mPin, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
-      syncDataToCloud();
-      setSafeValue('ownerAddMachineNameInput', '');
-      setSafeValue('ownerAddMachinePinInput', '');
-      renderOwnerMachines();
-      alert(`✓ Navin machine save zhali! Super Admin approve kelyavar chalu hoil.`);
-    }
-
-    // =====================================
-    // ⛽ DIESEL & PUMP LEDGER
-    // =====================================
-    function renderDieselSummaryBox() {
-      if (!currentSessionClient) return;
-      const dHistory = currentSessionClient.dieselHistory || [];
-      let totalL = 0, totalC = 0, totalP = 0;
-      dHistory.forEach(d => {
-        totalL += parseFloat(d.liters) || 0;
-        totalC += parseFloat(d.cost) || 0;
-        totalP += parseFloat(d.paid) || 0;
-      });
-
-      setSafeText('menuDieselLtrBadge', `${totalL.toFixed(1)} Ltr`);
-      setSafeText('detailDieselLiters', `${totalL.toFixed(1)} Ltr`);
-      setSafeText('detailDieselTotalBill', `₹ ${totalC.toFixed(0)}`);
-      setSafeText('detailDieselPaid', `₹ ${totalP.toFixed(0)}`);
-      setSafeText('detailDieselPending', `₹ ${(totalC - totalP).toFixed(0)}`);
-
-      renderFullDieselEntriesList();
-    }
-
-    function renderFullDieselEntriesList() {
-      const container = document.getElementById('fullDieselEntriesListContainer');
-      if (!container || !currentSessionClient) return;
-      container.innerHTML = '';
-      const dHistory = currentSessionClient.dieselHistory || [];
-
-      if (dHistory.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">Kontihi diesel nond nahi.</div>`;
-        return;
-      }
-
-      dHistory.forEach(d => {
-        container.innerHTML += `
-          <div class="data-item-card">
-            <div style="display:flex; justify-content:space-between; font-weight:bold;">
-              <span>📅 ${d.date} - ${d.machine}</span>
-              <span style="color:var(--primary-blue);">${d.liters} Ltr</span>
-            </div>
-            <div style="font-size:11px; color:#64748b; margin-top:3px;">Pump: ${d.pump || 'Pump'} | Chalak: ${d.driver}</div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
-              <span>Bill: ₹${d.cost}</span>
-              <span style="color:green;">Paid: ₹${d.paid || 0}</span>
-            </div>
-          </div>`;
-      });
-    }
-
-    // =====================================
-    // 📊 MONTHLY PROFIT & LOSS (MONTH SELECTOR)
-    // =====================================
-    function setPnlMonthQuick(mode) {
-      const today = new Date();
-      let year = today.getFullYear();
-      let month = today.getMonth();
-
-      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
-
-      if (mode === 'current') {
-        const chip = document.getElementById('chipThisMonth');
-        if (chip) chip.classList.add('active');
-        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-        setSafeValue('pnlMonthPicker', monthStr);
-        applyMonthDates(year, month);
-      } else if (mode === 'prev') {
-        const chip = document.getElementById('chipLastMonth');
-        if (chip) chip.classList.add('active');
-        let prevM = month - 1;
-        let prevY = year;
-        if (prevM < 0) { prevM = 11; prevY--; }
-        const monthStr = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
-        setSafeValue('pnlMonthPicker', monthStr);
-        applyMonthDates(prevY, prevM);
-      } else if (mode === 'all') {
-        const chip = document.getElementById('chipAllData');
-        if (chip) chip.classList.add('active');
-        setSafeValue('pnlMonthPicker', '');
-        setSafeValue('pnlFromDate', '');
-        setSafeValue('pnlToDate', '');
-        setSafeText('pnlSelectedMonthLabel', 'All Time Data');
-        renderProfitAndLossOverview();
-      }
-    }
-
-    function handlePnlMonthPickerChange() {
-      const val = document.getElementById('pnlMonthPicker').value;
-      if (!val) return;
-      const parts = val.split('-');
-      const year = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1;
-      
-      document.querySelectorAll('.filter-box .quick-chip').forEach(c => c.classList.remove('active'));
-      applyMonthDates(year, month);
-    }
-
-    function applyMonthDates(year, month) {
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-
-      const fStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-      const lStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
-
-      setSafeValue('pnlFromDate', fStr);
-      setSafeValue('pnlToDate', lStr);
-
-      const monthNames = ["Janevari", "Phebruvari", "March", "April", "May", "June", "Julai", "August", "September", "October", "November", "December"];
-      setSafeText('pnlSelectedMonthLabel', `${monthNames[month]} ${year}`);
-
-      renderProfitAndLossOverview();
-    }
-
-    function renderProfitAndLossOverview() {
-      if (!currentSessionClient) return;
-
-      const fDateVal = document.getElementById('pnlFromDate').value;
-      const tDateVal = document.getElementById('pnlToDate').value;
-
-      const fromDate = fDateVal ? new Date(fDateVal + 'T00:00:00') : null;
-      const toDate = tDateVal ? new Date(tDateVal + 'T23:59:59') : null;
-
-      const history = currentSessionClient.operatorHistory || [];
-      const dHistory = currentSessionClient.dieselHistory || [];
-
-      let totalGross = 0;
-      history.forEach(h => {
-        const itemD = parseDateDMY(h.date);
-        if (fromDate && itemD < fromDate) return;
-        if (toDate && itemD > toDate) return;
-        totalGross += (parseFloat(h.hours) || 0) * (parseFloat(h.hourlyRate) || 2000);
-      });
-
-      let totalFuel = 0;
-      dHistory.forEach(d => {
-        const itemD = parseDateDMY(d.date);
-        if (fromDate && itemD < fromDate) return;
-        if (toDate && itemD > toDate) return;
-        totalFuel += parseFloat(d.cost) || 0;
-      });
-
-      let totalAdv = 0;
-      (currentSessionClient.fleet || []).forEach(m => {
-        (m.advanceHistory || []).forEach(a => {
-          const itemD = parseDateDMY(a.date);
-          if (fromDate && itemD < fromDate) return;
-          if (toDate && itemD > toDate) return;
-          totalAdv += parseFloat(a.amount) || 0;
-        });
-      });
-
-      const net = totalGross - (totalFuel + totalAdv);
-
-      setSafeText('pnlNetProfitDisplay', `₹ ${net.toFixed(0)}`);
-      setSafeText('menuNetProfitBadge', `₹ ${net.toFixed(0)} Net`);
-      setSafeText('pnlBreakdownGrossBilling', `₹ ${totalGross.toFixed(0)}`);
-      setSafeText('pnlBreakdownDieselCost', `₹ ${totalFuel.toFixed(0)}`);
-      setSafeText('pnlBreakdownDriverAdvances', `₹ ${totalAdv.toFixed(0)}`);
-    }
-
-    // =====================================
-    // 👷 OPERATOR ACTIONS & CONSOLE
-    // =====================================
-    function handleOperatorPinLogin() {
-      runAutoSubscriptionEngine();
-      const ownerId = document.getElementById('opOwnerUserIdInput').value.trim().toLowerCase();
-      const opPin = document.getElementById('opPinInput').value.trim();
-      const client = clientsDatabase.find(c => c.user.toLowerCase() === ownerId);
-
-      if (client) {
-        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL") {
-          const lockScreen = document.getElementById('lockOverlayScreen');
-          if (lockScreen) lockScreen.classList.add('active-lock');
-          return;
-        }
-        const matched = (client.fleet || []).find(m => String(m.pin).trim() === opPin);
-        if (matched) {
-          if (matched.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe! Payment baki ahe."); return; }
-          localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OPERATOR', ownerId: client.user, machineId: matched.id }));
-          currentSessionClient = client;
-          currentSessionMachine = matched;
-          updateNotificationBellDot();
-          updateOperatorConsoleUI();
-          navigate('screenOpMenu');
-        } else { alert("Chukicha PIN!"); }
-      } else { alert("Chukicha User ID!"); }
-    }
-
-    function loginOperatorMachineDirect(idx) {
-      const m = currentSessionClient.fleet[idx];
-      if (m.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe!"); return; }
-      currentSessionMachine = m;
-      updateOperatorConsoleUI();
-      navigate('screenOpMenu');
-    }
-
-    function updateOperatorConsoleUI() {
-      if (!currentSessionMachine) return;
-      setSafeText('opMachineName', currentSessionMachine.name);
-      setSafeText('opDriverTitle', currentSessionMachine.driver);
-      setSafeText('opActiveCustomer', currentSessionMachine.activeParty || "General Work");
-      setSafeValue('opPartyDirectInput', currentSessionMachine.activeParty || "General Work");
-      setSafeValue('morningPartyDirectInput', currentSessionMachine.activeParty || "General Work");
-      setSafeValue('shiftStartReading', currentSessionMachine.totalHours || 0);
-    }
-
-    function saveActivePartyDirect() {
-      const pName = document.getElementById('opPartyDirectInput').value.trim();
-      if (!pName) {
-        alert("Krupaya party che naav taaka!");
-        return;
-      }
-      currentSessionMachine.activeParty = pName;
-      setSafeText('opActiveCustomer', pName);
-      setSafeValue('morningPartyDirectInput', pName);
-      syncDataToCloud();
-      alert("✓ Chaloo party save zhali: " + pName);
-    }
-
-    function openMorningScreen() {
-      setSafeValue('startReadingInput', currentSessionMachine.totalHours || 0);
-      setSafeValue('morningPartyDirectInput', currentSessionMachine.activeParty || "General Work");
-      navigate('screenMorning');
-    }
-
-    function saveMorningShift() {
-      const r = parseFloat(document.getElementById('startReadingInput').value) || 0;
-      const party = document.getElementById('morningPartyDirectInput').value.trim() || currentSessionMachine.activeParty || "General Work";
-
-      if (r <= 0) { alert("Reading taaka!"); return; }
-      
-      currentSessionMachine.totalHours = r;
-      currentSessionMachine.activeParty = party;
-      setSafeValue('shiftStartReading', r);
-      setSafeText('opActiveCustomer', party);
-      setSafeValue('opPartyDirectInput', party);
-
-      syncDataToCloud();
-      alert("Sakal reading aani party save zhale!");
-      navigate('screenOpMenu');
-    }
-
-    function submitDieselEntry() {
-      const p = document.getElementById('dieselPumpSelect').value;
-      const l = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
-      const c = parseFloat(document.getElementById('dieselCostInput').value) || 0;
-      const paid = parseFloat(document.getElementById('dieselPaidInput').value) || 0;
-
-      if (l <= 0 || c <= 0) {
-        alert("Krupaya Liters aani Cost bhara!");
-        return;
-      }
-
-      if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
-
-      currentSessionClient.dieselHistory.unshift({
-        date: new Date().toLocaleDateString('mr-IN'),
-        pump: p,
-        machine: currentSessionMachine.name,
-        driver: currentSessionMachine.driver,
-        liters: l,
-        cost: c,
-        paid: paid
-      });
-
-      syncDataToCloud();
-      renderDieselSummaryBox();
-      renderProfitAndLossOverview();
-
-      setSafeValue('dieselLitersInput', '');
-      setSafeValue('dieselCostInput', '');
-      setSafeValue('dieselPaidInput', '0');
-
-      alert(`✓ डिझेल नोंद यशस्वीरित्या सेव्ह झाली!\nपंप: ${p} | लिटर: ${l} Ltr | बिल: ₹${c}`);
-      navigate('screenOpMenu');
-    }
-
-    function submitEveningShift() {
-      const s = parseFloat(document.getElementById('shiftStartReading').value) || currentSessionMachine.totalHours || 0;
-      const e = parseFloat(document.getElementById('shiftEndReading').value) || 0;
-
-      if (e <= s) {
-        alert("Sandhyakalche reading sakalchya reading peksha jast asave!");
-        return;
-      }
-
-      const runHours = parseFloat((e - s).toFixed(1));
-      currentSessionMachine.totalHours = e;
-
-      if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
-      currentSessionClient.operatorHistory.unshift({
-        date: new Date().toLocaleDateString('mr-IN'),
-        machine: currentSessionMachine.name,
-        driver: currentSessionMachine.driver,
-        party: currentSessionMachine.activeParty || "General Work",
-        hours: runHours,
-        startMeter: s,
-        endMeter: e,
-        hourlyRate: currentSessionMachine.defaultHourlyRate || 2000
-      });
-
-      syncDataToCloud();
-      renderProfitAndLossOverview();
-      renderNightClosingMachineWise();
-
-      setSafeValue('shiftEndReading', '');
-      alert(`✓ शिफ्ट क्लोज झाली! आज चाललेले तास: ${runHours} Taas`);
-      navigate('screenOpMenu');
-    }
-
-    function renderOperatorSalarySummary() {
-      const container = document.getElementById('operatorSalarySummaryList');
-      if (!container || !currentSessionClient) return;
-      container.innerHTML = '';
-
-      (currentSessionClient.fleet || []).forEach((m, idx) => {
-        const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
-        const sal = parseFloat(m.monthlySalary) || 20000;
-        const bal = sal - totalUchhal;
-
-        container.innerHTML += `
-          <div class="data-item-card">
-            <div style="display:flex; justify-content:space-between;">
-              <b>👷 ${m.driver} (${m.name})</b>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
-              <span>Pagar: ₹${sal}</span>
-              <span>Uchhal: <b style="color:var(--accent-red);">₹${totalUchhal}</b></span>
-              <span>Shillak: <b style="color:var(--accent-green);">₹${bal > 0 ? bal : 0}</b></span>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function renderNightClosingMachineWise() {
-      const container = document.getElementById('nightClosingMachineWiseList');
-      if (!container || !currentSessionClient) return;
-      container.innerHTML = '';
-      const history = currentSessionClient.operatorHistory || [];
-
-      if (history.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">Kontihi reading entry nahi.</div>`;
-        return;
-      }
-
-      history.forEach(h => {
-        container.innerHTML += `
-          <div class="data-item-card" style="border-left:4px solid var(--accent-purple);">
-            <div style="display:flex; justify-content:space-between; font-size:12px;">
-              <b>🚜 ${h.machine} - ${h.date}</b>
-              <b style="color:var(--accent-green);">${h.hours} Taas</b>
-            </div>
-            <div style="font-size:11px; margin-top:3px;">Sakal: <b>${h.startMeter || 0}</b> | Band: <b>${h.endMeter || 0}</b></div>
-            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Chalak: ${h.driver} | Party: <b>${h.party}</b></div>
-          </div>
-        `;
-      });
-    }
-
-    function openOwnerBillingPage() {
-      const select = document.getElementById('billMachineSelect');
-      if (!select || !currentSessionClient) return;
-      select.innerHTML = '';
-      (currentSessionClient.fleet || []).forEach((m, idx) => {
-        select.innerHTML += `<option value="${idx}">${m.name}</option>`;
-      });
-      autoLoadPartiesForSelectedMachine();
-    }
-    function autoLoadPartiesForSelectedMachine() {
-      const partySelect = document.getElementById('billPartySelect');
-      if (partySelect) partySelect.innerHTML = '<option value="General Work">General Work</option>';
-      calculateOngoingRent();
-    }
-    function calculateOngoingRent() {
-      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
-      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
-      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
-      setSafeText('livePartyPendingAmt', `₹ ${(h * r) - a}`);
-      setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
-    }
-
     function updateNewClientFeeCalc() {
       const count = parseInt(document.getElementById('newClientMachinesCount').value) || 0;
       setSafeText('newClientCalculatedFee', `₹ ${count * 250}`);
@@ -1987,9 +1971,6 @@
         generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
       }
 
-      const expiry = new Date();
-      expiry.setDate(expiry.getDate() + 30);
-
       clientsDatabase.unshift({
         id: "CLIENT_" + Date.now(),
         businessName: name,
@@ -1997,10 +1978,9 @@
         pass: pass,
         phone: phone,
         status: "PENDING_APPROVAL",
-        subscriptionExpiry: expiry.toISOString().split('T')[0],
         paidMachinesCount: 0,
         fleet: generatedFleet,
-        dieselHistory: [], operatorHistory: []
+        dieselHistory: [], operatorHistory: [], dumperHistory: []
       });
 
       syncDataToCloud();
@@ -2024,15 +2004,13 @@
       if (!mName || !mPin) { alert("Machine che naav aani 4-anki PIN bhara!"); return; }
 
       client.fleet.push({ id: "M_" + Date.now(), name: mName, driver: 'Chalak', pin: mPin, status: "DEACTIVE", totalHours: 0.0, advanceHistory: [] });
-      if (client.paidMachinesCount === undefined) client.paidMachinesCount = 0;
-
       syncDataToCloud();
       setSafeValue('saAddMachineNameInput', '');
       setSafeValue('saAddMachinePinInput', '');
 
       openSuperAdminClientDetailPage(selectedSaClientId);
       renderSaasBusinessPnl();
-      alert(`✓ Navin machine jodli geli! He pending madhe disel.`);
+      alert(`✓ Navin machine jodli geli!`);
     }
 
     function renderSaasBusinessPnl() {
@@ -2048,7 +2026,6 @@
       const grossPotential = totalMachines * 250;
       const progressPercent = grossPotential > 0 ? ((totalReceived / grossPotential) * 100).toFixed(0) : 0;
 
-      setSafeText('saasNetProfit', "₹ " + totalReceived.toLocaleString('en-IN'));
       setSafeText('saasTotalClientsCount', clientsDatabase.length + " Grahak");
       setSafeText('saasTotalMachinesCount', totalMachines + " JCB");
       setSafeText('saasFeeReceived', "₹ " + totalReceived.toLocaleString('en-IN'));
@@ -2061,14 +2038,11 @@
 
     function openSaasBoxDetailScreen(boxType) {
       const headerEl = document.getElementById('saasBoxDetailHeader');
-      const titleEl = document.getElementById('saasBoxDetailTitle');
       const contentEl = document.getElementById('saasBoxDetailContent');
-
       if (!contentEl) return;
       contentEl.innerHTML = '';
 
       if (boxType === 'clients') {
-        if (titleEl) titleEl.innerText = "Ekun App Clients";
         if (headerEl) headerEl.innerText = "📋 Registered Clients List";
         clientsDatabase.forEach(c => {
           contentEl.innerHTML += `
@@ -2078,7 +2052,6 @@
             </div>`;
         });
       } else if (boxType === 'machines') {
-        if (titleEl) titleEl.innerText = "All Machines & Owners";
         if (headerEl) headerEl.innerText = "🚜 Fleet Machine Management";
         clientsDatabase.forEach(c => {
           let html = '';
@@ -2095,7 +2068,6 @@
           contentEl.innerHTML += `<div class="panel-card"><b style="color:var(--primary-blue);">👑 ${c.businessName}</b>${html}</div>`;
         });
       } else if (boxType === 'received') {
-        if (titleEl) titleEl.innerText = "Received Payment (Jama Fee)";
         if (headerEl) headerEl.innerText = "💳 Received Ledger";
         clientsDatabase.forEach(c => {
           const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
@@ -2108,7 +2080,6 @@
           }
         });
       } else if (boxType === 'pending') {
-        if (titleEl) titleEl.innerText = "Pending Fee (Baki Rakkam)";
         if (headerEl) headerEl.innerText = "⚠️ Pending Requests";
         clientsDatabase.forEach(c => {
           const fCount = (c.fleet || []).length;
@@ -2124,19 +2095,6 @@
               </div>`;
           }
         });
-      } else if (boxType === 'gross') {
-        if (titleEl) titleEl.innerText = "Gross Monthly Turnover";
-        if (headerEl) headerEl.innerText = "📑 Financial Breakdown & Forecasting";
-        let totalM = 0;
-        clientsDatabase.forEach(c => totalM += (c.fleet || []).length);
-        const monthly = totalM * 250;
-        const annual = monthly * 12;
-        contentEl.innerHTML = `
-          <div class="turnover-unique-card" style="cursor:default;">
-            <div style="font-size:12px; color:#94a3b8; font-weight:bold;">SaaS Recurring Revenue Calculator</div>
-            <div style="font-size:24px; font-weight:900; color:#38bdf8; margin:6px 0;">₹ ${monthly.toLocaleString('en-IN')} / mahina</div>
-            <div style="font-size:13px; color:#a7f3d0;">Varshik Utpanna (Annual Forecast): <b>₹ ${annual.toLocaleString('en-IN')}</b></div>
-          </div>`;
       }
       navigate('screenSaasBoxDetailPage');
     }
@@ -2186,42 +2144,25 @@
     }
 
     function approveClientPayment(clientId) {
-      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      if (!saved || !saved.isSuperAdmin) {
-        alert("Phakta Super Admin la payment approve karnyacha adhikar ahe!");
-        return;
-      }
-
       const client = clientsDatabase.find(c => c.id === clientId);
       if (!client) return;
-
-      if (confirm(`✅ ${client.businessName} che payment approve karun app start karayche ka?`)) {
-        client.paidMachinesCount = (client.fleet || []).length;
-        client.status = "ACTIVE";
-        (client.fleet || []).forEach(m => m.status = "ACTIVE");
-        syncDataToCloud();
-        renderSuperAdminDashboard();
-        renderSaasBusinessPnl();
-        alert(`✓ Payment approve zale! App start zale.`);
-      }
+      client.paidMachinesCount = (client.fleet || []).length;
+      client.status = "ACTIVE";
+      (client.fleet || []).forEach(m => m.status = "ACTIVE");
+      syncDataToCloud();
+      renderSuperAdminDashboard();
+      renderSaasBusinessPnl();
+      alert(`✓ ${client.businessName} che payment approve zale!`);
     }
 
     function rejectClientPayment(clientId) {
-      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      if (!saved || !saved.isSuperAdmin) {
-        alert("Phakta Super Admin la request reject karnyacha adhikar ahe!");
-        return;
-      }
-
       const client = clientsDatabase.find(c => c.id === clientId);
       if (!client) return;
-      if (confirm(`❌ Request reject karaychi ka?`)) {
-        client.status = "MANUAL_LOCK";
-        (client.fleet || []).forEach(m => m.status = "DEACTIVE");
-        syncDataToCloud();
-        renderSuperAdminDashboard();
-        renderSaasBusinessPnl();
-      }
+      client.status = "MANUAL_LOCK";
+      (client.fleet || []).forEach(m => m.status = "DEACTIVE");
+      syncDataToCloud();
+      renderSuperAdminDashboard();
+      renderSaasBusinessPnl();
     }
 
     function populateDirectLockClientDropdown() {
@@ -2251,9 +2192,95 @@
       alert(`✓ Status update zhala!`);
     }
 
+    function updateFrontPagePendingAlert() {
+      const banner = document.getElementById('frontPagePendingAlertBanner');
+      const text = document.getElementById('frontPendingSummaryText');
+      if (!banner || !text) return;
+
+      let pendingCount = 0;
+      let pendingAmount = 0;
+
+      clientsDatabase.forEach(c => {
+        const totalFleet = (c.fleet || []).length;
+        const paidCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
+        const unpaid = Math.max(0, totalFleet - paidCount);
+
+        if (c.status === "PENDING_APPROVAL" || unpaid > 0) {
+          pendingCount++;
+          pendingAmount += (unpaid * 250);
+        }
+      });
+
+      if (pendingCount > 0) {
+        banner.style.display = 'block';
+        text.innerHTML = `सध्या <b>${pendingCount} ग्राहक / मशीन</b> चे एकूण <b>₹${pendingAmount}</b> पेमेंट ॲप्रुव्हल बाकी आहे.`;
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    function updateNotificationBellDot() {
+      const bellBtn = document.getElementById('adminNotifBellBtn');
+      const dot = document.getElementById('notifBadgeDot');
+      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
+      const isSuper = saved && saved.type === 'SUPER_ADMIN';
+
+      if (!isSuper) {
+        if (bellBtn) bellBtn.style.display = 'none';
+        return;
+      }
+      if (bellBtn) bellBtn.style.display = 'flex';
+      let count = 0;
+      clientsDatabase.forEach(c => {
+        const fCount = (c.fleet || []).length;
+        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
+        if (fCount > pCount || c.status === "PENDING_APPROVAL") count++;
+      });
+      if (dot) dot.style.display = count > 0 ? 'block' : 'none';
+    }
+
+    function toggleNotificationModal(show) {
+      const m = document.getElementById('notificationModal');
+      if (m) m.style.display = show ? 'flex' : 'none';
+    }
+
+    function openNotificationModal() {
+      const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
+      if (!saved || saved.type !== 'SUPER_ADMIN') {
+        alert("Phakta Super Admin la ya soochna pahnyacha adhikar ahe!");
+        return;
+      }
+
+      const listContainer = document.getElementById('notificationListContainer');
+      if (!listContainer) return;
+      listContainer.innerHTML = '';
+      let has = false;
+
+      clientsDatabase.forEach(c => {
+        const fCount = (c.fleet || []).length;
+        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
+        const unpaid = fCount - pCount;
+
+        if (unpaid > 0 || c.status === "PENDING_APPROVAL") {
+          has = true;
+          listContainer.innerHTML += `
+            <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
+              <b>${c.businessName}</b>
+              <div style="font-size:12px; margin:3px 0;">Baki Rakkam: <b style="color:red;">₹ ${unpaid * 250}</b> (${unpaid} Machines Pending)</div>
+              <button onclick="approveClientPayment('${c.id}'); toggleNotificationModal(false);" style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">✓ Approve Payment</button>
+            </div>
+          `;
+        }
+      });
+
+      if (!has) listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#10b981;">✅ Kontahi Alert Nahi!</div>`;
+      toggleNotificationModal(true);
+    }
+
     function logoutSession() {
       localStorage.removeItem('jcb_active_session');
       currentSessionClient = null;
+      currentSessionMachine = null;
       const lockScreen = document.getElementById('lockOverlayScreen');
       if (lockScreen) lockScreen.classList.remove('active-lock');
       updateNotificationBellDot();
@@ -2262,16 +2289,16 @@
     }
 
     // =====================================
-    // 🚀 INITIALIZATION
+    // 🚀 INITIALIZATION & SESSION RESTORE
     // =====================================
     window.addEventListener('DOMContentLoaded', () => {
-      runAutoSubscriptionEngine();
       renderSuperAdminDashboard();
       renderSaasBusinessPnl();
       updateNotificationBellDot();
       updateFrontPagePendingAlert();
+      populateDirectLockClientDropdown();
 
-      // Realtime Cloud Listener
+      // REALTIME LISTENER
       if (db) {
         db.ref('jcb_fleet_master').on('value', (snapshot) => {
           const cloudData = snapshot.val();
@@ -2293,13 +2320,25 @@
         });
       }
 
+      // RESTORE SAVED STATE (SWIPE / REFRESH FIX)
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       if (saved) {
-        if (saved.isSuperAdmin) {
+        if (saved.type === 'SUPER_ADMIN') {
           navigate('screenSuperAdmin');
         } else if (saved.type === 'OWNER') {
           const client = clientsDatabase.find(c => c.user.toLowerCase() === saved.userId.toLowerCase());
-          if (client && client.status === "ACTIVE") proceedLogin(client);
+          if (client && client.status === "ACTIVE") proceedOwnerLogin(client);
+        } else if (saved.type === 'OPERATOR') {
+          const client = clientsDatabase.find(c => c.user.toLowerCase() === saved.ownerId.toLowerCase());
+          if (client) {
+            const m = (client.fleet || []).find(m => m.id === saved.machineId);
+            if (m) {
+              currentSessionClient = client;
+              currentSessionMachine = m;
+              updateOperatorConsoleUI();
+              navigate('screenOpMenu');
+            }
+          }
         }
       }
     });

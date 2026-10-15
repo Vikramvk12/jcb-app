@@ -307,7 +307,10 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: 8px;
       margin-top: 14px;
-      padding-top: 12px;
+      padding-top: 12px;थँक यू! मागील पेमेंट वेळेवर केल्याबद्दल धन्यवाद. आपल्या उत्तम सेवेसाठी आम्ही नेहमीच बांधील आहोत. 🙏
+आत्तापर्यंत चे सर्व पेमेंट जमा झाले 
+एकूण 1700 पेमेंट जमा... बाकी. 0
+धन्यवाद....
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       text-align: center;
     }
@@ -535,6 +538,33 @@
     .party-bill-total { font-size:18px; font-weight:900; color:#1a73e8; padding-top:10px; }
     .salary-pay-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
     .salary-mini { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px; font-size:11px; }
+    .saas-plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .saas-plan-card { border:1.5px solid var(--border-light); border-radius:12px; padding:12px; background:#fff; }
+    .saas-plan-card.featured { border-color:var(--accent-gold); background:#fffbeb; }
+    .saas-price { font-size:22px; font-weight:900; color:var(--primary-blue); margin:4px 0; }
+    .notif-section { border:1px solid var(--border-light); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+    .notif-section-head { padding:10px 12px; font-weight:900; display:flex; justify-content:space-between; align-items:center; }
+    .notif-section-body { padding:8px 10px; }
+    .notif-approval { border-left:4px solid var(--accent-gold); }
+    .notif-reminder { border-left:4px solid var(--accent-purple); }
+    .notif-pending { border-left:4px solid var(--accent-red); }
+    .notif-send-all { width:100%; padding:8px 10px; border:none; border-radius:7px; background:#25d366; color:#fff; font-weight:900; cursor:pointer; margin-top:6px; }
+    .notif-summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:10px; }
+    .notif-summary-card { border-radius:10px; padding:9px 7px; text-align:center; background:#f8fafc; border:1px solid #e2e8f0; }
+    .notif-summary-num { font-size:18px; font-weight:900; line-height:1.1; }
+    .notif-summary-label { font-size:9.5px; color:#64748b; font-weight:800; margin-top:3px; }
+    .machine-lock-card { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; }
+    .machine-delete-btn { width:100%; margin-top:7px; padding:7px 10px; border:1px solid #fecaca; border-radius:6px; background:#fff1f2; color:#b91c1c; font-size:11px; font-weight:900; cursor:pointer; }
+    .machine-sub-chip { font-size:10px; padding:3px 7px; border-radius:6px; font-weight:800; display:inline-block; }
+    .machine-sub-ok { background:#dcfce7; color:#15803d; }
+    .machine-sub-warn { background:#fef3c7; color:#b45309; }
+    .machine-sub-exp { background:#fee2e2; color:#b91c1c; }
+    .saas-ledger-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
+    .saas-ledger-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px; text-align:center; }
+    .saas-ledger-value { font-size:17px; font-weight:900; }
+    .saas-ledger-label { font-size:9.5px; color:#64748b; font-weight:800; margin-top:2px; }
+    .machine-archive-card { background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:10px; margin-top:8px; }
+
 
   </style>
 
@@ -564,7 +594,7 @@
   <div id="notificationModal" class="modal-overlay">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
-        <b style="font-size:16px; color:var(--text-dark);">🔔 Approval Pending for Payment</b>
+        <b style="font-size:16px; color:var(--text-dark);">🔔 Subscription Notifications</b>
         <button onclick="toggleNotificationModal(false)" style="background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
       </div>
       <div id="notificationListContainer"></div>
@@ -800,6 +830,26 @@
         <div style="font-size:26px; font-weight:900; color:var(--accent-green); margin-top:2px;" id="saasNetProfit">₹ 0</div>
       </div>
 
+      <!-- SUBSCRIPTION PLANS BOX -->
+      <div class="panel-card" style="border:2px solid var(--primary-blue); background:#f8fbff; margin-bottom:14px;">
+        <div class="panel-header" style="color:var(--primary-blue);">💳 Subscription Plans & Machine Pricing</div>
+        <div class="saas-plan-grid">
+          <div class="saas-plan-card">
+            <div style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;">28 Days / 1 Machine</div>
+            <div class="saas-price">₹250</div>
+            <div style="font-size:11px;color:#64748b;">Machine-wise subscription</div>
+          </div>
+          <div class="saas-plan-card featured">
+            <div style="font-size:11px;font-weight:800;color:#92400e;text-transform:uppercase;">Annual / 1 Machine</div>
+            <div class="saas-price">₹3,000</div>
+            <div style="font-size:11px;color:#92400e;">13 monthly cycles = ₹3,250 → <b>₹250 saving</b></div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:9px;border-radius:8px;background:#eef6ff;font-size:11.5px;color:#334155;line-height:1.5;">
+          प्रत्येक मशीनची 28 दिवसांची subscription <b>मशीन add केलेल्या दिवशी</b> सुरू होईल. Payment न केलेल्या मशीनचा जुना data delete होणार नाही; फक्त त्या मशीनचा access बंद राहील.
+        </div>
+      </div>
+
       <!-- 4 BOXES TILES -->
       <div class="section-title-row">
         <div style="font-size:16px;">⊞</div>
@@ -873,7 +923,7 @@
               <input type="number" id="newClientMachinesCount" value="2" min="1" oninput="updateNewClientFeeCalc()" required>
             </div>
             <div style="background:#f8fafc; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; margin-top:15px;">
-              Monthly Fee: <b id="newClientCalculatedFee" style="color:var(--accent-gold);">₹ 500</b> (@ ₹250/M)
+              28-Day Fee: <b id="newClientCalculatedFee" style="color:var(--accent-gold);">₹ 500</b> (@ ₹250/M)
             </div>
           </div>
           <button type="submit" class="btn-submit btn-amber">💾 Grahak Joda (Pending Authorization)</button>
@@ -1674,6 +1724,7 @@
     // 👑 LOGIN ENGINE
     // =====================================
     function handleOwnerLogin() {
+      enforceMachineSubscriptions();
       const u = document.getElementById('ownerLoginUserId').value.trim();
       const p = document.getElementById('ownerLoginPassword').value.trim();
       if (!u || !p) { alert("User ID va Password bhara!"); return; }
@@ -1689,7 +1740,8 @@
 
       const client = clientsDatabase.find(c => c.user.toLowerCase() === u.toLowerCase() && c.pass === p);
       if (client) {
-        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL") {
+        const activeMachines = (client.fleet || []).filter(m => m.status === 'ACTIVE' && getSubscriptionDaysLeft(m) !== null && getSubscriptionDaysLeft(m) >= 0);
+        if (client.status === "LOCKED" || client.status === "MANUAL_LOCK" || client.status === "PENDING_APPROVAL" || activeMachines.length === 0) {
           const lockScreen = document.getElementById('lockOverlayScreen');
           if (lockScreen) lockScreen.classList.add('active-lock');
           return;
@@ -1702,10 +1754,19 @@
       }
     }
 
+    function getClientSubscriptionSummary(client) {
+      const active = (client.fleet || []).filter(m => m.status === 'ACTIVE');
+      if (!active.length) return 'Subscription inactive';
+      const days = active.map(getSubscriptionDaysLeft).filter(d => d !== null);
+      const min = days.length ? Math.min(...days) : null;
+      return min !== null ? `Subscription: ${min} दिवस बाकी` : 'Active Session';
+    }
+
     function proceedOwnerLogin(client) {
       currentSessionClient = client;
       setSafeText('ownerClientTitle', client.businessName);
       setSafeText('liveTodayDateBadge', getTodayStandardDate());
+      setSafeText('ownerSubDaysLeft', getClientSubscriptionSummary(client));
       setSafeValue('ownerDieselRateInput', client.currentDieselRate || 92);
 
       const backBtn = document.getElementById('ownerBackBtn');
@@ -1754,7 +1815,8 @@
         }
         const matched = (client.fleet || []).find(m => String(m.pin).trim() === opPin);
         if (matched) {
-          if (matched.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe! Malakashi sampark kara."); return; }
+          ensureMachineSubscription(matched, false);
+          if (matched.status === "DEACTIVE" || (getSubscriptionDaysLeft(matched) !== null && getSubscriptionDaysLeft(matched) < 0)) { alert("Hi machine chi subscription active nahi ahe. Super Admin kade renewal kara."); return; }
           localStorage.setItem('jcb_active_session', JSON.stringify({ type: 'OPERATOR', ownerId: client.user, machineId: matched.id }));
           currentSessionClient = client;
           currentSessionMachine = matched;
@@ -1766,7 +1828,9 @@
 
     function loginOperatorMachineDirect(idx) {
       const m = currentSessionClient.fleet[idx];
-      if (m.status === "DEACTIVE") { alert("Hi machine DEACTIVE ahe!"); return; }
+      if (!m) return;
+      ensureMachineSubscription(m, false);
+      if (m.status === "DEACTIVE" || (getSubscriptionDaysLeft(m) !== null && getSubscriptionDaysLeft(m) < 0)) { alert("🔒 Hi machine cha Operating Page LOCK ahe. Super Admin/Owner kade payment/Unlock kara."); return; }
       currentSessionMachine = m;
       updateOperatorConsoleUI();
       navigate('screenOpMenu');
@@ -2181,40 +2245,39 @@
     // MACHINE CONSOLE & EDIT MACHINE/DRIVER FUNCTIONS
     // ========================================================
     function renderOwnerMachines() {
+      if (!currentSessionClient) return;
       const container = document.getElementById('clientOwnerMachinesList');
-      if (container && currentSessionClient) {
+      if (container) {
         container.innerHTML = '';
         (currentSessionClient.fleet || []).forEach((m, idx) => {
           const isDeact = (m.status === 'DEACTIVE');
+          const days = getSubscriptionDaysLeft(m);
           container.innerHTML += `
-            <div class="data-item-card" style="border-left: 4px solid ${isDeact ? 'var(--accent-red)' : 'var(--primary-blue)'}; margin-bottom:10px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="data-item-card" style="border-left:4px solid ${isDeact ? 'var(--accent-red)' : 'var(--primary-blue)'}; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
                 <b style="font-size:15px; color:var(--text-dark);">🚜 ${m.name}</b>
-                <span class="sub-badge ${isDeact ? 'sub-expired' : 'sub-active'}">${m.status || 'ACTIVE'}</span>
+                <span class="sub-badge ${isDeact ? 'sub-expired' : 'sub-active'}">${isDeact ? 'LOCKED / DEACTIVE' : 'ACTIVE'}</span>
               </div>
-              <div style="font-size:12px; color:#334155; margin-top:4px;">
-                👷 चालक (Driver): <b style="color:var(--primary-blue);">${m.driver}</b>
-              </div>
-              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
-                🔑 Operator PIN: <b>${m.pin}</b> | 💰 दर: <b>₹${m.defaultHourlyRate || 2000}/तास</b>
-              </div>
+              <div style="font-size:12px; color:#334155; margin-top:4px;">👷 चालक: <b style="color:var(--primary-blue);">${m.driver}</b></div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">🔑 PIN: <b>${m.pin}</b> | 💰 ₹${m.defaultHourlyRate || 2000}/तास</div>
+              <div style="margin-top:6px; font-size:10.5px; font-weight:800; color:${isDeact ? '#b91c1c' : '#15803d'};">${days === null ? '' : (days < 0 ? 'Subscription Expired' : days + ' दिवस बाकी')}</div>
               <div style="display:flex; gap:8px; margin-top:10px;">
-                <button onclick="openEditMachineModal('${currentSessionClient.id}', ${idx})" style="flex:1; background:#e8f0fe; color:#1a73e8; border:1px solid #bfdbfe; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">
-                  ✏️ नाव / चालक बदला (Edit)
-                </button>
+                <button onclick="openEditMachineModal('${currentSessionClient.id}', ${idx})" style="flex:1; background:#e8f0fe; color:#1a73e8; border:1px solid #bfdbfe; padding:8px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">✏️ Edit</button>
+                <button onclick="toggleMachineStatusDirectly('${currentSessionClient.id}', ${idx})" style="flex:1; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff; border:none; padding:8px 10px; border-radius:8px; font-size:11px; font-weight:900; cursor:pointer;">${isDeact ? '🔓 Unlock / Activate' : '🔒 Lock Operating'}</button>
               </div>
             </div>`;
         });
       }
 
       const opContainer = document.getElementById('clientFleetContainer');
-      if (opContainer && currentSessionClient) {
+      if (opContainer) {
         opContainer.innerHTML = '';
         (currentSessionClient.fleet || []).forEach((m, idx) => {
+          const locked = m.status === 'DEACTIVE' || (getSubscriptionDaysLeft(m) !== null && getSubscriptionDaysLeft(m) < 0);
           opContainer.innerHTML += `
-            <div class="feature-card" onclick="loginOperatorMachineDirect(${idx})">
-              <div class="card-top"><div class="icon-badge" style="background:#e8f0fe;">🚜</div><span class="arrow-icon">›</span></div>
-              <div class="card-body"><div class="card-main-title">${m.name}</div><div class="card-sub-title">Chalak: ${m.driver}</div></div>
+            <div class="feature-card" style="${locked ? 'opacity:.62; filter:grayscale(.35); cursor:not-allowed;' : ''}" onclick="loginOperatorMachineDirect(${idx})">
+              <div class="card-top"><div class="icon-badge" style="background:${locked ? '#fee2e2' : '#e8f0fe'};">${locked ? '🔒' : '🚜'}</div><span class="arrow-icon">${locked ? '🔒' : '›'}</span></div>
+              <div class="card-body"><div class="card-main-title">${m.name}</div><div class="card-sub-title">${locked ? 'Operating Page Locked' : 'Chalak: ' + m.driver}</div></div>
             </div>`;
         });
       }
@@ -2294,16 +2357,11 @@
 
       if (!mName || !mPin) { alert("Machine che naav aani 4-Anki PIN bhara!"); return; }
 
+      const startDate = getTodayISOFormat();
       currentSessionClient.fleet.push({ 
-        id: "M_" + Date.now(), 
-        name: mName, 
-        driver: mDriver, 
-        pin: mPin, 
-        status: "ACTIVE", 
-        totalHours: 0.0, 
-        defaultHourlyRate: mRate,
-        monthlySalary: 20000,
-        advanceHistory: [] 
+        id: "M_" + Date.now(), name: mName, driver: mDriver, pin: mPin,
+        status: "DEACTIVE", totalHours: 0.0, defaultHourlyRate: mRate, monthlySalary: 20000, advanceHistory: [],
+        subscriptionStart: startDate, subscriptionExpiry: isoAddDays(startDate, 27), subscriptionPlan: '28_DAYS', subscriptionStatus: 'PENDING', lastPaymentAmount: 0
       });
 
       syncDataToCloud();
@@ -3240,6 +3298,89 @@
 
     // =====================================
     // 📋 SUPER ADMIN FUNCTIONS
+    // 💳 MACHINE-WISE SUBSCRIPTION ENGINE
+    // =====================================
+    const SUBSCRIPTION_CONFIG = { monthlyDays: 28, monthlyPrice: 250, annualPrice: 3000, reminderDays: 3 };
+
+    function isoAddDays(iso, days) {
+      const d = iso ? new Date(iso + 'T00:00:00') : new Date();
+      d.setDate(d.getDate() + days);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getSubscriptionDaysLeft(m) {
+      if (!m || !m.subscriptionExpiry) return null;
+      const today = new Date(getTodayISOFormat() + 'T00:00:00');
+      const exp = new Date(m.subscriptionExpiry + 'T00:00:00');
+      return Math.ceil((exp - today) / 86400000);
+    }
+
+    function ensureMachineSubscription(m, shouldActivate=false) {
+      if (!m) return;
+      if (!m.subscriptionStart) m.subscriptionStart = getTodayISOFormat();
+      if (!m.subscriptionExpiry) m.subscriptionExpiry = isoAddDays(m.subscriptionStart, SUBSCRIPTION_CONFIG.monthlyDays - 1);
+      if (!m.subscriptionPlan) m.subscriptionPlan = '28_DAYS';
+      if (getSubscriptionDaysLeft(m) < 0) {
+        m.status = 'DEACTIVE';
+        m.subscriptionStatus = 'EXPIRED';
+      } else if (shouldActivate && m.subscriptionStatus !== 'EXPIRED') {
+        m.status = 'ACTIVE';
+        m.subscriptionStatus = 'ACTIVE';
+      }
+    }
+
+    function enforceMachineSubscriptions() {
+      clientsDatabase.forEach(c => {
+        (c.fleet || []).forEach(m => ensureMachineSubscription(m, false));
+        const activePaid = (c.fleet || []).filter(m => m.subscriptionStatus !== 'EXPIRED' && m.status === 'ACTIVE').length;
+        c.paidMachinesCount = Math.max(c.paidMachinesCount || 0, activePaid);
+        if (c.fleet && c.fleet.length && c.fleet.every(m => getSubscriptionDaysLeft(m) !== null && getSubscriptionDaysLeft(m) < 0)) {
+          c.status = 'MANUAL_LOCK';
+        }
+      });
+    }
+
+    function getSubscriptionReminderItems() {
+      const items = [];
+      clientsDatabase.forEach(c => (c.fleet || []).forEach((m, idx) => {
+        ensureMachineSubscription(m, false);
+        const days = getSubscriptionDaysLeft(m);
+        if (days !== null && days >= 0 && days <= SUBSCRIPTION_CONFIG.reminderDays && m.status === 'ACTIVE') {
+          items.push({ client:c, machine:m, machineIndex:idx, days });
+        }
+      }));
+      return items;
+    }
+
+    function activatePaidMachines(client, count, plan='28_DAYS') {
+      const fleet = client.fleet || [];
+      let activated = 0;
+      fleet.forEach(m => ensureMachineSubscription(m, false));
+      for (const m of fleet) {
+        if (activated >= count) break;
+        if (m.subscriptionStatus === 'EXPIRED' || m.status === 'ACTIVE') continue;
+        m.subscriptionStart = getTodayISOFormat();
+        m.subscriptionPlan = plan;
+        m.subscriptionExpiry = plan === 'ANNUAL' ? isoAddDays(m.subscriptionStart, 365) : isoAddDays(m.subscriptionStart, 27);
+        m.subscriptionStatus = 'ACTIVE';
+        m.status = 'ACTIVE';
+        m.lastPaymentAmount = plan === 'ANNUAL' ? 3000 : 250;
+        m.lastPaymentDate = getTodayISOFormat();
+        activated++;
+      }
+      client.paidMachinesCount = (fleet || []).filter(m => m.subscriptionStatus === 'ACTIVE').length;
+      client.status = client.paidMachinesCount > 0 ? 'ACTIVE' : client.status;
+      return activated;
+    }
+
+    function getPendingMachineCount(c) {
+      const total = (c.fleet || []).length;
+      const paid = (c.fleet || []).filter(m => m.subscriptionStatus === 'ACTIVE').length;
+      return Math.max(0, total - paid);
+    }
+
+    // =====================================
+    // 📋 SUPER ADMIN FUNCTIONS
     // =====================================
     function renderSuperAdminDashboard() {
       const container = document.getElementById('superAdminClientsList');
@@ -3340,6 +3481,7 @@
               <div>
                 <b style="font-size:14.5px;">🚜 ${m.name}</b>
                 <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">चालक: <b>${m.driver}</b> | PIN: <b>${m.pin}</b></div>
+                <div style="margin-top:5px;">${(() => { const d=getSubscriptionDaysLeft(m); const cls=d===null?'machine-sub-warn':(d<0?'machine-sub-exp':(d<=3?'machine-sub-warn':'machine-sub-ok')); return `<span class="machine-sub-chip ${cls}">${d===null?'Subscription set करा':(d<0?'Expired':d+' days left')} • ${m.subscriptionPlan==='ANNUAL'?'Annual':'28 Days'}</span>`; })()}</div>
               </div>
               <button onclick="toggleMachineStatusDirectly('${client.id}', ${idx})" style="padding:7px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff;">
                 ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
@@ -3349,6 +3491,7 @@
               <button onclick="openEditMachineModal('${client.id}', ${idx})" style="width:100%; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:bold; cursor:pointer;">
                 ✏️ मशीन नाव / चालक बदला (Edit)
               </button>
+              <button class="machine-delete-btn" onclick="deleteMachineFromClient('${client.id}', ${idx})">🗑️ Machine विकली / कायमची Delete</button>
             </div>
           </div>
         `;
@@ -3357,25 +3500,100 @@
 
     function toggleMachineStatusDirectly(clientId, mIdx) {
       const client = clientsDatabase.find(c => c.id === clientId);
-      if (!client || !client.fleet[mIdx]) return;
-      client.fleet[mIdx].status = client.fleet[mIdx].status === 'DEACTIVE' ? 'ACTIVE' : 'DEACTIVE';
+      const m = client && client.fleet ? client.fleet[mIdx] : null;
+      if (!client || !m) return;
+      ensureMachineSubscription(m, false);
+      if (m.status === 'DEACTIVE') {
+        const days = getSubscriptionDaysLeft(m);
+        if (m.subscriptionStatus !== 'ACTIVE' || (days !== null && days < 0)) {
+          alert('ही machine paid/active subscription मध्ये नाही. Payment approve किंवा renewal झाल्यावरच Unlock करता येईल.');
+          return;
+        }
+        m.status = 'ACTIVE';
+      } else {
+        m.status = 'DEACTIVE';
+      }
+      m.subscriptionStatus = m.status === 'ACTIVE' ? 'ACTIVE' : (getSubscriptionDaysLeft(m) < 0 ? 'EXPIRED' : 'PAUSED');
+      client.paidMachinesCount = (client.fleet || []).filter(x => x.subscriptionStatus === 'ACTIVE' && x.status === 'ACTIVE').length;
       syncDataToCloud();
-      renderSaMachine1x1();
+      if (selectedSaClientId === clientId) renderSaMachine1x1();
+      if (currentSessionClient && currentSessionClient.id === clientId) renderClientOwnerView();
+      updateNotificationBellDot();
+    }
+
+    function ensureSubscriptionLedger(client) {
+      if (!client) return;
+      client.subscriptionBilling = client.subscriptionBilling || { receivedAmount: 0, payments: [] };
+      client.subscriptionBilling.payments = Array.isArray(client.subscriptionBilling.payments) ? client.subscriptionBilling.payments : [];
+      client.subscriptionBilling.archivedMachines = Array.isArray(client.subscriptionBilling.archivedMachines) ? client.subscriptionBilling.archivedMachines : [];
+      client.subscriptionBilling.receivedAmount = Number(client.subscriptionBilling.receivedAmount || 0);
+    }
+
+    function recordMachinePayment(client, machine, amount, plan, date) {
+      ensureSubscriptionLedger(client);
+      machine.paymentHistory = Array.isArray(machine.paymentHistory) ? machine.paymentHistory : [];
+      const entry = { date: date || getTodayISOFormat(), machineId: machine.id, machineName: machine.name, plan: plan || '28_DAYS', amount: Number(amount || 0) };
+      machine.paymentHistory.push(entry);
+      client.subscriptionBilling.receivedAmount += entry.amount;
+      client.subscriptionBilling.payments.push(entry);
+    }
+
+    function getSubscriptionReceivedTotal() {
+      let total = 0;
+      clientsDatabase.forEach(c => {
+        ensureSubscriptionLedger(c);
+        total += Number(c.subscriptionBilling.receivedAmount || 0);
+      });
+      return total;
+    }
+
+    function deleteMachineFromClient(clientId, mIdx) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client || !client.fleet || !client.fleet[mIdx]) return;
+      const machine = client.fleet[mIdx];
+      const ok = confirm(`🚜 ${machine.name} ही machine कायमची delete/sold archive करायची आहे का?\n\nMachine All Machines मधून हटेल; पण तिचे subscription payment records कायमचे सुरक्षित राहतील.`);
+      if (!ok) return;
+
+      ensureSubscriptionLedger(client);
+      const paymentHistory = Array.isArray(machine.paymentHistory) ? machine.paymentHistory.slice() : [];
+      const machineReceived = paymentHistory.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+      client.subscriptionBilling.archivedMachines.push({
+        machineId: machine.id, name: machine.name, driver: machine.driver || '',
+        addedOn: machine.subscriptionStart || null, deletedOn: getTodayISOFormat(),
+        reason: 'SOLD/DELETED', paymentsReceived: machineReceived, paymentCount: paymentHistory.length,
+        paymentHistory: paymentHistory
+      });
+      client.fleet.splice(mIdx, 1);
+      client.paidMachinesCount = (client.fleet || []).filter(x => x.subscriptionStatus === 'ACTIVE' && x.status === 'ACTIVE').length;
+      if (!client.fleet.length) client.status = 'MANUAL_LOCK';
+      syncDataToCloud();
+      renderSuperAdminDashboard();
+      renderSaasBusinessPnl();
+      if (selectedSaClientId === clientId) renderSaMachine1x1();
+      if (currentSessionClient && currentSessionClient.id === clientId) renderClientOwnerView();
+      updateNotificationBellDot();
+      updateFrontPagePendingAlert();
+      alert(`✓ ${machine.name} delete झाली.\nआत्तापर्यंतचे ₹${machineReceived.toLocaleString('en-IN')} payment records सुरक्षित ठेवले आहेत.`);
     }
 
     function editClientFeePayment(clientId) {
       const client = clientsDatabase.find(c => c.id === clientId);
       if (!client) return;
-      const total = (client.fleet || []).length;
-      const cur = client.paidMachinesCount !== undefined ? client.paidMachinesCount : total;
-      const input = prompt(`Kiti machines che payment jama zhale? (0 te ${total}):`, cur);
-      if (input !== null && !isNaN(input)) {
-        client.paidMachinesCount = Math.max(0, Math.min(total, parseInt(input)));
-        syncDataToCloud();
-        renderSuperAdminDashboard();
-        renderSaasBusinessPnl();
-        alert("Fee update jhali!");
-      }
+      const pending = getPendingMachineCount(client);
+      if (pending <= 0) { alert('या client ची सर्व machines paid आहेत.'); return; }
+      const input = prompt(`Kiti machine che payment आले? (1 ते ${pending})`, client.pendingPaymentMachines || pending);
+      if (input === null || isNaN(input)) return;
+      const count = Math.max(1, Math.min(pending, parseInt(input)));
+      const plan = prompt('Plan type: 28_DAYS किंवा ANNUAL', client.pendingPaymentPlan || '28_DAYS');
+      const selectedPlan = String(plan || '28_DAYS').toUpperCase() === 'ANNUAL' ? 'ANNUAL' : '28_DAYS';
+      client.pendingPaymentMachines = count;
+      client.pendingPaymentPlan = selectedPlan;
+      client.lastApprovedPlan = selectedPlan;
+      syncDataToCloud();
+      renderSuperAdminDashboard();
+      renderSaasBusinessPnl();
+      updateNotificationBellDot();
+      alert(`✓ ${count} machine चे payment approval साठी तयार आहे. आता Approval section मधून Approve करा.`);
     }
 
     function removeClientAccount(clientId) {
@@ -3389,7 +3607,7 @@
 
     function updateNewClientFeeCalc() {
       const count = parseInt(document.getElementById('newClientMachinesCount').value) || 0;
-      setSafeText('newClientCalculatedFee', `₹ ${count * 250}`);
+      setSafeText('newClientCalculatedFee', `₹ ${count * SUBSCRIPTION_CONFIG.monthlyPrice}`);
     }
 
     function createNewClientAccount() {
@@ -3408,7 +3626,8 @@
 
       let generatedFleet = [];
       for (let i = 1; i <= count; i++) {
-        generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, monthlySalary: 20000, advanceHistory: [] });
+        const startDate = getTodayISOFormat();
+         generatedFleet.push({ id: "M_" + Date.now() + "_" + i, name: `Machine ${i}`, driver: `Chalak ${i}`, pin: `${i}${i}${i}${i}`, status: "DEACTIVE", totalHours: 0.0, monthlySalary: 20000, advanceHistory: [], subscriptionStart: startDate, subscriptionExpiry: isoAddDays(startDate, 27), subscriptionPlan: '28_DAYS', subscriptionStatus: 'PENDING', lastPaymentAmount: 0, paymentHistory: [] });
       }
 
       clientsDatabase.unshift({
@@ -3421,7 +3640,8 @@
         paidMachinesCount: 0,
         currentDieselRate: 92,
         fleet: generatedFleet,
-        dieselHistory: [], operatorHistory: [], dumperHistory: [], pumpPaymentsHistory: []
+        dieselHistory: [], operatorHistory: [], dumperHistory: [], pumpPaymentsHistory: [],
+        subscriptionBilling: { receivedAmount: 0, payments: [], archivedMachines: [] }
       });
 
       syncDataToCloud();
@@ -3446,7 +3666,8 @@
 
       if (!mName || !mPin) { alert("Machine che naav aani 4-anki PIN bhara!"); return; }
 
-      client.fleet.push({ id: "M_" + Date.now(), name: mName, driver: mDriver, pin: mPin, status: "DEACTIVE", totalHours: 0.0, defaultHourlyRate: mRate, monthlySalary: 20000, advanceHistory: [] });
+      const startDate = getTodayISOFormat();
+      client.fleet.push({ id: "M_" + Date.now(), name: mName, driver: mDriver, pin: mPin, status: "DEACTIVE", totalHours: 0.0, defaultHourlyRate: mRate, monthlySalary: 20000, advanceHistory: [], subscriptionStart: startDate, subscriptionExpiry: isoAddDays(startDate, 27), subscriptionPlan: '28_DAYS', subscriptionStatus: 'PENDING', lastPaymentAmount: 0, paymentHistory: [] });
       syncDataToCloud();
       setSafeValue('saAddMachineNameInput', '');
       setSafeValue('saAddMachineDriverInput', '');
@@ -3458,25 +3679,26 @@
     }
 
     function renderSaasBusinessPnl() {
-      let totalMachines = 0, totalReceived = 0, totalPending = 0;
+      let totalMachines = 0, totalReceived = 0, totalPending = 0, archivedMachines = 0;
       clientsDatabase.forEach(c => {
+        ensureSubscriptionLedger(c);
         const fCount = (c.fleet || []).length;
-        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
+        (c.fleet || []).forEach(m => ensureMachineSubscription(m, false));
+        const pCount = (c.fleet || []).filter(m => m.subscriptionStatus === 'ACTIVE').length;
         totalMachines += fCount;
-        totalReceived += (pCount * 250);
-        totalPending += Math.max(0, (fCount - pCount) * 250);
+        archivedMachines += c.subscriptionBilling.archivedMachines.length;
+        totalReceived += Number(c.subscriptionBilling.receivedAmount || 0);
+        totalPending += Math.max(0, (fCount - pCount) * SUBSCRIPTION_CONFIG.monthlyPrice);
       });
 
-      const grossPotential = totalMachines * 250;
-      const progressPercent = grossPotential > 0 ? ((totalReceived / grossPotential) * 100).toFixed(0) : 0;
-
-      setSafeText('saasNetProfit', "₹ " + totalReceived.toLocaleString('en-IN'));
-      setSafeText('saasTotalClientsCount', clientsDatabase.length + " Grahak");
-      setSafeText('saasTotalMachinesCount', totalMachines + " JCB");
-      setSafeText('saasFeeReceived', "₹ " + totalReceived.toLocaleString('en-IN'));
-      setSafeText('saasFeePending', "₹ " + totalPending.toLocaleString('en-IN'));
-      setSafeText('saasGrossBilling', "₹ " + grossPotential.toLocaleString('en-IN'));
-
+      const grossPotential = totalMachines * SUBSCRIPTION_CONFIG.monthlyPrice;
+      const progressPercent = grossPotential > 0 ? Math.min(100, ((totalReceived / grossPotential) * 100)).toFixed(0) : 0;
+      setSafeText('saasNetProfit', '₹ ' + totalReceived.toLocaleString('en-IN'));
+      setSafeText('saasTotalClientsCount', clientsDatabase.length + ' Grahak');
+      setSafeText('saasTotalMachinesCount', totalMachines + ' JCB');
+      setSafeText('saasFeeReceived', '₹ ' + totalReceived.toLocaleString('en-IN'));
+      setSafeText('saasFeePending', '₹ ' + totalPending.toLocaleString('en-IN'));
+      setSafeText('saasGrossBilling', '₹ ' + grossPotential.toLocaleString('en-IN'));
       const bar = document.getElementById('turnoverProgressBar');
       if (bar) bar.style.width = `${progressPercent}%`;
     }
@@ -3519,18 +3741,28 @@
           contentEl.innerHTML += `<div class="panel-card"><b style="color:var(--primary-blue);">👑 ${c.businessName}</b>${html}</div>`;
         });
       } else if (boxType === 'received') {
-        if (titleEl) titleEl.innerText = "Received Payment";
-        if (headerEl) headerEl.innerText = "💳 Received Ledger";
+        if (titleEl) titleEl.innerText = 'Received Payment & History';
+        if (headerEl) headerEl.innerText = '💳 Lifetime Subscription Revenue Ledger';
+        let grandTotal = 0, grandPayments = 0, grandArchived = 0;
         clientsDatabase.forEach(c => {
-          const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-          if (pCount > 0) {
-            contentEl.innerHTML += `
-              <div class="data-item-card" style="border-left:4px solid var(--accent-green);">
-                <b>${c.businessName}</b> <span style="float:right; color:var(--accent-green); font-weight:bold;">₹ ${pCount * 250}</span>
-                <div style="font-size:11px; color:#64748b;">Paid for: ${pCount} Machines</div>
-              </div>`;
-          }
+          ensureSubscriptionLedger(c);
+          const total = Number(c.subscriptionBilling.receivedAmount || 0);
+          const payments = c.subscriptionBilling.payments || [];
+          const archived = c.subscriptionBilling.archivedMachines || [];
+          grandTotal += total; grandPayments += payments.length; grandArchived += archived.length;
+          contentEl.innerHTML += `
+            <div class="data-item-card" style="border-left:4px solid var(--accent-green);">
+              <div style="display:flex;justify-content:space-between;gap:8px;"><b>${c.businessName}</b><b style="color:var(--accent-green);">₹ ${total.toLocaleString('en-IN')}</b></div>
+              <div style="font-size:11px;color:#64748b;margin-top:3px;">${payments.length} payment entries • ${archived.length} sold/deleted machines archived</div>
+              ${(payments.length ? payments.slice().reverse().slice(0,8).map(p => `<div style="font-size:10.5px;margin-top:5px;padding:6px;background:#f0fdf4;border-radius:6px;">${p.date} • 🚜 ${p.machineName || 'Machine'} • ${p.plan || '28_DAYS'} • <b>₹${Number(p.amount||0).toLocaleString('en-IN')}</b></div>`).join('') : '<div style="font-size:11px;color:#94a3b8;margin-top:5px;">No payment history yet</div>')}
+              ${(archived.length ? archived.map(a => `<div class="machine-archive-card"><b>🗃️ ${a.name}</b><div style="font-size:10.5px;color:#9a3412;margin-top:3px;">Sold/Deleted: ${a.deletedOn || '-'} • Lifetime Received: <b>₹${Number(a.paymentsReceived||0).toLocaleString('en-IN')}</b> • ${a.paymentCount||0} payments</div></div>`).join('') : '')}
+            </div>`;
         });
+        contentEl.innerHTML = `<div class="saas-ledger-summary">
+          <div class="saas-ledger-card"><div class="saas-ledger-value" style="color:var(--accent-green);">₹${grandTotal.toLocaleString('en-IN')}</div><div class="saas-ledger-label">LIFETIME RECEIVED</div></div>
+          <div class="saas-ledger-card"><div class="saas-ledger-value">${grandPayments}</div><div class="saas-ledger-label">PAYMENT ENTRIES</div></div>
+          <div class="saas-ledger-card"><div class="saas-ledger-value">${grandArchived}</div><div class="saas-ledger-label">SOLD / DELETED</div></div>
+        </div>` + contentEl.innerHTML;
       } else if (boxType === 'pending') {
         if (titleEl) titleEl.innerText = "Pending Fee";
         if (headerEl) headerEl.innerText = "⚠️ Pending Requests";
@@ -3578,7 +3810,7 @@
         const unpaidMachines = Math.max(0, totalFleet - paidCount);
 
         if (c.status === "PENDING_APPROVAL") {
-          pendingList.push({ clientId: c.id, name: c.businessName, amount: totalFleet * 250, desc: `Navin Grahak: ${totalFleet} Machines` });
+          pendingList.push({ clientId: c.id, name: c.businessName, amount: (c.pendingPaymentMachines || totalFleet) * 250, desc: `Payment Approval: ${c.pendingPaymentMachines || totalFleet} Machines` });
         } else if (unpaidMachines > 0) {
           pendingList.push({ clientId: c.id, name: c.businessName, amount: unpaidMachines * 250, desc: `${unpaidMachines} Navin Machine Baki` });
         }
@@ -3609,16 +3841,28 @@
       });
     }
 
-    function approveClientPayment(clientId) {
+    function approveClientPayment(clientId, requestedCount) {
       const client = clientsDatabase.find(c => c.id === clientId);
       if (!client) return;
-      client.paidMachinesCount = (client.fleet || []).length;
-      client.status = "ACTIVE";
-      (client.fleet || []).forEach(m => m.status = "ACTIVE");
+      enforceMachineSubscriptions();
+      const pending = getPendingMachineCount(client);
+      const count = Math.max(1, Math.min(pending, parseInt(requestedCount || client.pendingPaymentMachines || pending)));
+      const activated = activatePaidMachines(client, count, client.pendingPaymentPlan || '28_DAYS');
+      client.pendingPaymentMachines = 0;
+      client.pendingPaymentPlan = null;
+      ensureSubscriptionLedger(client);
+      const approvedPlan = client.lastApprovedPlan || '28_DAYS';
+      const unitAmount = approvedPlan === 'ANNUAL' ? SUBSCRIPTION_CONFIG.annualPrice : SUBSCRIPTION_CONFIG.monthlyPrice;
+      const paidMachines = (client.fleet || []).filter(m => m.subscriptionStatus === 'ACTIVE');
+      paidMachines.slice(-activated).forEach(m => recordMachinePayment(client, m, unitAmount, approvedPlan));
+      client.lastApprovedPlan = null;
+      client.paidMachinesCount = (client.fleet || []).filter(m => m.subscriptionStatus === 'ACTIVE').length;
+      if (client.paidMachinesCount > 0) client.status = 'ACTIVE';
       syncDataToCloud();
       renderSuperAdminDashboard();
       renderSaasBusinessPnl();
-      alert(`✓ ${client.businessName} che payment approve zale!`);
+      updateNotificationBellDot();
+      alert(`✓ ${client.businessName} साठी ${activated} machine payment approve झाले. बाकी machine चा data सुरक्षित आहे.`);
     }
 
     function rejectClientPayment(clientId) {
@@ -3690,56 +3934,72 @@
       const dot = document.getElementById('notifBadgeDot');
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
       const isSuper = saved && (saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin);
-
-      if (!isSuper) {
-        if (bellBtn) bellBtn.style.display = 'none';
-        return;
-      }
+      if (!isSuper) { if (bellBtn) bellBtn.style.display = 'none'; return; }
       if (bellBtn) bellBtn.style.display = 'flex';
-      let count = 0;
-      clientsDatabase.forEach(c => {
-        const fCount = (c.fleet || []).length;
-        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-        if (fCount > pCount || c.status === "PENDING_APPROVAL") count++;
-      });
+      enforceMachineSubscriptions();
+      const count = clientsDatabase.filter(c => c.status === 'PENDING_APPROVAL' || getPendingMachineCount(c) > 0 || (c.fleet || []).some(m => { const d=getSubscriptionDaysLeft(m); return d !== null && d >= 0 && d <= 3 && m.status === 'ACTIVE'; })).length;
       if (dot) dot.style.display = count > 0 ? 'block' : 'none';
     }
 
-    function toggleNotificationModal(show) {
-      const m = document.getElementById('notificationModal');
-      if (m) m.style.display = show ? 'flex' : 'none';
+    function toggleNotificationModal(show) { const m=document.getElementById('notificationModal'); if(m) m.style.display=show?'flex':'none'; }
+
+    function sendSubscriptionReminderToAll() {
+      const items = getSubscriptionReminderItems();
+      if (!items.length) { alert('सध्या 3 दिवसांच्या आत subscription संपणारी machine नाही.'); return; }
+      const msg = 'JCB Fleet Pro Subscription Reminder\n\n' + items.map(x => `${x.client.businessName} - ${x.machine.name}: ${x.days} दिवस बाकी`).join('\n') + '\n\nकृपया subscription payment करा.';
+      const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
     }
 
     function openNotificationModal() {
       const saved = JSON.parse(localStorage.getItem('jcb_active_session'));
-      if (!saved || !(saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin)) {
-        alert("Phakta Super Admin la ya soochna pahnyacha adhikar ahe!");
-        return;
-      }
-
+      if (!saved || !(saved.type === 'SUPER_ADMIN' || saved.isSuperAdmin)) { alert('Phakta Super Admin la ya soochna pahnyacha adhikar ahe!'); return; }
+      enforceMachineSubscriptions();
       const listContainer = document.getElementById('notificationListContainer');
       if (!listContainer) return;
-      listContainer.innerHTML = '';
-      let has = false;
-
+      const approvals = [];
+      const reminders = getSubscriptionReminderItems();
+      const pendingFees = [];
       clientsDatabase.forEach(c => {
-        const fCount = (c.fleet || []).length;
-        const pCount = (c.paidMachinesCount !== undefined) ? c.paidMachinesCount : 0;
-        const unpaid = fCount - pCount;
-
-        if (unpaid > 0 || c.status === "PENDING_APPROVAL") {
-          has = true;
-          listContainer.innerHTML += `
-            <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
-              <b>${c.businessName}</b>
-              <div style="font-size:12px; margin:3px 0;">Baki Rakkam: <b style="color:red;">₹ ${unpaid * 250}</b> (${unpaid} Machines Pending)</div>
-              <button onclick="approveClientPayment('${c.id}'); toggleNotificationModal(false);" style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">✓ Approve Payment</button>
-            </div>
-          `;
-        }
+        const pending = getPendingMachineCount(c);
+        if (c.status === 'PENDING_APPROVAL' || (c.pendingPaymentMachines || 0) > 0) approvals.push(c);
+        if (pending > 0) pendingFees.push({c, pending});
       });
+      const totalPendingMachines = pendingFees.reduce((a, x) => a + x.pending, 0);
+      const totalApprovalMachines = approvals.reduce((a, c) => a + (c.pendingPaymentMachines || getPendingMachineCount(c)), 0);
+      let html = `
+        <div style="background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:14px;padding:13px;margin-bottom:10px;">
+          <div style="font-size:17px;font-weight:900;">🔔 Smart Subscription Center</div>
+          <div style="font-size:10.5px;color:#cbd5e1;margin-top:3px;">Payment, reminder आणि machine lock status एकाच ठिकाणी</div>
+        </div>
+        <div class="notif-summary-grid">
+          <div class="notif-summary-card"><div class="notif-summary-num" style="color:#d97706;">${totalApprovalMachines}</div><div class="notif-summary-label">APPROVAL MACHINES</div></div>
+          <div class="notif-summary-card"><div class="notif-summary-num" style="color:#7c3aed;">${reminders.length}</div><div class="notif-summary-label">3-DAY REMINDERS</div></div>
+          <div class="notif-summary-card"><div class="notif-summary-num" style="color:#dc2626;">${totalPendingMachines}</div><div class="notif-summary-label">UNPAID MACHINES</div></div>
+        </div>`;
 
-      if (!has) listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#10b981;">✅ Kontahi Alert Nahi!</div>`;
+      html += `<div class="notif-section notif-approval"><div class="notif-section-head" style="background:#fffbeb;color:#92400e;">1️⃣ Approval <span>${approvals.length} client</span></div><div class="notif-section-body">`;
+      if (approvals.length) approvals.forEach(c => {
+        const n = c.pendingPaymentMachines || getPendingMachineCount(c) || (c.fleet||[]).length;
+        const plan = c.pendingPaymentPlan === 'ANNUAL' ? 'Annual' : '28 Days';
+        const amount = n * (c.pendingPaymentPlan === 'ANNUAL' ? SUBSCRIPTION_CONFIG.annualPrice : SUBSCRIPTION_CONFIG.monthlyPrice);
+        html += `<div class="data-item-card"><b>${c.businessName}</b><div style="font-size:11px;margin:3px 0;">${n} machine payment • ${plan} • ₹${amount}</div><button onclick="approveClientPayment('${c.id}', ${n}); openNotificationModal();" class="btn-submit btn-green" style="margin-top:5px;">✓ Approve Payment</button></div>`;
+      }); else html += `<div style="padding:8px;color:#15803d;font-size:12px;">✓ Approval pending नाही.</div>`;
+      html += `</div></div>`;
+
+      html += `<div class="notif-section notif-reminder"><div class="notif-section-head" style="background:#f5f3ff;color:#6d28d9;">2️⃣ Reminder Message <span>${reminders.length} machine</span></div><div class="notif-section-body">`;
+      if (reminders.length) {
+        reminders.forEach(x => { html += `<div class="data-item-card"><b>${x.client.businessName}</b> — 🚜 ${x.machine.name}<div style="font-size:11px;color:#6d28d9;margin-top:3px;">⏳ Subscription फक्त <b>${x.days} दिवस</b> मध्ये संपेल.</div></div>`; });
+        html += `<button class="notif-send-all" onclick="sendSubscriptionReminderToAll()">📲 सर्व reminder एकाच क्लिकवर WhatsApp Share</button>`;
+      } else html += `<div style="padding:8px;color:#15803d;font-size:12px;">✓ पुढील 3 दिवसांत expiry नाही.</div>`;
+      html += `</div></div>`;
+
+      html += `<div class="notif-section notif-pending"><div class="notif-section-head" style="background:#fef2f2;color:#b91c1c;">3️⃣ Pending Fees <span>${totalPendingMachines} machine</span></div><div class="notif-section-body">`;
+      if (pendingFees.length) pendingFees.forEach(x => {
+        html += `<div class="data-item-card"><div style="display:flex;justify-content:space-between;gap:8px;"><b>${x.c.businessName}</b><span style="font-size:10px;background:#fee2e2;color:#b91c1c;padding:3px 6px;border-radius:6px;font-weight:900;">${x.pending} BAKI</span></div><div style="font-size:11px;color:#b91c1c;margin-top:4px;">💰 ${x.pending} machine चे payment बाकी • ₹${x.pending * SUBSCRIPTION_CONFIG.monthlyPrice}</div><div style="font-size:10px;color:#64748b;margin-top:3px;">Paid: ${(x.c.fleet||[]).filter(m=>m.subscriptionStatus==='ACTIVE').length} / Total: ${(x.c.fleet||[]).length}</div><button onclick="editClientFeePayment('${x.c.id}')" style="margin-top:6px;width:100%;padding:7px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;font-weight:800;cursor:pointer;">✏️ Payment Count / Plan</button></div>`;
+      }); else html += `<div style="padding:8px;color:#15803d;font-size:12px;">✓ सर्व machines चे payment paid आहे.</div>`;
+      html += `</div></div>`;
+      listContainer.innerHTML = html;
       toggleNotificationModal(true);
     }
 
@@ -3758,6 +4018,7 @@
     // 🚀 INITIALIZATION & SESSION RESTORE
     // =====================================
     window.addEventListener('DOMContentLoaded', () => {
+      enforceMachineSubscriptions();
       renderSuperAdminDashboard();
       renderSaasBusinessPnl();
       updateNotificationBellDot();
@@ -3769,6 +4030,7 @@
           const cloudData = snapshot.val();
           if (cloudData && cloudData.clients) {
             clientsDatabase = cloudData.clients;
+            enforceMachineSubscriptions();
             if (cloudData.expenses) saasExpensesDatabase = cloudData.expenses;
             renderSuperAdminDashboard();
             renderSaasBusinessPnl();
@@ -3799,6 +4061,11 @@
           if (client) {
             const m = (client.fleet || []).find(m => m.id === saved.machineId);
             if (m) {
+              ensureMachineSubscription(m, false);
+              if (m.status === 'DEACTIVE' || (getSubscriptionDaysLeft(m) !== null && getSubscriptionDaysLeft(m) < 0)) {
+                localStorage.removeItem('jcb_active_session');
+                return;
+              }
               currentSessionClient = client;
               currentSessionMachine = m;
               updateOperatorConsoleUI();

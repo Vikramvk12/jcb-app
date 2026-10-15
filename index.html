@@ -520,12 +520,27 @@
     }
 
     @media print {
-      body * { visibility: hidden; }
-      #screenOwnerBillingPage, #screenOwnerBillingPage * { visibility: visible; }
-      #screenOwnerBillingPage { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; }
+      body * { visibility: hidden !important; }
+      #partyBillPrintArea, #partyBillPrintArea * { visibility: visible !important; }
+      #partyBillPrintArea { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; padding: 18px !important; }
       .no-print { display: none !important; }
     }
+    .party-bill-paper {
+      background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:18px;
+      margin-top:12px; box-shadow:0 3px 12px rgba(0,0,0,.05);
+    }
+    .party-bill-head { text-align:center; border-bottom:2px solid #1a73e8; padding-bottom:10px; margin-bottom:12px; }
+    .party-bill-title { font-size:20px; font-weight:900; color:#1e293b; }
+    .party-bill-row { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px dashed #e2e8f0; font-size:12px; }
+    .party-bill-total { font-size:18px; font-weight:900; color:#1a73e8; padding-top:10px; }
+    .salary-pay-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+    .salary-mini { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px; font-size:11px; }
+
   </style>
+
+  <!-- PDF generation library for Party Bills -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 <body>
 
@@ -1224,6 +1239,25 @@
         <button class="btn-submit btn-amber" onclick="saveOperatorAdvanceEntry()">💾 Uchhal Save Kara</button>
       </div>
 
+      <div class="panel-card" style="border:1.5px solid var(--accent-green); background:#f0fdf4;">
+        <div class="panel-header" style="color:#047857;">💰 Operator Pagar Jama Kara</div>
+        <div class="grid-2">
+          <div>
+            <label>Machine / Operator:</label>
+            <select id="salaryPayMachineSelect"></select>
+          </div>
+          <div>
+            <label>Jama Rakkam (₹):</label>
+            <input type="number" id="salaryPayAmountInput" placeholder="uda. 15000">
+          </div>
+        </div>
+        <label>Payment Date:</label>
+        <input type="date" id="salaryPayDateInput">
+        <label>Remark:</label>
+        <input type="text" id="salaryPayRemarkInput" placeholder="uda. October Salary">
+        <button class="btn-submit btn-green" onclick="saveOperatorSalaryPayment()">✓ Pagar Jama Save Kara</button>
+      </div>
+
       <div class="panel-card">
         <div class="panel-header">👷 Operator Pagar & Advance Khate</div>
         <div id="operatorSalarySummaryList"></div>
@@ -1245,28 +1279,75 @@
     <!-- OWNER PAGES: PARTY BHADE & PDF BILL -->
     <div id="screenOwnerBillingPage" class="screen">
       <button class="btn-nav no-print" id="btnBackBilling" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
-      <div class="panel-card">
+      <div class="panel-card no-print">
         <div class="panel-header">📝 Party Bhade Hishob & PDF Bill</div>
-        <div class="grid-2 no-print">
+
+        <div class="grid-2">
           <div><label>Machine:</label><select id="billMachineSelect" onchange="autoLoadPartiesForSelectedMachine()"></select></div>
-          <div><label>Party:</label><select id="billPartySelect" onchange="autoSumPartyHours()"></select></div>
+          <div><label>Party:</label><select id="billPartySelect" onchange="loadPartyContact(); autoSumPartyHours();"></select></div>
         </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Party Mobile / WhatsApp No.:</label>
+            <input type="tel" id="billPartyMobile" inputmode="numeric" maxlength="15" placeholder="98XXXXXXXX">
+          </div>
+          <div>
+            <label>Bill Date:</label>
+            <input type="date" id="billDateInput">
+          </div>
+        </div>
+
+        <label>Bill Number:</label>
+        <input type="text" id="billNumberInput" placeholder="Auto bill number">
+
         <div style="background:#e8f0fe; padding:10px; border-radius:8px; margin:10px 0;">
           <div style="display:flex; justify-content:space-between; font-size:13px;">
             <span>Ekun Taas:</span><b id="billAutoHoursTotal" style="color:var(--primary-blue);">0.0 Taas</b>
           </div>
         </div>
+
         <div class="grid-2">
           <div><label>Dar (₹/Taas):</label><input type="number" id="custHourlyRate" value="2000" oninput="calculateOngoingRent()"></div>
           <div><label>Ekun Taas:</label><input type="number" step="0.1" id="custTodayHours" oninput="calculateOngoingRent()"></div>
         </div>
-        <label>Advance Jama (₹):</label><input type="number" id="custAdvancePaid" value="0" oninput="calculateOngoingRent()">
+
+        <label>Advance Jama (₹):</label>
+        <input type="number" id="custAdvancePaid" value="0" oninput="calculateOngoingRent()">
+
         <div style="background:#f8fafc; padding:12px; border-radius:8px; margin:12px 0;">
+          <div class="pnl-row"><span>Gross Bill:</span><b id="livePartyGrossAmt">₹ 0</b></div>
+          <div class="pnl-row"><span>Advance:</span><b id="livePartyAdvanceAmt">₹ 0</b></div>
           <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:var(--accent-red);">
             <span>Baki Shillak:</span><b id="livePartyPendingAmt">₹ 0</b>
           </div>
         </div>
-        <button class="btn-submit btn-blue no-print" onclick="window.print()">🖨️ PDF Bill Print Kara</button>
+
+        <div class="grid-2">
+          <button class="btn-submit btn-blue" onclick="generatePartyBillPDF()">📄 PDF Bill Banva</button>
+          <button class="btn-submit btn-green" onclick="sharePartyBillWhatsApp()">📲 WhatsApp Bill</button>
+        </div>
+        <button class="btn-submit" style="background:#334155;color:#fff;" onclick="printPartyBill()">🖨️ Bill Print Kara</button>
+      </div>
+
+      <div id="partyBillPrintArea" class="party-bill-paper">
+        <div class="party-bill-head">
+          <div class="party-bill-title">🚜 JCB FLEET PRO</div>
+          <div style="font-size:12px;color:#64748b;">PARTY RENT BILL</div>
+        </div>
+        <div class="party-bill-row"><span>Bill No.</span><b id="printBillNumber">-</b></div>
+        <div class="party-bill-row"><span>Date</span><b id="printBillDate">-</b></div>
+        <div class="party-bill-row"><span>Party</span><b id="printPartyName">-</b></div>
+        <div class="party-bill-row"><span>Mobile / WhatsApp</span><b id="printPartyMobile">-</b></div>
+        <div class="party-bill-row"><span>Machine</span><b id="printMachineName">-</b></div>
+        <div class="party-bill-row"><span>Total Hours</span><b id="printBillHours">0.0</b></div>
+        <div class="party-bill-row"><span>Rate / Hour</span><b id="printBillRate">₹ 0</b></div>
+        <div class="party-bill-row"><span>Gross Amount</span><b id="printBillGross">₹ 0</b></div>
+        <div class="party-bill-row"><span>Advance Paid</span><b id="printBillAdvance">₹ 0</b></div>
+        <div class="party-bill-total" style="display:flex;justify-content:space-between;">
+          <span>NET BALANCE</span><span id="printBillPending">₹ 0</span>
+        </div>
+        <div style="margin-top:22px;font-size:10px;color:#64748b;text-align:center;">Thank you. Please keep this bill for your records.</div>
       </div>
     </div>
 
@@ -2663,36 +2744,65 @@
     function renderOperatorSalarySummary() {
       const container = document.getElementById('operatorSalarySummaryList');
       const select = document.getElementById('advMachineSelect');
+      const paySelect = document.getElementById('salaryPayMachineSelect');
       if (!container || !currentSessionClient) return;
       container.innerHTML = '';
       if (select) select.innerHTML = '';
+      if (paySelect) paySelect.innerHTML = '';
 
       (currentSessionClient.fleet || []).forEach((m, idx) => {
         if (select) select.innerHTML += `<option value="${idx}">${m.driver} (${m.name})</option>`;
-        const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
-        const sal = parseFloat(m.monthlySalary) || 20000;
-        const bal = sal - totalUchhal;
+        if (paySelect) paySelect.innerHTML += `<option value="${idx}">${m.driver} (${m.name})</option>`;
 
-        let advLogsHtml = '';
-        (m.advanceHistory || []).forEach(a => {
-          advLogsHtml += `<div style="font-size:10.5px; color:#64748b; margin-top:2px;">• ${a.date}: <b style="color:var(--accent-red);">₹${a.amount}</b> (${a.remark || 'Uchhal'})</div>`;
-        });
+        const totalUchhal = (m.advanceHistory || []).reduce((sum, a) => sum + (parseFloat(a.amount) || 0), 0);
+        const totalPaid = (m.salaryPaymentHistory || []).reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+        const sal = parseFloat(m.monthlySalary) || 20000;
+        const balance = Math.max(0, sal - totalUchhal - totalPaid);
+
+        let advLogsHtml = (m.advanceHistory || []).map(a =>
+          `<div style="font-size:10.5px;color:#64748b;margin-top:2px;">• Advance ${a.date}: <b style="color:var(--accent-red);">₹${Number(a.amount).toFixed(0)}</b> (${a.remark || 'Uchhal'})</div>`
+        ).join('');
+
+        let payLogsHtml = (m.salaryPaymentHistory || []).map(p =>
+          `<div style="font-size:10.5px;color:#64748b;margin-top:2px;">• Salary Paid ${p.date}: <b style="color:var(--accent-green);">₹${Number(p.amount).toFixed(0)}</b> (${p.remark || 'Salary'})</div>`
+        ).join('');
 
         container.innerHTML += `
           <div class="data-item-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
               <b>👷 ${m.driver} (${m.name})</b>
-              <button onclick="editDriverSalaryPrompt(${idx})" style="background:#e0f2fe; color:#0284c7; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">✏️ Pagar Badla</button>
+              <button onclick="editDriverSalaryPrompt(${idx})" style="background:#e0f2fe;color:#0284c7;border:none;padding:4px 8px;border-radius:4px;font-size:10px;font-weight:bold;cursor:pointer;">✏️ Monthly Pagar</button>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-top:6px; padding-bottom:6px; border-bottom:1px dashed #e2e8f0;">
-              <span>Pagar: <b>₹${sal}</b></span>
-              <span>Uchhal: <b style="color:var(--accent-red);">₹${totalUchhal}</b></span>
-              <span>Shillak: <b style="color:var(--accent-green);">₹${bal > 0 ? bal : 0}</b></span>
+            <div class="salary-pay-row">
+              <div class="salary-mini">Monthly Pagar<br><b>₹${sal.toFixed(0)}</b></div>
+              <div class="salary-mini">Advance/Uchhal<br><b style="color:var(--accent-red);">₹${totalUchhal.toFixed(0)}</b></div>
+              <div class="salary-mini">Salary Paid<br><b style="color:var(--accent-green);">₹${totalPaid.toFixed(0)}</b></div>
+              <div class="salary-mini">Remaining<br><b style="color:${balance > 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">₹${balance.toFixed(0)}</b></div>
             </div>
-            ${advLogsHtml}
+            ${advLogsHtml}${payLogsHtml}
           </div>
         `;
       });
+    }
+
+    function saveOperatorSalaryPayment() {
+      if (!currentSessionClient) return;
+      const select = document.getElementById('salaryPayMachineSelect');
+      const amt = parseFloat(document.getElementById('salaryPayAmountInput').value) || 0;
+      const date = document.getElementById('salaryPayDateInput').value || getTodayStandardDate();
+      const remark = document.getElementById('salaryPayRemarkInput').value.trim() || 'Salary';
+      if (!select || amt <= 0) { alert("Krupaya pagarachi rakkam taka!"); return; }
+
+      const m = currentSessionClient.fleet[parseInt(select.value)];
+      if (!m) return;
+      if (!m.salaryPaymentHistory) m.salaryPaymentHistory = [];
+      m.salaryPaymentHistory.unshift({ date, amount: amt, remark });
+      syncDataToCloud();
+
+      setSafeValue('salaryPayAmountInput', '');
+      setSafeValue('salaryPayRemarkInput', '');
+      renderOperatorSalarySummary();
+      alert(`✓ ₹${amt} pagar ${m.driver} chya khatyat jama zala!`);
     }
 
     function saveOperatorAdvanceEntry() {
@@ -2729,6 +2839,40 @@
       }
     }
 
+    function getBillTodayISO() {
+      const d = new Date();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${d.getFullYear()}-${m}-${day}`;
+    }
+
+    function ensurePartyContacts() {
+      if (!currentSessionClient.partyContacts) currentSessionClient.partyContacts = {};
+      return currentSessionClient.partyContacts;
+    }
+
+    function getSelectedBillParty() {
+      const p = document.getElementById('billPartySelect');
+      return p ? p.value : '';
+    }
+
+    function loadPartyContact() {
+      if (!currentSessionClient) return;
+      const party = getSelectedBillParty();
+      const contacts = ensurePartyContacts();
+      setSafeValue('billPartyMobile', contacts[party] || '');
+      updatePartyBillPreview();
+    }
+
+    function savePartyContact() {
+      if (!currentSessionClient) return;
+      const party = getSelectedBillParty();
+      const mobile = (document.getElementById('billPartyMobile')?.value || '').replace(/\D/g,'');
+      if (party) ensurePartyContacts()[party] = mobile;
+      syncDataToCloud();
+      return mobile;
+    }
+
     function openOwnerBillingPage() {
       const select = document.getElementById('billMachineSelect');
       if (!select || !currentSessionClient) return;
@@ -2736,7 +2880,10 @@
       (currentSessionClient.fleet || []).forEach((m, idx) => {
         select.innerHTML += `<option value="${idx}">${m.name}</option>`;
       });
+      setSafeValue('billDateInput', getBillTodayISO());
+      setSafeValue('billNumberInput', 'BILL-' + Date.now().toString().slice(-6));
       autoLoadPartiesForSelectedMachine();
+      updatePartyBillPreview();
     }
 
     function autoLoadPartiesForSelectedMachine() {
@@ -2758,9 +2905,10 @@
 
       partySelect.innerHTML = '';
       partiesSet.forEach(p => {
-        partySelect.innerHTML += `<option value="${p}">${p}</option>`;
+        partySelect.innerHTML += `<option value="${String(p).replace(/"/g,'&quot;')}">${p}</option>`;
       });
 
+      loadPartyContact();
       autoSumPartyHours();
     }
 
@@ -2775,9 +2923,7 @@
 
       let sumH = 0;
       (currentSessionClient.operatorHistory || []).forEach(h => {
-        if (h.machine === m.name && h.party === party) {
-          sumH += parseFloat(h.hours) || 0;
-        }
+        if (h.machine === m.name && h.party === party) sumH += parseFloat(h.hours) || 0;
       });
 
       setSafeValue('custTodayHours', sumH.toFixed(1));
@@ -2785,11 +2931,149 @@
     }
 
     function calculateOngoingRent() {
-      const h = parseFloat(document.getElementById('custTodayHours').value) || 0;
-      const r = parseFloat(document.getElementById('custHourlyRate').value) || 2000;
-      const a = parseFloat(document.getElementById('custAdvancePaid').value) || 0;
-      setSafeText('livePartyPendingAmt', `₹ ${((h * r) - a).toFixed(0)}`);
+      const h = parseFloat(document.getElementById('custTodayHours')?.value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate')?.value) || 2000;
+      const a = parseFloat(document.getElementById('custAdvancePaid')?.value) || 0;
+      const gross = h * r;
+      const pending = Math.max(0, gross - a);
+      setSafeText('livePartyGrossAmt', `₹ ${gross.toFixed(0)}`);
+      setSafeText('livePartyAdvanceAmt', `₹ ${a.toFixed(0)}`);
+      setSafeText('livePartyPendingAmt', `₹ ${pending.toFixed(0)}`);
       setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
+      updatePartyBillPreview();
+    }
+
+    function updatePartyBillPreview() {
+      if (!document.getElementById('partyBillPrintArea')) return;
+      const m = currentSessionClient?.fleet?.[parseInt(document.getElementById('billMachineSelect')?.value)] || null;
+      const party = getSelectedBillParty() || '-';
+      const mobile = (document.getElementById('billPartyMobile')?.value || '').replace(/\D/g,'') || '-';
+      const billNo = document.getElementById('billNumberInput')?.value || '-';
+      const date = document.getElementById('billDateInput')?.value || getBillTodayISO();
+      const h = parseFloat(document.getElementById('custTodayHours')?.value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate')?.value) || 0;
+      const a = parseFloat(document.getElementById('custAdvancePaid')?.value) || 0;
+      const gross = h*r;
+      const pending = Math.max(0, gross-a);
+
+      setSafeText('printBillNumber', billNo);
+      setSafeText('printBillDate', date);
+      setSafeText('printPartyName', party);
+      setSafeText('printPartyMobile', mobile);
+      setSafeText('printMachineName', m ? m.name : '-');
+      setSafeText('printBillHours', h.toFixed(1));
+      setSafeText('printBillRate', `₹ ${r.toFixed(0)}`);
+      setSafeText('printBillGross', `₹ ${gross.toFixed(0)}`);
+      setSafeText('printBillAdvance', `₹ ${a.toFixed(0)}`);
+      setSafeText('printBillPending', `₹ ${pending.toFixed(0)}`);
+    }
+
+    function buildBillText() {
+      updatePartyBillPreview();
+      const party = getSelectedBillParty() || 'Party';
+      const mobile = (document.getElementById('billPartyMobile')?.value || '').replace(/\D/g,'');
+      const billNo = document.getElementById('billNumberInput')?.value || '';
+      const h = parseFloat(document.getElementById('custTodayHours')?.value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate')?.value) || 0;
+      const a = parseFloat(document.getElementById('custAdvancePaid')?.value) || 0;
+      const gross = h*r;
+      const pending = Math.max(0, gross-a);
+      return `JCB FLEET PRO BILL%0AParty: ${party}%0ABill No: ${billNo}%0AHours: ${h.toFixed(1)}%0ARate: ₹${r.toFixed(0)}/hr%0AGross: ₹${gross.toFixed(0)}%0AAdvance: ₹${a.toFixed(0)}%0ABalance: ₹${pending.toFixed(0)}`;
+    }
+
+    function generatePartyBillPDF() {
+      if (!currentSessionClient) return;
+      savePartyContact();
+      updatePartyBillPreview();
+
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert("PDF library load zali nahi. Internet on karun page reload kara.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit:'mm', format:'a4' });
+      const m = currentSessionClient.fleet?.[parseInt(document.getElementById('billMachineSelect')?.value)] || {};
+      const party = getSelectedBillParty() || 'General Work';
+      const mobile = (document.getElementById('billPartyMobile')?.value || '').replace(/\D/g,'') || '-';
+      const billNo = document.getElementById('billNumberInput')?.value || 'BILL';
+      const date = document.getElementById('billDateInput')?.value || getBillTodayISO();
+      const h = parseFloat(document.getElementById('custTodayHours')?.value) || 0;
+      const r = parseFloat(document.getElementById('custHourlyRate')?.value) || 0;
+      const a = parseFloat(document.getElementById('custAdvancePaid')?.value) || 0;
+      const gross = h*r;
+      const pending = Math.max(0, gross-a);
+
+      doc.setFontSize(20); doc.text('JCB FLEET PRO', 105, 20, {align:'center'});
+      doc.setFontSize(13); doc.text('PARTY RENT BILL', 105, 28, {align:'center'});
+      doc.line(15, 33, 195, 33);
+      doc.setFontSize(11);
+      const rows = [
+        ['Bill No.', billNo], ['Date', date], ['Party', party], ['Mobile / WhatsApp', mobile],
+        ['Machine', m.name || '-'], ['Total Hours', h.toFixed(1)], ['Rate / Hour', 'Rs. ' + r.toFixed(0)],
+        ['Gross Amount', 'Rs. ' + gross.toFixed(0)], ['Advance Paid', 'Rs. ' + a.toFixed(0)],
+        ['NET BALANCE', 'Rs. ' + pending.toFixed(0)]
+      ];
+      let y=45;
+      rows.forEach((row,i) => {
+        doc.text(String(row[0]), 20, y);
+        doc.text(String(row[1]), 190, y, {align:'right'});
+        doc.line(20, y+3, 190, y+3);
+        y += 10;
+      });
+      doc.setFontSize(9);
+      doc.text('Thank you. Please keep this bill for your records.', 105, 165, {align:'center'});
+      doc.save(`${billNo || 'JCB-Bill'}.pdf`);
+      alert("✓ PDF bill download zala.");
+    }
+
+    async function sharePartyBillWhatsApp() {
+      if (!currentSessionClient) return;
+      const mobile = savePartyContact();
+      updatePartyBillPreview();
+
+      // Generate a PDF file and use the native Share Sheet where supported.
+      if (window.jspdf && window.jspdf.jsPDF && navigator.share && navigator.canShare) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit:'mm', format:'a4' });
+        const m = currentSessionClient.fleet?.[parseInt(document.getElementById('billMachineSelect')?.value)] || {};
+        const party = getSelectedBillParty() || 'General Work';
+        const billNo = document.getElementById('billNumberInput')?.value || 'BILL';
+        const date = document.getElementById('billDateInput')?.value || getBillTodayISO();
+        const h = parseFloat(document.getElementById('custTodayHours')?.value) || 0;
+        const r = parseFloat(document.getElementById('custHourlyRate')?.value) || 0;
+        const a = parseFloat(document.getElementById('custAdvancePaid')?.value) || 0;
+        const gross = h*r, pending = Math.max(0,gross-a);
+
+        doc.setFontSize(20); doc.text('JCB FLEET PRO', 105, 20, {align:'center'});
+        doc.setFontSize(13); doc.text('PARTY RENT BILL', 105, 28, {align:'center'});
+        doc.line(15,33,195,33);
+        const rows = [
+          ['Bill No.',billNo],['Date',date],['Party',party],['Mobile / WhatsApp',mobile || '-'],
+          ['Machine',m.name || '-'],['Total Hours',h.toFixed(1)],['Rate / Hour','Rs. '+r.toFixed(0)],
+          ['Gross Amount','Rs. '+gross.toFixed(0)],['Advance Paid','Rs. '+a.toFixed(0)],['NET BALANCE','Rs. '+pending.toFixed(0)]
+        ];
+        let y=45; doc.setFontSize(11);
+        rows.forEach(row=>{ doc.text(String(row[0]),20,y); doc.text(String(row[1]),190,y,{align:'right'}); doc.line(20,y+3,190,y+3); y+=10; });
+        const blob = doc.output('blob');
+        const file = new File([blob], `${billNo || 'JCB-Bill'}.pdf`, {type:'application/pdf'});
+        if (navigator.canShare({files:[file]})) {
+          await navigator.share({title:`${billNo} - ${party}`, text:'JCB Fleet Pro Party Bill', files:[file]});
+          return;
+        }
+      }
+
+      // Fallback: open WhatsApp chat with bill details. User can attach the downloaded PDF.
+      const phone = (mobile || '').replace(/\D/g,'');
+      const url = phone ? `https://wa.me/${phone}?text=${buildBillText()}` : `https://wa.me/?text=${buildBillText()}`;
+      window.open(url, '_blank');
+      alert("WhatsApp उघडले. PDF attach करण्यासाठी आधी 'PDF Bill Banva' करून PDF निवडा.");
+    }
+
+    function printPartyBill() {
+      savePartyContact();
+      updatePartyBillPreview();
+      window.print();
     }
 
     // ⭐ OWNER DASHBOARD: DUMPER TRIPS WITH DYNAMIC SEARCH/FILTER
@@ -3524,6 +3808,13 @@
         }
       }
     });
-  </script>
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      const d = document.getElementById('salaryPayDateInput');
+      if (d) d.value = getBillTodayISO();
+      const bd = document.getElementById('billDateInput');
+      if (bd) bd.value = getBillTodayISO();
+    });
+</script>
 </body>
 </html>

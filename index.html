@@ -483,11 +483,23 @@
     .btn-approve { background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; }
     .btn-reject { background: #fee2e2; color: #b91c1c; border: 1.5px solid #dc2626; }
 
+    .btn-delete-entry {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #f87171;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-delete-entry:hover { background: #ef4444; color: #fff; }
+
     .trip-counter-box {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 14px;
       background: #f8fafc;
       padding: 12px;
       border-radius: 10px;
@@ -544,7 +556,41 @@
     </div>
   </div>
 
-  <!-- ⭐ SMART PUMP PAYMENT MODAL (FOR DIESEL UDHARI) -->
+  <!-- ⭐ SMART EDIT MACHINE & DRIVER MODAL -->
+  <div id="editMachineModal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
+        <div>
+          <span style="font-size:10px; color:#64748b; font-weight:800; text-transform:uppercase;">Machine & Operator Settings</span>
+          <h3 style="font-size:16px; font-weight:900; color:var(--text-dark);">🚜 मशीन आणि चालक नाव बदला</h3>
+        </div>
+        <button onclick="closeEditMachineModal()" style="background:#f1f5f9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
+      </div>
+
+      <label>मशीनचे नवीन नाव / नंबर (Machine Name):</label>
+      <input type="text" id="editMachineNameInput" placeholder="उदा. 1. विक्रम किंवा JCB MH-12" style="font-weight:800; color:var(--primary-blue);">
+
+      <label>चालकाचे / ऑपरेटरचे नाव (Driver Name):</label>
+      <input type="text" id="editMachineDriverInput" placeholder="उदा. राहुल शिंदे" style="font-weight:800;">
+
+      <div class="grid-2" style="margin-top:4px;">
+        <div>
+          <label>4-अंकी Operator PIN:</label>
+          <input type="text" maxlength="6" id="editMachinePinInput" placeholder="1111" style="font-weight:bold;">
+        </div>
+        <div>
+          <label>भाडे दर (₹/तास):</label>
+          <input type="number" id="editMachineRateInput" placeholder="2000" style="font-weight:bold;">
+        </div>
+      </div>
+
+      <button class="btn-submit btn-blue" onclick="confirmEditMachineSave()" style="margin-top:14px; font-size:14px;">
+        💾 बदल सेव्ह करा (Save Changes)
+      </button>
+    </div>
+  </div>
+
+  <!-- SMART PUMP PAYMENT MODAL (FOR DIESEL UDHARI) -->
   <div id="pumpPaymentModal" class="modal-overlay">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px;">
@@ -600,9 +646,7 @@
 
   <div class="container">
 
-    <!-- ========================================================
-         SCREEN 0: FRONT LOGIN CHOICE
-         ======================================================== -->
+    <!-- SCREEN 0: FRONT LOGIN CHOICE -->
     <div id="screenLoginSelect" class="screen active">
       <div id="frontPagePendingAlertBanner" class="front-pending-alert-banner">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -683,9 +727,7 @@
       </div>
     </div>
 
-    <!-- ========================================================
-         SCREEN 1: SUPER ADMIN DASHBOARD
-         ======================================================== -->
+    <!-- SCREEN 1: SUPER ADMIN DASHBOARD -->
     <div id="screenSuperAdmin" class="screen">
       <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
         <button class="btn-nav" style="margin:0;" onclick="logoutSession()">🔒 Super Admin Logout</button>
@@ -878,7 +920,7 @@
       <div class="grid-tiles-2x2">
         <div class="feature-card" onclick="openSaSection('machines')">
           <div class="card-top"><div class="icon-badge" style="background:#e0f2fe; color:#0284c7;">🚜</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">१. Machines Control</div><div class="card-sub-title">Status, PIN & Chalak</div></div>
+          <div class="card-body"><div class="card-main-title">१. Machines Control</div><div class="card-sub-title">Naav, Chalak, PIN & Status</div></div>
         </div>
         <div class="feature-card" onclick="openSaSection('diesel')">
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5; color:#059669;">⛽</div><span class="arrow-icon">›</span></div>
@@ -907,7 +949,7 @@
     <div id="screenSaMachineListPage" class="screen">
       <button class="btn-nav" onclick="navigate('screenSuperAdminClientDetail')">⬅ Mage Ja (Management Hub)</button>
       <div class="panel-card">
-        <div class="panel-header">🚜 Machines List (Activate / Deactivate)</div>
+        <div class="panel-header">🚜 Machines List (Edit Naav / Chalak / Status)</div>
         <div id="saMachine1x1Container"></div>
       </div>
     </div>
@@ -959,9 +1001,9 @@
           </div>
         </div>
 
-        <div class="feature-card" onclick="openOwnerSection('dumper')">
+        <div class="feature-card" onclick="openOwnerSection('dumper')" style="border-left: 3.5px solid #d97706;">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7; color:#d97706;">🚛</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Dumper Ferya</div><div class="card-sub-title">Malak & Trips Ledger</div></div>
+          <div class="card-body"><div class="card-main-title">Dumper & Tractor</div><div class="card-sub-title" style="color:#b45309;">(नवीन डिझेल व फायनल हिशोब)</div></div>
         </div>
 
         <div class="feature-card" onclick="openOwnerSection('salary')">
@@ -969,9 +1011,9 @@
           <div class="card-body"><div class="card-main-title">Advance / Pagar</div><div class="card-sub-title">Uchhal & Salary</div></div>
         </div>
 
-        <div class="feature-card" onclick="openOwnerSection('night')" style="grid-column: span 2;">
+        <div class="feature-card" onclick="openOwnerSection('night')" style="grid-column: span 2; border-left: 3.5px solid var(--accent-purple);">
           <div class="card-top"><div class="icon-badge" style="background:#f3e8ff; color:#7c3aed;">🌙</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">Night Closing</div><div class="card-sub-title">Reading & Kamache Taas</div></div>
+          <div class="card-body"><div class="card-main-title">Night Closing / Readings</div><div class="card-sub-title">Reading, Taas (डबल रीडिंग दुरुस्त करा 🗑️)</div></div>
         </div>
       </div>
 
@@ -996,11 +1038,12 @@
     <!-- OWNER PAGES: MACHINE CONSOLE -->
     <div id="screenOwnerMachinesPage" class="screen">
       <button class="btn-nav" id="btnBackMachinesConsole" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      
       <div class="panel-card">
         <div class="panel-header">➕ Navin Machine Joda</div>
         <div class="grid-2">
           <input type="text" id="ownerAddMachineNameInput" placeholder="Machine che naav (uda. JCB 3DX)">
-          <input type="text" id="ownerAddMachineDriverInput" placeholder="Chalakache naav">
+          <input type="text" id="ownerAddMachineDriverInput" placeholder="Chalakache naav (Driver)">
         </div>
         <div class="grid-2" style="margin-top:6px;">
           <input type="password" maxlength="6" id="ownerAddMachinePinInput" placeholder="4-Anki Operator PIN">
@@ -1008,19 +1051,36 @@
         </div>
         <button class="btn-submit btn-blue" onclick="ownerSaveNewMachine()">💾 Machine Save Kara</button>
       </div>
+
       <div class="panel-card">
-        <div class="panel-header">🚜 Tumchya Machines</div>
-        <div id="clientOwnerMachinesList" class="grid-tiles-2x2"></div>
+        <div class="panel-header">
+          <span>🚜 Tumchya Machines (Naav & Chalak Edit Kara)</span>
+        </div>
+        <div id="clientOwnerMachinesList"></div>
       </div>
     </div>
 
     <!-- ========================================================
-         ⭐ UNIQUE DIGITAL KHATA-BOOK DIESEL & PUMP LEDGER
+         UNIQUE DIGITAL KHATA-BOOK DIESEL & PUMP LEDGER
          ======================================================== -->
     <div id="screenDieselLedger" class="screen">
       <button class="btn-nav" id="btnBackDiesel" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
 
-      <!-- 1. PREMIUM DARK FUEL COMMAND CENTER -->
+      <!-- 1. DIESEL RATE SETTING CARD FOR OWNER -->
+      <div class="panel-card" style="border: 2px solid var(--accent-gold); background:#fffbeb;">
+        <div class="panel-header" style="color:#b45309;">
+          <span>⛽ डिझेलचा आजचा चालू दर सेट करा (₹/Ltr)</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="number" step="0.5" id="ownerDieselRateInput" placeholder="उदा. 92.5" style="font-size:16px; font-weight:bold;">
+          <button onclick="saveOwnerDieselRate()" style="background:#d97706; color:#fff; border:none; padding:11px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">
+            दर सेव्ह करा
+          </button>
+        </div>
+        <small style="color:#64748b; display:block; margin-top:5px;">(या दरानुसार ऑपरेटरने टाकलेल्या रुपयांचे आपोआप लिटर मोजले जातील)</small>
+      </div>
+
+      <!-- 2. PREMIUM DARK FUEL COMMAND CENTER -->
       <div class="turnover-unique-card" style="cursor:default;">
         <div class="turnover-top-row">
           <div>
@@ -1054,7 +1114,7 @@
         </div>
       </div>
 
-      <!-- 2. MACHINE-WISE DIESEL CONSUMPTION BREAKDOWN -->
+      <!-- 3. MACHINE-WISE DIESEL CONSUMPTION BREAKDOWN -->
       <div class="panel-card" style="background:#f8fafc;">
         <div class="panel-header" style="margin-bottom:8px;">
           <span>🚜 मशीननुसार डिझेल वापर (Machine Fuel Meter)</span>
@@ -1062,7 +1122,7 @@
         <div id="machineWiseFuelStripContainer" class="grid-2" style="margin-bottom:0;"></div>
       </div>
 
-      <!-- 3. DIGITAL KHATA-BOOK PUMP CARDS + PASSBOOK TIMELINE -->
+      <!-- 4. DIGITAL KHATA-BOOK PUMP CARDS + PASSBOOK TIMELINE -->
       <div class="section-title-row">
         <div style="font-size:16px;">⛽</div>
         <div class="section-title">पंप डिजिटल खाते-बुक (Pump Passbook)</div>
@@ -1070,7 +1130,7 @@
       </div>
       <div id="pumpWiseLedgerCardsContainer"></div>
 
-      <!-- 4. ALL DIESEL FILLING LOGS WITH FILTER -->
+      <!-- 5. ALL DIESEL FILLING LOGS WITH FILTER -->
       <div class="panel-card" style="margin-top:14px;">
         <div class="panel-header">
           <span>📋 सर्व डिझेल फिलिंग नोंदी (Filling Logs)</span>
@@ -1087,11 +1147,23 @@
       </div>
     </div>
 
-    <!-- OWNER PAGES: DUMPER TRIPS -->
+    <!-- ⭐ OWNER PAGES: DUMPER TRIPS & DIESEL SUMMARY -->
     <div id="screenOwnerDumperPage" class="screen">
       <button class="btn-nav" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
+      
       <div class="panel-card">
-        <div class="panel-header">🚛 Dumper & Tractor Ferya Hishob</div>
+        <div class="panel-header" style="color:var(--primary-blue);">🚛 डंपर सर्च व फायनल हिशोब</div>
+        <div class="filter-box" style="margin-bottom:0; background:#f0f9ff; border:1px solid #bae6fd;">
+          <label style="color:#0369a1;">🔍 डंपर शोधा (गाडी नंबर टाका):</label>
+          <input type="text" id="ownerDumperSearchInput" placeholder="उदा. MH12 किंवा 1234" onkeyup="renderOwnerDumperTrips()" style="font-size:15px; font-weight:bold; border-color:#7dd3fc; margin-bottom:8px;">
+          <small style="color:#64748b;">(गाडी नंबर टाकल्यास त्या गाडीला दिलेले डिझेल आणि एकूण काम आपोआप दिसेल)</small>
+        </div>
+        
+        <div id="dumperFinancialSummaryBox" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="panel-card" style="margin-top:14px;">
+        <div class="panel-header">🚛 सर्व डंपर / ट्रॅक्टर कामाची नोंद</div>
         <div id="ownerDumperTripsListContainer"></div>
       </div>
     </div>
@@ -1158,11 +1230,14 @@
       </div>
     </div>
 
-    <!-- OWNER PAGES: NIGHT CLOSING -->
+    <!-- OWNER PAGES: NIGHT CLOSING (WITH DIRECT DELETE TO FIX DOUBLE READING) -->
     <div id="screenNightClosingPage" class="screen">
       <button class="btn-nav" id="btnBackNight" onclick="navigate('screenClientOwner')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header">🌙 Night Closing (Reading & Taas)</div>
+        <div style="background:#fee2e2; border:1px solid #f87171; padding:8px 10px; border-radius:8px; font-size:11.5px; color:#991b1b; margin-bottom:12px;">
+          ℹ️ <b>डबल रीडिंग पडले असल्यास:</b> खालील यादीतून जे रीडिंग दोनदा पडले आहे त्याच्या समोरील <b>"🗑️ डिलीट करा"</b> बटण दाबा. चुकीचे रीडिंग लगेच निघून जाईल आणि तास पूर्ववत होतील.
+        </div>
         <div id="nightClosingMachineWiseList"></div>
       </div>
     </div>
@@ -1233,11 +1308,11 @@
         </div>
         <div class="feature-card" onclick="navigate('screenDiesel')">
           <div class="card-top"><div class="icon-badge" style="background:#e6fcf5;">⛽</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">२. Diesel Nond</div><div class="card-sub-title">Pump, Liters & Bill</div></div>
+          <div class="card-body"><div class="card-main-title">२. Diesel Nond</div><div class="card-sub-title">रुपये टाका (Auto Ltr)</div></div>
         </div>
         <div class="feature-card" style="border-left:4px solid var(--accent-red);" onclick="navigate('screenOpDumper')">
           <div class="card-top"><div class="icon-badge" style="background:#fee2e2;">🚛</div><span class="arrow-icon">›</span></div>
-          <div class="card-body"><div class="card-main-title">३. Dumper Ferya</div><div class="card-sub-title">Malak & Trips nond</div></div>
+          <div class="card-body"><div class="card-main-title">३. Dumper Kam</div><div class="card-sub-title">Ferya / Taas / Divas</div></div>
         </div>
         <div class="feature-card" onclick="navigate('screenEvening')">
           <div class="card-top"><div class="icon-badge" style="background:#fef3c7;">🛑</div><span class="arrow-icon">›</span></div>
@@ -1261,11 +1336,12 @@
       </div>
     </div>
 
-    <!-- SCREEN 6: DIESEL ENTRY -->
+    <!-- ⭐ SCREEN 6: DIESEL ENTRY (AUTO LITERS BY AMOUNT + VEHICLE REMARK) -->
     <div id="screenDiesel" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
         <div class="panel-header">२. Diesel Nond (Operator)</div>
+        
         <label>Petrol Pump Nivada:</label>
         <select id="dieselPumpSelect">
           <option value="Indian Oil">Indian Oil</option>
@@ -1274,27 +1350,39 @@
           <option value="Reliance Pump">Reliance Pump</option>
           <option value="Other">Itar Pump</option>
         </select>
-        <div class="grid-2">
-          <div><label>Liters:</label><input type="number" step="0.01" id="dieselLitersInput" placeholder="100.0"></div>
-          <div><label>Bill (₹):</label><input type="number" step="0.01" id="dieselCostInput" placeholder="4000.0"></div>
+
+        <label style="margin-top:12px;">कोणत्या गाडीत डिझेल भरले? (मशीन की डंपर?):</label>
+        <input type="text" id="dieselVehicleRemark" placeholder="उदा. स्वतःची मशीन किंवा डंपर MH12" style="font-weight:bold; color:var(--primary-blue);">
+        <small style="color:#64748b;">(डंपर असेल तर नंबर अचूक टाका म्हणजे मालकाला हिशोब दिसेल)</small>
+
+        <label style="color:#d97706; font-size:12px; font-weight:900; margin-top:12px;">💰 किती रुपयांचे डिझेल भरले? (₹ Bill):</label>
+        <input type="number" step="1" id="dieselCostInput" placeholder="उदा. 3000" oninput="calculateAutoDieselLiters()" style="font-size:18px; font-weight:900; border:2px solid var(--accent-gold);">
+
+        <div style="background:#ecfdf5; border:1.5px solid #10b981; border-radius:10px; padding:12px; margin-top:12px; text-align:center;">
+          <div style="font-size:11px; color:#047857; font-weight:bold; text-transform:uppercase;">ऑटोमॅटिक डिझेल लिटर:</div>
+          <div style="font-size:26px; font-weight:900; color:#065f46; margin-top:2px;" id="autoCalculatedLitersText">0.00 Ltr</div>
+          <div style="font-size:10.5px; color:#64748b; margin-top:3px;" id="dieselCurrentRateLabel">(चालू दर: ₹92 / Ltr नुसार)</div>
+          <input type="hidden" id="dieselLitersInput" value="0">
         </div>
-        <label>Dilele Cash / Paid (₹) [Udhari asel tr 0 theva]:</label>
-        <input type="number" step="0.01" id="dieselPaidInput" placeholder="0" value="0">
+
+        <label style="margin-top:12px;">Dilele Cash / Paid (₹) [Udhari asel tr 0 theva]:</label>
+        <input type="number" step="1" id="dieselPaidInput" placeholder="0" value="0">
+
         <button class="btn-submit btn-blue" onclick="submitDieselEntry()">💾 Diesel Nond Save Kara</button>
       </div>
     </div>
 
-    <!-- SCREEN: DUMPER TRIPS (MALAKACHE NAAV SAH) -->
+    <!-- ⭐ SCREEN: DUMPER TRIPS (WITH RATE & TOTAL AMOUNT) -->
     <div id="screenOpDumper" class="screen">
       <button class="btn-nav" onclick="navigate('screenOpMenu')">⬅ Mage Ja</button>
       <div class="panel-card">
-        <div class="panel-header">🚛 Dumper / Tractor Ferya Nond (Trips)</div>
+        <div class="panel-header">🚛 Dumper / Tractor Kamachi Nond</div>
         
         <label>Dumper Malakache Naav (Owner Name):</label>
-        <input type="text" id="dumperOwnerInput" placeholder="uda. Ganesh Patil / SK Trans" style="font-weight:bold;">
+        <input type="text" id="dumperOwnerInput" placeholder="uda. Ganesh Patil" style="font-weight:bold;">
 
         <label>Gadi / Dumper Number kivha Naav:</label>
-        <input type="text" id="dumperVehicleInput" placeholder="uda. MH 12 AB 1234 kivha Dumper 1" style="font-weight:bold;">
+        <input type="text" id="dumperVehicleInput" placeholder="uda. MH 12 AB 1234" style="font-weight:bold;">
 
         <label>Material:</label>
         <select id="dumperMaterialSelect">
@@ -1305,14 +1393,30 @@
           <option value="Itar">Itar</option>
         </select>
 
-        <label>Aajchya Ekun Ferya (Trips Count):</label>
-        <div class="trip-counter-box">
-          <button class="btn-trip-circle btn-red" onclick="adjustDumperCount(-1)">−</button>
-          <span style="font-size:32px; font-weight:900; color:var(--primary-blue);" id="dumperCountDisplay">1</span>
-          <button class="btn-trip-circle btn-green" onclick="adjustDumperCount(1)">+</button>
+        <div class="grid-2">
+          <div>
+            <label>Kamacha Prakar:</label>
+            <select id="dumperWorkTypeSelect" style="border: 2px solid var(--accent-gold); font-weight: bold; color: var(--primary-blue);">
+              <option value="Ferya (Trips)">🔄 Ferya (Trips)</option>
+              <option value="Taas (Hours)">⏱️ Taas (Hours)</option>
+              <option value="Divas (Days)">📅 Divas (Days)</option>
+            </select>
+          </div>
+          <div>
+            <label>दर (Rate ₹):</label>
+            <input type="number" step="1" id="dumperRateInput" placeholder="उदा. 500" style="font-weight:bold; border-color:var(--accent-gold);">
+          </div>
         </div>
 
-        <button class="btn-submit btn-amber" onclick="submitDumperTripEntry()">💾 Dumper Feri Save Kara</button>
+        <label>Ekun Sankhya (Count):</label>
+        <div class="trip-counter-box" style="gap:10px;">
+          <button class="btn-trip-circle btn-red" onclick="adjustDumperCount(-0.5)">−</button>
+          <input type="number" step="0.5" id="dumperCountDisplay" value="1" style="width: 80px; height: 44px; font-size: 24px; font-weight: 900; text-align: center; color: var(--primary-blue); border: 2px solid var(--border-light); border-radius: 8px;">
+          <button class="btn-trip-circle btn-green" onclick="adjustDumperCount(0.5)">+</button>
+        </div>
+        <small style="color:#64748b; display:block; text-align:center; margin-top:-5px; margin-bottom:10px;">(0.5 mhanje ardha divas kivha ardha taas)</small>
+
+        <button class="btn-submit btn-amber" onclick="submitDumperTripEntry()">💾 Dumper Nond Save Kara</button>
       </div>
     </div>
 
@@ -1432,16 +1536,17 @@
         status: "ACTIVE",
         subscriptionExpiry: "2026-12-31",
         paidMachinesCount: 2,
+        currentDieselRate: 92,
         fleet: [
           { id: "M1", name: "1. Vikram", driver: "Rahul Shinde", pin: "1111", status: "ACTIVE", totalHours: 4528.0, activeParty: "Amol Patil", defaultHourlyRate: 2000, monthlySalary: 22000, advanceHistory: [{ date: "02/10/2026", amount: 2000, remark: "Gharkharch" }] },
           { id: "M2", name: "2. Gold man", driver: "Sachin Kadam", pin: "2222", status: "ACTIVE", totalHours: 2890.0, activeParty: "Highway Site", defaultHourlyRate: 1800, monthlySalary: 18000, advanceHistory: [{ date: "05/10/2026", amount: 1500, remark: "Rokh" }] }
         ],
         dieselHistory: [
-          { date: "08/10/2026", pump: "Bharat Petroleum", machine: "1. Vikram", driver: "Rahul Shinde", liters: 40.0, cost: 4000.0, paid: 0.0 }
+          { date: "08/10/2026", pump: "Bharat Petroleum", machine: "1. Vikram", driver: "Rahul Shinde", liters: 40.0, cost: 4000.0, paid: 0.0, remark: "स्वतःची मशीन" }
         ],
         operatorHistory: [
-          { date: "09/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.5, startMeter: 4519.5, endMeter: 4528.0, hourlyRate: 2000 },
-          { date: "09/10/2026", machine: "2. Gold man", driver: "Sachin Kadam", party: "Highway Site", hours: 8.0, startMeter: 2882.0, endMeter: 2890.0, hourlyRate: 1800 }
+          { id: "H_1", date: "09/10/2026", machine: "1. Vikram", driver: "Rahul Shinde", party: "Amol Patil", hours: 8.5, startMeter: 4519.5, endMeter: 4528.0, hourlyRate: 2000 },
+          { id: "H_2", date: "09/10/2026", machine: "2. Gold man", driver: "Sachin Kadam", party: "Highway Site", hours: 8.0, startMeter: 2882.0, endMeter: 2890.0, hourlyRate: 1800 }
         ],
         dumperHistory: [],
         pumpPaymentsHistory: []
@@ -1455,11 +1560,11 @@
     let currentSessionMachine = null;
     let selectedSaClientId = null;
     let isSuperAdminImpersonating = false;
-    let currentDumperCount = 1;
 
-    // Modal state variables for Pump Payment
     let activeModalPumpName = "";
     let activeModalPumpPending = 0;
+    let editingMachineClientRef = null;
+    let editingMachineIndex = null;
 
     function syncDataToCloud() {
       localStorage.setItem('jcb_fleet_stable_core', JSON.stringify(clientsDatabase));
@@ -1485,7 +1590,7 @@
     }
 
     // =====================================
-    // 👑 LOGIN ENGINE (SUPER ADMIN + OWNER)
+    // 👑 LOGIN ENGINE
     // =====================================
     function handleOwnerLogin() {
       const u = document.getElementById('ownerLoginUserId').value.trim();
@@ -1520,6 +1625,7 @@
       currentSessionClient = client;
       setSafeText('ownerClientTitle', client.businessName);
       setSafeText('liveTodayDateBadge', getTodayStandardDate());
+      setSafeValue('ownerDieselRateInput', client.currentDieselRate || 92);
 
       const backBtn = document.getElementById('ownerBackBtn');
       if (backBtn) {
@@ -1599,6 +1705,10 @@
       } else {
         setSafeValue('shiftStartReading', currentSessionMachine.totalHours || 0);
       }
+
+      const rate = currentSessionClient.currentDieselRate || 92;
+      setSafeText('dieselCurrentRateLabel', `(चालू दर: ₹${rate} / Ltr नुसार)`);
+      calculateAutoDieselLiters();
     }
 
     function saveActivePartyDirect() {
@@ -1638,6 +1748,7 @@
 
         if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
         currentSessionClient.operatorHistory.unshift({
+          id: "H_" + Date.now(),
           date: prevDate,
           machine: currentSessionMachine.name,
           driver: currentSessionMachine.driver,
@@ -1681,22 +1792,46 @@
       navigate('screenOpMenu');
     }
 
+    // ⭐ DOUBLE CLOSING & READING FIX FOR OPERATOR
     function submitEveningShift() {
+      if (!currentSessionMachine.activeShift || !currentSessionMachine.activeShift.isLive) {
+        alert("⚠️ Hi shift aadhich close zali ahe! (Double reading taalnyasathi lock kele ahe)");
+        navigate('screenOpMenu');
+        return;
+      }
+
       const s = parseFloat(document.getElementById('shiftStartReading').value) || (currentSessionMachine.activeShift ? currentSessionMachine.activeShift.startMeter : currentSessionMachine.totalHours) || 0;
       const e = parseFloat(document.getElementById('shiftEndReading').value) || 0;
 
       if (e <= s) { alert("Sandhyakalche reading sakalchya reading peksha jast asave!"); return; }
 
+      // Strict duplicate reading lock
+      const alreadyClosed = (currentSessionClient.operatorHistory || []).some(
+        h => h.machine === currentSessionMachine.name && 
+             h.date === getTodayStandardDate() && 
+             h.startMeter === s
+      );
+
+      if (alreadyClosed) {
+        alert("⚠️ He reading aadhich close zale ahe! (Duplicate Lock)");
+        currentSessionMachine.activeShift = null;
+        syncDataToCloud();
+        navigate('screenOpMenu');
+        return;
+      }
+
       const runHours = parseFloat((e - s).toFixed(1));
       currentSessionMachine.totalHours = e;
-      currentSessionMachine.activeShift = null;
+      const party = currentSessionMachine.activeParty || "General Work";
+      currentSessionMachine.activeShift = null; // Lock
 
       if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
       currentSessionClient.operatorHistory.unshift({
+        id: "H_" + Date.now(),
         date: getTodayStandardDate(),
         machine: currentSessionMachine.name,
         driver: currentSessionMachine.driver,
-        party: currentSessionMachine.activeParty || "General Work",
+        party: party,
         hours: runHours,
         startMeter: s,
         endMeter: e,
@@ -1709,13 +1844,37 @@
       navigate('screenOpMenu');
     }
 
+    // ⭐ AUTO DIESEL LITERS ENGINE (OPERATOR JUST ENTERS RUPEES + REMARK)
+    function calculateAutoDieselLiters() {
+      const cost = parseFloat(document.getElementById('dieselCostInput').value) || 0;
+      const rate = parseFloat(currentSessionClient ? (currentSessionClient.currentDieselRate || 92) : 92);
+      if (cost <= 0) {
+        setSafeText('autoCalculatedLitersText', '0.00 Ltr');
+        setSafeValue('dieselLitersInput', '0');
+        return 0;
+      }
+      const ltr = (cost / rate).toFixed(2);
+      setSafeText('autoCalculatedLitersText', `${ltr} Ltr`);
+      setSafeValue('dieselLitersInput', ltr);
+      return parseFloat(ltr);
+    }
+
+    function saveOwnerDieselRate() {
+      const r = parseFloat(document.getElementById('ownerDieselRateInput').value) || 92;
+      currentSessionClient.currentDieselRate = r;
+      syncDataToCloud();
+      alert(`✓ डिझेलचा चालू दर ₹${r} / Ltr सेव्ह झाला!`);
+    }
+
     function submitDieselEntry() {
       const p = document.getElementById('dieselPumpSelect').value;
-      const l = parseFloat(document.getElementById('dieselLitersInput').value) || 0;
+      const vehRemark = document.getElementById('dieselVehicleRemark').value.trim() || 'स्वतःची मशीन (JCB)';
       const c = parseFloat(document.getElementById('dieselCostInput').value) || 0;
       const paid = parseFloat(document.getElementById('dieselPaidInput').value) || 0;
+      const rate = parseFloat(currentSessionClient ? (currentSessionClient.currentDieselRate || 92) : 92);
+      const l = parseFloat((c / rate).toFixed(2));
 
-      if (l <= 0 || c <= 0) { alert("Krupaya Liters va Bill bhara!"); return; }
+      if (c <= 0) { alert("Krupaya डिझेलचे रुपये (Bill) टाका!"); return; }
 
       if (!currentSessionClient.dieselHistory) currentSessionClient.dieselHistory = [];
 
@@ -1723,6 +1882,7 @@
         id: "D_" + Date.now(),
         date: getTodayStandardDate(),
         pump: p,
+        remark: vehRemark,
         machine: currentSessionMachine.name,
         driver: currentSessionMachine.driver,
         liters: l,
@@ -1731,50 +1891,63 @@
       });
 
       syncDataToCloud();
-      setSafeValue('dieselLitersInput', '');
+      setSafeValue('dieselVehicleRemark', '');
       setSafeValue('dieselCostInput', '');
       setSafeValue('dieselPaidInput', '0');
+      setSafeText('autoCalculatedLitersText', '0.00 Ltr');
 
-      alert(`✓ डिझेल नोंद सेव्ह झाली!\nपंप: ${p} | लिटर: ${l} Ltr | बिल: ₹${c}\nजमा रक्कम: ₹${paid} | बाकी उधारी: ₹${c - paid}`);
+      alert(`✓ डिझेल नोंद सेव्ह झाली!\nगाडी: ${vehRemark}\nपंप: ${p} | बिल: ₹${c} | लिटर: ${l} Ltr`);
       navigate('screenOpMenu');
     }
 
+    // ⭐ DUMPER SECTION UPDATES (HOURS / DAYS / TRIPS WITH RATE)
     function adjustDumperCount(delta) {
-      currentDumperCount = Math.max(1, currentDumperCount + delta);
-      setSafeText('dumperCountDisplay', currentDumperCount);
+      let el = document.getElementById('dumperCountDisplay');
+      let val = parseFloat(el.value) || 0;
+      val = Math.max(0.5, val + delta);
+      el.value = val;
     }
 
     function submitDumperTripEntry() {
       const o = document.getElementById('dumperOwnerInput').value.trim();
       const v = document.getElementById('dumperVehicleInput').value.trim();
       const m = document.getElementById('dumperMaterialSelect').value;
+      const wType = document.getElementById('dumperWorkTypeSelect').value;
+      const qty = parseFloat(document.getElementById('dumperCountDisplay').value) || 1;
+      const rate = parseFloat(document.getElementById('dumperRateInput').value) || 0;
 
       if (!v) { alert("Krupaya gadi / dumper number taaka!"); return; }
+
+      const totalAmt = qty * rate;
 
       if (!currentSessionClient.dumperHistory) currentSessionClient.dumperHistory = [];
 
       currentSessionClient.dumperHistory.unshift({
+        id: "DP_" + Date.now(),
         date: getTodayStandardDate(),
         machine: currentSessionMachine.name,
         party: currentSessionMachine.activeParty || "General Work",
         ownerName: o || 'Self / General',
         vehicle: v,
         material: m,
-        trips: currentDumperCount
+        workType: wType,
+        trips: qty,
+        rate: rate,
+        totalAmount: totalAmt
       });
 
       syncDataToCloud();
       setSafeValue('dumperOwnerInput', '');
       setSafeValue('dumperVehicleInput', '');
-      currentDumperCount = 1;
-      setSafeText('dumperCountDisplay', '1');
+      setSafeValue('dumperCountDisplay', '1');
+      setSafeValue('dumperRateInput', '');
 
-      alert(`✓ डंपर फेऱ्या सेव्ह झाल्या!\nमालक: ${o || 'Self'} | गाडी: ${v} | फेऱ्या: ${currentDumperCount}`);
+      alert(`✓ डंपर नोंद सेव्ह झाली!\nमालक: ${o || 'Self'} | गाडी: ${v} \nकाम: ${qty} ${wType} | एकूण रक्कम: ₹${totalAmt}`);
       navigate('screenOpMenu');
     }
 
     // ========================================================
-    // MACHINE-WISE LIVE WORK FOR TODAY
+    // MACHINE-WISE LIVE WORK (OWNER) & DOUBLE CLOSING FIX
     // ========================================================
     function renderOwnerTodayLiveSummary() {
       const box = document.getElementById('ownerTodayLiveSummary');
@@ -1802,8 +1975,8 @@
         let todayDieselLtr = 0;
         mDiesel.forEach(d => todayDieselLtr += (parseFloat(d.liters) || 0));
 
-        let todayTrips = 0;
-        mDumper.forEach(dp => todayTrips += (parseInt(dp.trips) || 0));
+        let todayDumperCount = 0;
+        mDumper.forEach(dp => todayDumperCount += (parseFloat(dp.trips) || 0));
 
         let shiftStatusHtml = '';
         if (m.activeShift && m.activeShift.isLive) {
@@ -1844,8 +2017,8 @@
                 <div style="font-size:14px; font-weight:900; color:var(--accent-green);">${todayDieselLtr.toFixed(0)} L</div>
               </div>
               <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
-                <div style="font-size:9.5px; color:#64748b;">Dumper Ferya</div>
-                <div style="font-size:14px; font-weight:900; color:var(--accent-red);">${todayTrips} Ferya</div>
+                <div style="font-size:9.5px; color:#64748b;">Dumper Qty</div>
+                <div style="font-size:14px; font-weight:900; color:var(--accent-red);">${todayDumperCount}</div>
               </div>
             </div>
 
@@ -1857,7 +2030,25 @@
 
     function adminCloseShiftPrompt(machineIdx) {
       const m = currentSessionClient.fleet[machineIdx];
-      if (!m || !m.activeShift) return;
+      if (!m || !m.activeShift || !m.activeShift.isLive) {
+        alert("⚠️ Hi shift aadhich close zali ahe! (Operator ne kela asel)");
+        renderOwnerTodayLiveSummary();
+        return;
+      }
+
+      const alreadyClosed = (currentSessionClient.operatorHistory || []).some(
+        h => h.machine === m.name && 
+             h.date === getTodayStandardDate() && 
+             h.startMeter === m.activeShift.startMeter
+      );
+
+      if (alreadyClosed) {
+        alert("⚠️ He reading aadhich close zale ahe! (Operator ne close kele ahe)");
+        m.activeShift = null;
+        syncDataToCloud();
+        renderClientOwnerView();
+        return;
+      }
 
       const endMeterInput = prompt(`🚜 ${m.name} sathi sandhyakalche band reading taka:\n(Sakalche Start Reading: ${m.activeShift.startMeter})`);
       if (endMeterInput !== null) {
@@ -1872,10 +2063,11 @@
         const runHours = parseFloat((e - s).toFixed(1));
         m.totalHours = e;
         const partyName = m.activeShift.party || m.activeParty || "General Work";
-        m.activeShift = null;
+        m.activeShift = null; // Lock
 
         if (!currentSessionClient.operatorHistory) currentSessionClient.operatorHistory = [];
         currentSessionClient.operatorHistory.unshift({
+          id: "H_" + Date.now(),
           date: getTodayStandardDate(),
           machine: m.name,
           driver: m.driver,
@@ -1904,17 +2096,31 @@
       renderOwnerDumperTrips();
     }
 
+    // ========================================================
+    // MACHINE CONSOLE & EDIT MACHINE/DRIVER FUNCTIONS
+    // ========================================================
     function renderOwnerMachines() {
       const container = document.getElementById('clientOwnerMachinesList');
       if (container && currentSessionClient) {
         container.innerHTML = '';
-        (currentSessionClient.fleet || []).forEach(m => {
+        (currentSessionClient.fleet || []).forEach((m, idx) => {
+          const isDeact = (m.status === 'DEACTIVE');
           container.innerHTML += `
-            <div class="feature-card">
-              <div class="card-top"><div class="icon-badge" style="background:#e0f2fe;">🚜</div><span class="arrow-icon">›</span></div>
-              <div class="card-body">
-                <div class="card-main-title">${m.name}</div>
-                <div class="card-sub-title">Chalak: ${m.driver} | PIN: <b>${m.pin}</b></div>
+            <div class="data-item-card" style="border-left: 4px solid ${isDeact ? 'var(--accent-red)' : 'var(--primary-blue)'}; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size:15px; color:var(--text-dark);">🚜 ${m.name}</b>
+                <span class="sub-badge ${isDeact ? 'sub-expired' : 'sub-active'}">${m.status || 'ACTIVE'}</span>
+              </div>
+              <div style="font-size:12px; color:#334155; margin-top:4px;">
+                👷 चालक (Driver): <b style="color:var(--primary-blue);">${m.driver}</b>
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+                🔑 Operator PIN: <b>${m.pin}</b> | 💰 दर: <b>₹${m.defaultHourlyRate || 2000}/तास</b>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                <button onclick="openEditMachineModal('${currentSessionClient.id}', ${idx})" style="flex:1; background:#e8f0fe; color:#1a73e8; border:1px solid #bfdbfe; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">
+                  ✏️ नाव / चालक बदला (Edit)
+                </button>
               </div>
             </div>`;
         });
@@ -1931,6 +2137,71 @@
             </div>`;
         });
       }
+    }
+
+    function openEditMachineModal(clientId, mIdx) {
+      const client = clientsDatabase.find(c => c.id === clientId);
+      if (!client || !client.fleet[mIdx]) return;
+
+      editingMachineClientRef = client;
+      editingMachineIndex = mIdx;
+      const m = client.fleet[mIdx];
+
+      setSafeValue('editMachineNameInput', m.name || '');
+      setSafeValue('editMachineDriverInput', m.driver || '');
+      setSafeValue('editMachinePinInput', m.pin || '');
+      setSafeValue('editMachineRateInput', m.defaultHourlyRate || 2000);
+
+      const modal = document.getElementById('editMachineModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeEditMachineModal() {
+      const modal = document.getElementById('editMachineModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function confirmEditMachineSave() {
+      if (!editingMachineClientRef || editingMachineIndex === null) return;
+      const m = editingMachineClientRef.fleet[editingMachineIndex];
+      if (!m) return;
+
+      const newName = document.getElementById('editMachineNameInput').value.trim();
+      const newDriver = document.getElementById('editMachineDriverInput').value.trim();
+      const newPin = document.getElementById('editMachinePinInput').value.trim();
+      const newRate = parseFloat(document.getElementById('editMachineRateInput').value) || 2000;
+
+      if (!newName || !newDriver || !newPin) {
+        alert("कृपया मशीनचे नाव, चालकाचे नाव आणि PIN भरा!");
+        return;
+      }
+
+      const oldName = m.name;
+
+      m.name = newName;
+      m.driver = newDriver;
+      m.pin = newPin;
+      m.defaultHourlyRate = newRate;
+
+      if (oldName !== newName) {
+        (editingMachineClientRef.operatorHistory || []).forEach(h => {
+          if (h.machine === oldName) h.machine = newName;
+        });
+        (editingMachineClientRef.dieselHistory || []).forEach(d => {
+          if (d.machine === oldName) d.machine = newName;
+        });
+        (editingMachineClientRef.dumperHistory || []).forEach(dp => {
+          if (dp.machine === oldName) dp.machine = newName;
+        });
+      }
+
+      closeEditMachineModal();
+      syncDataToCloud();
+      renderOwnerMachines();
+      renderSaMachine1x1();
+      if (currentSessionClient) renderClientOwnerView();
+
+      alert(`✓ बदल सेव्ह झाले!\nमशीन: ${newName}\nचालक: ${newDriver}\nPIN: ${newPin}`);
     }
 
     function ownerSaveNewMachine() {
@@ -1964,7 +2235,7 @@
     }
 
     // ========================================================
-    // ⭐ UNIQUE DIGITAL KHATA-BOOK DIESEL LEDGER ENGINE
+    // UNIQUE DIGITAL KHATA-BOOK DIESEL LEDGER ENGINE
     // ========================================================
     function renderDieselSummaryBox() {
       if (!currentSessionClient) return;
@@ -2028,7 +2299,6 @@
       });
     }
 
-    // ⭐ KHATA-BOOK PUMP CARDS WITH WHATSAPP SHARE & PASSBOOK TIMELINE
     function renderPumpWiseLedger(dHistory, pHistory) {
       const container = document.getElementById('pumpWiseLedgerCardsContainer');
       if (!container) return;
@@ -2060,7 +2330,6 @@
         const pending = Math.max(0, item.totalBill - item.totalPaid);
         const pct = item.totalBill > 0 ? Math.min(100, Math.round((item.totalPaid / item.totalBill) * 100)) : 100;
 
-        // Filter Date-wise Payments for this specific pump
         const pumpPayLogs = pHistory.filter(p => (p.pump || 'Other') === pName);
         let payLogsHtml = '';
 
@@ -2141,7 +2410,6 @@
       });
     }
 
-    // ⭐ SMART MODAL FUNCTIONS FOR PUMP PAYMENT
     function openPumpPayModal(pumpName, currentPending) {
       activeModalPumpName = pumpName;
       activeModalPumpPending = currentPending;
@@ -2230,21 +2498,23 @@
       window.open(`https://wa.me/?text=${msg}`, '_blank');
     }
 
+    // ⭐ DIESEL LOG (SHOW VEHICLE REMARK)
     function renderFullDieselEntriesList(dHistory) {
       const container = document.getElementById('fullDieselEntriesListContainer');
       const filterEl = document.getElementById('dieselLogPumpFilter');
       if (!container) return;
       container.innerHTML = '';
 
+      const list = dHistory || (currentSessionClient ? currentSessionClient.dieselHistory : []) || [];
       const selectedPump = filterEl ? filterEl.value : 'ALL';
-      const filteredList = selectedPump === 'ALL' ? dHistory : dHistory.filter(d => d.pump === selectedPump);
+      const filteredList = selectedPump === 'ALL' ? list : list.filter(d => d.pump === selectedPump);
 
       if (filteredList.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b;">कोणतीही डिझेल फिलिंग नोंद नाही.</div>`;
         return;
       }
 
-      filteredList.forEach(d => {
+      filteredList.forEach((d, idx) => {
         const liters = parseFloat(d.liters) || 0;
         const cost = parseFloat(d.cost) || 0;
         const paid = parseFloat(d.paid) || 0;
@@ -2257,16 +2527,32 @@
               <span>📅 ${d.date} — 🚜 ${d.machine}</span>
               <span style="color:var(--primary-blue); font-size:13.5px;">${liters} Ltr <small style="color:#64748b;">(@₹${ratePerLtr})</small></span>
             </div>
+            
             <div style="font-size:11.5px; color:#475569; margin-top:4px;">
               ⛽ पंप: <b>${d.pump}</b> | 👷 चालक: ${d.driver}
             </div>
+            
+            <div style="font-size:11.5px; color:#b45309; margin-top:2px;">
+              कोणत्या गाडीसाठी: <b>${d.remark || 'स्वतःची मशीन (JCB)'}</b>
+            </div>
+
             <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-top:6px; padding-top:5px; border-top:1px dashed #e2e8f0;">
               <span>एकूण बिल: <b>₹${cost}</b></span>
               <span style="color:green;">जागेवर दिले: <b>₹${paid}</b></span>
               <span style="color:red; font-weight:800;">उधारीत जमा: ₹${pend}</span>
             </div>
+            <div style="text-align:right; margin-top:6px;">
+              <button class="btn-delete-entry" onclick="deleteDieselLogEntry(${idx})">🗑️ डिलीट करा</button>
+            </div>
           </div>`;
       });
+    }
+
+    function deleteDieselLogEntry(idx) {
+      if (confirm("खात्री करा: ही डिझेल नोंद डिलीट करायची का?")) {
+        currentSessionClient.dieselHistory.splice(idx, 1);
+        syncDataToCloud();
+      }
     }
 
     // ========================================================
@@ -2506,33 +2792,103 @@
       setSafeText('billAutoHoursTotal', `${h.toFixed(1)} Taas`);
     }
 
+    // ⭐ OWNER DASHBOARD: DUMPER TRIPS WITH DYNAMIC SEARCH/FILTER
     function renderOwnerDumperTrips() {
       const container = document.getElementById('ownerDumperTripsListContainer');
+      const summaryBox = document.getElementById('dumperFinancialSummaryBox');
+      const searchInput = document.getElementById('ownerDumperSearchInput');
+      
       if (!container || !currentSessionClient) return;
-      container.innerHTML = '';
-      const list = currentSessionClient.dumperHistory || [];
+      
+      const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      let dList = currentSessionClient.dumperHistory || [];
+      let dieselList = currentSessionClient.dieselHistory || [];
 
-      if (list.length === 0) {
+      // Filter Dumper list by search term (vehicle or owner)
+      if (searchVal) {
+        dList = dList.filter(item => 
+          (item.vehicle || '').toLowerCase().includes(searchVal) || 
+          (item.ownerName || '').toLowerCase().includes(searchVal)
+        );
+      }
+
+      // Calculate Totals for Summary Box
+      let totalWorkAmt = 0;
+      let totalTrips = 0;
+      dList.forEach(i => {
+         totalWorkAmt += (parseFloat(i.totalAmount) || 0);
+         totalTrips += (parseFloat(i.trips) || 0);
+      });
+
+      // Calculate Diesel specifically given to this Dumper (Matches the remark)
+      let totalDieselCost = 0;
+      let totalDieselLtr = 0;
+      
+      if (searchVal && searchVal.length >= 2) { // only show diesel match if search is specific
+         let matchedDiesel = dieselList.filter(d => (d.remark || '').toLowerCase().includes(searchVal));
+         matchedDiesel.forEach(d => {
+            totalDieselCost += (parseFloat(d.cost) || 0);
+            totalDieselLtr += (parseFloat(d.liters) || 0);
+         });
+
+         let pending = totalWorkAmt - totalDieselCost;
+         
+         summaryBox.innerHTML = `
+            <div style="background:#e0f2fe; border:1.5px solid #0284c7; padding:12px; border-radius:10px; margin-bottom:12px;">
+              <b style="color:#0369a1; font-size:14px;">📊 ${searchVal.toUpperCase()} चा फायनल हिशोब</b>
+              <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:12px;">
+                 <span>एकूण काम बिल: <b style="color:#15803d; font-size:14px;">₹${totalWorkAmt}</b></span>
+                 <span>दिलेले डिझेल (${totalDieselLtr.toFixed(1)}L): <b style="color:#b91c1c; font-size:14px;">₹${totalDieselCost}</b></span>
+              </div>
+              <div style="margin-top:8px; padding-top:8px; border-top:1px solid #bae6fd; font-size:15px; font-weight:900; color:${pending >= 0 ? '#15803d' : '#b91c1c'}; display:flex; justify-content:space-between;">
+                 <span>${pending >= 0 ? 'डंपरला देणे बाकी:' : 'आपले येणे (Advance):'}</span>
+                 <span>₹${Math.abs(pending)}</span>
+              </div>
+            </div>
+         `;
+      } else {
+         summaryBox.innerHTML = '';
+      }
+
+      container.innerHTML = '';
+      if (dList.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:16px; color:#64748b;">Kontihi dumper nond nahi.</div>`;
         return;
       }
 
-      list.forEach(item => {
+      dList.forEach((item, idx) => {
+        const type = item.workType || 'Ferya';
+        const qty = item.trips;
+        const rate = item.rate || 0;
+        const total = item.totalAmount || 0;
+
         container.innerHTML += `
           <div class="data-item-card" style="border-left:4px solid var(--accent-red);">
-            <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:bold;">
-              <span>🚛 ${item.vehicle} (${item.material})</span>
-              <span style="color:var(--accent-red); font-size:14px;">${item.trips} Ferya</span>
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold;">
+              <span>🚛 ${item.vehicle}</span>
+              <span style="color:var(--accent-red); background:#fee2e2; padding:3px 8px; border-radius:6px;">₹${total} Bill</span>
             </div>
-            <div style="font-size:11.5px; color:#334155; margin-top:3px;">
-              Dumper Malak: <b style="color:var(--primary-blue);">${item.ownerName || 'Self'}</b>
+            <div style="font-size:11.5px; color:#334155; margin-top:6px;">
+              काम: <b style="color:var(--primary-blue);">${qty} ${type}</b> (@₹${rate}) | मालक: ${item.ownerName || 'Self'}
             </div>
-            <div style="font-size:11px; color:#64748b; margin-top:2px;">Tariqh: <b>${item.date}</b> | Party: ${item.party} | Machine: ${item.machine}</div>
+            <div style="font-size:11px; color:#64748b; margin-top:4px;">Tariqh: <b>${item.date}</b> | Material: ${item.material}</div>
+            <div style="text-align:right; margin-top:6px;">
+              <button class="btn-delete-entry" onclick="deleteDumperEntry(${idx})">🗑️ डिलीट करा</button>
+            </div>
           </div>
         `;
       });
     }
 
+    function deleteDumperEntry(idx) {
+      if (confirm("खात्री करा: ही डंपर नोंद डिलीट करायची का?")) {
+        currentSessionClient.dumperHistory.splice(idx, 1);
+        syncDataToCloud();
+        renderOwnerDumperTrips(); // update UI instantly
+      }
+    }
+
+    // ⭐ NIGHT CLOSING: WITH DELETE BUTTON TO REMOVE DOUBLE READINGS
     function renderNightClosingMachineWise() {
       const container = document.getElementById('nightClosingMachineWiseList');
       if (!container || !currentSessionClient) return;
@@ -2544,7 +2900,7 @@
         return;
       }
 
-      history.forEach(h => {
+      history.forEach((h, idx) => {
         container.innerHTML += `
           <div class="data-item-card" style="border-left:4px solid var(--accent-purple);">
             <div style="display:flex; justify-content:space-between; font-size:12px;">
@@ -2553,9 +2909,38 @@
             </div>
             <div style="font-size:11px; margin-top:3px;">Sakal: <b>${h.startMeter}</b> ➔ Band: <b>${h.endMeter}</b></div>
             <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Party: <b>${h.party}</b> | Chalak: ${h.driver}</div>
+            
+            <div style="text-align:right; margin-top:8px; padding-top:6px; border-top:1px dashed #e2e8f0;">
+              <button class="btn-delete-entry" onclick="deleteReadingEntry(${idx})">
+                🗑️ हे डबल रीडिंग डिलीट करा
+              </button>
+            </div>
           </div>
         `;
       });
+    }
+
+    // ⭐ DELETE WRONG / DOUBLE READING FUNCTION
+    function deleteReadingEntry(historyIndex) {
+      if (!currentSessionClient || !currentSessionClient.operatorHistory) return;
+      const item = currentSessionClient.operatorHistory[historyIndex];
+      if (!item) return;
+
+      if (confirm(`⚠️ खात्री करा: तुम्ही ${item.machine} ची तारीख ${item.date} ची (${item.hours} तास) एन्ट्री डिलीट करत आहात?`)) {
+        
+        currentSessionClient.operatorHistory.splice(historyIndex, 1);
+
+        const lastEntryForMachine = (currentSessionClient.operatorHistory || []).find(h => h.machine === item.machine);
+        const mObj = (currentSessionClient.fleet || []).find(m => m.name === item.machine);
+        if (mObj) {
+          if (lastEntryForMachine) {
+            mObj.totalHours = lastEntryForMachine.endMeter;
+          }
+        }
+
+        syncDataToCloud();
+        alert("✓ डबल/चुकीचे रीडिंग यशस्वीरित्या डिलीट झाले!");
+      }
     }
 
     function openOwnerSection(sec) {
@@ -2570,7 +2955,7 @@
     }
 
     // =====================================
-    // 📋 SUPER ADMIN FUNCTIONS (ALL 6 SECTIONS)
+    // 📋 SUPER ADMIN FUNCTIONS
     // =====================================
     function renderSuperAdminDashboard() {
       const container = document.getElementById('superAdminClientsList');
@@ -2666,14 +3051,21 @@
       client.fleet.forEach((m, idx) => {
         const isDeact = (m.status === 'DEACTIVE');
         container.innerHTML += `
-          <div class="data-item-card" style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <b style="font-size:14px;">🚜 ${m.name}</b>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Chalak: ${m.driver} | PIN: <b>${m.pin}</b></div>
+          <div class="data-item-card" style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <b style="font-size:14.5px;">🚜 ${m.name}</b>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">चालक: <b>${m.driver}</b> | PIN: <b>${m.pin}</b></div>
+              </div>
+              <button onclick="toggleMachineStatusDirectly('${client.id}', ${idx})" style="padding:7px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff;">
+                ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
+              </button>
             </div>
-            <button onclick="toggleMachineStatusDirectly('${client.id}', ${idx})" style="padding:7px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff;">
-              ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
-            </button>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #e2e8f0;">
+              <button onclick="openEditMachineModal('${client.id}', ${idx})" style="width:100%; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:bold; cursor:pointer;">
+                ✏️ मशीन नाव / चालक बदला (Edit)
+              </button>
+            </div>
           </div>
         `;
       });
@@ -2743,6 +3135,7 @@
         phone: phone,
         status: "PENDING_APPROVAL",
         paidMachinesCount: 0,
+        currentDieselRate: 92,
         fleet: generatedFleet,
         dieselHistory: [], operatorHistory: [], dumperHistory: [], pumpPaymentsHistory: []
       });
@@ -2831,9 +3224,12 @@
             html += `
               <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>🚜 ${m.name}</b> <br/> <span style="font-size:11px;">Chalak: ${m.driver} | PIN: ${m.pin}</span></div>
-                <button onclick="toggleMachineStatusDirectly('${c.id}', ${mIdx}); openSaasBoxDetailScreen('machines');" style="padding:6px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff;">
-                  ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
-                </button>
+                <div style="display:flex; gap:6px;">
+                  <button onclick="openEditMachineModal('${c.id}', ${mIdx})" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:bold; background:#f8fafc; cursor:pointer;">✏️ Edit</button>
+                  <button onclick="toggleMachineStatusDirectly('${c.id}', ${mIdx}); openSaasBoxDetailScreen('machines');" style="padding:6px 12px; border:none; border-radius:6px; font-size:11px; font-weight:bold; background:${isDeact ? '#10b981' : '#ef4444'}; color:#fff;">
+                    ${isDeact ? '🟢 Activate' : '🛑 Deactivate'}
+                  </button>
+                </div>
               </div>`;
           });
           contentEl.innerHTML += `<div class="panel-card"><b style="color:var(--primary-blue);">👑 ${c.businessName}</b>${html}</div>`;
